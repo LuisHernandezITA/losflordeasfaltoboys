@@ -5,13 +5,13 @@ import {
     MDBCardBody,
     MDBCol,
     MDBContainer,
-    MDBInput,
     MDBRow,
     MDBTypography,
     MDBIcon,
 } from "mdb-react-ui-kit";
 import { useUser } from "./UserContext";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
 function Cart() {
     const { userInfo } = useUser();
@@ -21,8 +21,7 @@ function Cart() {
     // VERIFIES AUTH USER
     const isLoggedIn = userInfo && userInfo.id;
 
-    const [cartProducts, setCartProducts] = useState([]);
-    const [totalPrice, setTotalPrice] = useState(0);
+    const [wishlistProducts, setWishlistProducts] = useState([]);
 
     useEffect(() => {
         // EXECUTES IF USER IS AUTH
@@ -37,248 +36,321 @@ function Cart() {
             })
                 .then((response) => response.json())
                 .then((data) => {
-                    setCartProducts(data);
-                    updateTotalPrice(data);
+                    setWishlistProducts(data);
                 })
-                .catch((error) => console.error("Error fetching data:", error));
+                .catch((error) =>
+                    console.error("Error fetching wishlist data:", error),
+                );
         }
-    }, [isLoggedIn, userId]);
+    }, [isLoggedIn, userId, accessToken]);
 
-    const updateTotalPrice = (products) => {
-        const total = products.reduce(
-            (accumulator, product) =>
-                accumulator + product.price * product.quantity,
-            0,
-        );
-        setTotalPrice(total);
-    };
+    const handleRemoveFromWishlist = (productId) => {
+        // Borrado visual optimista
+        const updated = wishlistProducts.filter((p) => p.id !== productId);
+        setWishlistProducts(updated);
 
-    const handleQuantityChange = (productId, newQuantity) => {
-        // 1. Actualización Visual Inmediata (Optimistic UI)
-        // Si la cantidad es 0, lo filtramos de una vez para que desaparezca de la vista
-        if (newQuantity <= 0) {
-            const filtered = cartProducts.filter((p) => p.id !== productId);
-            setCartProducts(filtered);
-            updateTotalPrice(filtered);
-        } else {
-            const updated = cartProducts.map((p) =>
-                p.id === productId ? { ...p, quantity: newQuantity } : p,
-            );
-            setCartProducts(updated);
-            updateTotalPrice(updated);
-        }
-
-        // 2. Petición al Backend usando Axios (Sincronizado con tu controlador)
-        axios
-            .post("http://127.0.0.1:8000/api/updateQuantity", {
-                user_id: userId,
-                product_id: productId,
-                quantity: newQuantity, // Tu controlador maneja si es > 0 (update) o 0 (delete)
-            })
-            .then((response) => {
-                console.log("Servidor dice:", response.data.message);
-            })
-            .catch((error) => {
-                console.error("Error al actualizar cantidad:", error);
-                // Opcional: Aquí podrías recargar los productos si hubo error para revertir el cambio visual
-            });
-    };
-
-    const handleRemoveFromCart = (productId) => {
-        // Borrado visual
-        const updated = cartProducts.filter((p) => p.id !== productId);
-        setCartProducts(updated);
-        updateTotalPrice(updated);
-
-        // Borrado en BD
+        // Borrado en BD (reutiliza tu endpoint actual)
         axios
             .post("http://127.0.0.1:8000/api/removeProductFromCart", {
                 user_id: userId,
                 product_id: productId,
             })
             .then((response) => {
-                console.log(response.data.message);
+                console.log("Removido de wishlist:", response.data.message);
             })
             .catch((error) => {
-                console.error("Error al eliminar:", error);
+                console.error("Error al eliminar de wishlist:", error);
             });
     };
 
     return (
-        <section className="h-100 h-custom">
+        <section className="h-100">
             <MDBContainer className="py-5 h-100">
                 <MDBRow className="justify-content-center align-items-center h-100">
                     <MDBCol size="12">
                         <MDBCard
-                            className="card-registration card-registration-2"
-                            style={{ borderRadius: "15px", padding: "30px" }}
+                            className="card-registration"
+                            style={{
+                                borderRadius: "16px",
+                                padding: "40px",
+                                border: "none",
+                                boxShadow: "0 4px 20px rgba(0,0,0,0.05)",
+                            }}
                         >
                             <MDBCardBody className="p-0">
-                                <h2
-                                    style={{
-                                        color: "black",
-                                        fontSize: "2.6em",
-                                        fontWeight: "bold",
-                                    }}
-                                >
-                                    Shopping Cart
-                                </h2>
-                                <br></br>
-                                {!isLoggedIn && ( // Display the link only if the user is not authenticated
-                                    <div>
-                                        <p>
-                                            You need to log in to use the cart.
+                                <div className="d-flex justify-content-between align-items-center border-bottom pb-4 mb-4">
+                                    <h2
+                                        style={{
+                                            color: "#111",
+                                            fontSize: "2.4em",
+                                            fontWeight: "800",
+                                            letterSpacing: "-0.5px",
+                                        }}
+                                    >
+                                        My Wishlist
+                                    </h2>
+                                    <MDBTypography
+                                        tag="h6"
+                                        className="text-muted mb-0"
+                                    >
+                                        {wishlistProducts.length}{" "}
+                                        {wishlistProducts.length === 1
+                                            ? "item"
+                                            : "items"}{" "}
+                                        guardados
+                                    </MDBTypography>
+                                </div>
+
+                                {!isLoggedIn && (
+                                    <div className="text-center py-5">
+                                        <MDBIcon
+                                            far
+                                            icon="heart"
+                                            size="3x"
+                                            className="text-muted mb-3"
+                                        />
+                                        <p
+                                            style={{
+                                                fontSize: "1.1em",
+                                                color: "#555",
+                                            }}
+                                        >
+                                            Necesitas iniciar sesión para
+                                            gestionar tu lista de deseos.
                                         </p>
-                                        <Link to="/Login_B">Log in</Link>
+                                        <Link
+                                            to="/login"
+                                            className="btn btn-dark btn-rounded px-4"
+                                        >
+                                            Iniciar Sesión
+                                        </Link>
                                     </div>
                                 )}
 
-                                {/* RENDER PRODUCTS IN CART */}
-                                {cartProducts.map((product) => (
-                                    <MDBRow
-                                        key={product.id}
-                                        className="mb-4 d-flex justify-content-between align-items-center"
-                                    >
-                                        <MDBCol md="2" lg="2" xl="2">
-                                            <img
-                                                src={product.images}
-                                                className="rounded-3 img-fluid"
-                                                alt={product.name}
-                                            />
-                                        </MDBCol>
-                                        <MDBCol md="3" lg="3" xl="3">
-                                            <MDBTypography
-                                                tag="h6"
-                                                className="text-muted"
+                                {/* RENDER PRODUCTS IN WISHLIST (DISEÑO EN CUADRÍCULA INTERACTIVA) */}
+                                <MDBRow>
+                                    {isLoggedIn &&
+                                        wishlistProducts.map((product) => (
+                                            <MDBCol
+                                                md="6"
+                                                lg="4"
+                                                xl="4"
+                                                key={product.id}
+                                                className="mb-4"
                                             >
-                                                {product.category}
-                                            </MDBTypography>
-                                            <MDBTypography
-                                                tag="h6"
-                                                className="text-black mb-0"
-                                            >
-                                                {product.name}
-                                            </MDBTypography>
-                                        </MDBCol>
-                                        <MDBCol
-                                            md="3"
-                                            lg="3"
-                                            xl="3"
-                                            className="d-flex align-items-center"
-                                        >
-                                            {/* BOTÓN MENOS */}
-                                            <MDBBtn
-                                                color="link"
-                                                className="px-2"
-                                                onClick={() =>
-                                                    handleQuantityChange(
-                                                        product.id,
-                                                        product.quantity - 1,
-                                                    )
-                                                }
-                                            >
-                                                <MDBIcon fas icon="minus" />
-                                            </MDBBtn>
+                                                <div
+                                                    className="p-3 h-100 d-flex flex-column justify-content-between"
+                                                    style={{
+                                                        borderRadius: "12px",
+                                                        border: "1px solid #eee",
+                                                        backgroundColor: "#fff",
+                                                        transition:
+                                                            "transform 0.2s",
+                                                        position: "relative",
+                                                    }}
+                                                    onMouseEnter={(e) =>
+                                                        (e.currentTarget.style.transform =
+                                                            "translateY(-4px)")
+                                                    }
+                                                    onMouseLeave={(e) =>
+                                                        (e.currentTarget.style.transform =
+                                                            "translateY(0)")
+                                                    }
+                                                >
+                                                    {/* BOTÓN ELIMINAR DE LA WISHLIST (TOP RIGHT) */}
+                                                    <button
+                                                        onClick={() =>
+                                                            handleRemoveFromWishlist(
+                                                                product.id,
+                                                            )
+                                                        }
+                                                        style={{
+                                                            position:
+                                                                "absolute",
+                                                            top: "15px",
+                                                            right: "15px",
+                                                            background:
+                                                                "rgba(255,255,255,0.9)",
+                                                            border: "none",
+                                                            borderRadius: "50%",
+                                                            width: "32px",
+                                                            height: "32px",
+                                                            display: "flex",
+                                                            alignItems:
+                                                                "center",
+                                                            justifyContent:
+                                                                "center",
+                                                            boxShadow:
+                                                                "0 2px 6px rgba(0,0,0,0.1)",
+                                                            zIndex: "2",
+                                                            color: "#666",
+                                                        }}
+                                                    >
+                                                        <MDBIcon
+                                                            fas
+                                                            icon="times"
+                                                        />
+                                                    </button>
 
-                                            {/* INPUT */}
-                                            <MDBInput
-                                                type="number"
-                                                readOnly
-                                                value={product.quantity}
-                                                size="sm"
-                                                className="text-center"
-                                            />
+                                                    <div>
+                                                        {/* IMAGEN INTERACTIVA QUE REDIRECCIONA AL DETAIL */}
+                                                        <Link
+                                                            to={`/item/${product.id}`}
+                                                            style={{
+                                                                display:
+                                                                    "block",
+                                                                overflow:
+                                                                    "hidden",
+                                                                borderRadius:
+                                                                    "8px",
+                                                            }}
+                                                        >
+                                                            <img
+                                                                src={
+                                                                    product.images
+                                                                        ? Array.isArray(
+                                                                              product.images,
+                                                                          )
+                                                                            ? product
+                                                                                  .images[0]
+                                                                            : product.images
+                                                                        : "https://via.placeholder.com/300"
+                                                                }
+                                                                className="img-fluid w-100"
+                                                                style={{
+                                                                    height: "240px",
+                                                                    objectFit:
+                                                                        "cover",
+                                                                    transition:
+                                                                        "transform 0.3s",
+                                                                }}
+                                                                alt={
+                                                                    product.name
+                                                                }
+                                                                onMouseEnter={(
+                                                                    e,
+                                                                ) =>
+                                                                    (e.currentTarget.style.transform =
+                                                                        "scale(1.04)")
+                                                                }
+                                                                onMouseLeave={(
+                                                                    e,
+                                                                ) =>
+                                                                    (e.currentTarget.style.transform =
+                                                                        "scale(1)")
+                                                                }
+                                                            />
+                                                        </Link>
 
-                                            {/* BOTÓN MÁS */}
-                                            <MDBBtn
-                                                color="link"
-                                                className="px-2"
-                                                onClick={() =>
-                                                    handleQuantityChange(
-                                                        product.id,
-                                                        product.quantity + 1,
-                                                    )
-                                                }
-                                            >
-                                                <MDBIcon fas icon="plus" />
-                                            </MDBBtn>
-                                        </MDBCol>
-                                        <MDBCol
-                                            md="3"
-                                            lg="2"
-                                            xl="2"
-                                            className="text-end"
-                                        >
-                                            <MDBTypography
-                                                tag="h6"
-                                                className="mb-0"
-                                            >
-                                                $ {product.price}
-                                            </MDBTypography>
-                                        </MDBCol>
-                                        <MDBCol
-                                            md="1"
-                                            lg="1"
-                                            xl="1"
-                                            className="text-end"
-                                        >
-                                            <a
-                                                href="#!"
-                                                className="text-muted"
-                                                onClick={() =>
-                                                    handleRemoveFromCart(
-                                                        product.id,
-                                                    )
-                                                }
-                                            >
-                                                <MDBIcon fas icon="times" />
-                                            </a>
-                                        </MDBCol>
-                                    </MDBRow>
-                                ))}
+                                                        {/* INFO DEL PRODUCTO */}
+                                                        <div className="pt-3">
+                                                            <span
+                                                                className="text-uppercase tracking-wider text-muted d-block mb-1"
+                                                                style={{
+                                                                    fontSize:
+                                                                        "0.75rem",
+                                                                    fontWeight:
+                                                                        "600",
+                                                                    letterSpacing:
+                                                                        "1px",
+                                                                }}
+                                                            >
+                                                                {product.brand ||
+                                                                    product.designer ||
+                                                                    product.category ||
+                                                                    "Diseño de Autor"}
+                                                            </span>
+                                                            <h5
+                                                                style={{
+                                                                    fontWeight:
+                                                                        "600",
+                                                                    fontSize:
+                                                                        "1.1rem",
+                                                                    margin: "0 0 8px 0",
+                                                                }}
+                                                            >
+                                                                {product.name}
+                                                            </h5>
+                                                            <p
+                                                                className="text-dark fw-bold mb-3"
+                                                                style={{
+                                                                    fontSize:
+                                                                        "1.15rem",
+                                                                }}
+                                                            >
+                                                                ${" "}
+                                                                {product.price}
+                                                            </p>
+                                                        </div>
+                                                    </div>
 
-                                <hr className="my-4" />
-
-                                {/* TOTAL PRICE */}
-                                <MDBRow className="d-flex justify-content-end">
-                                    <MDBCol
-                                        md="3"
-                                        lg="2"
-                                        xl="2"
-                                        className="text-end"
-                                    >
-                                        <MDBTypography
-                                            tag="h6"
-                                            className="mb-0"
-                                        >
-                                            Total: $ {totalPrice}
-                                        </MDBTypography>
-                                    </MDBCol>
+                                                    {/* BOTÓN DINÁMICO DE CONTACTO / ADQUISICIÓN */}
+                                                    <div className="mt-2">
+                                                        <a
+                                                            href={
+                                                                product.contact_url ||
+                                                                "#!"
+                                                            }
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            className="w-100 btn btn-outline-dark btn-sm pt-2 pb-2"
+                                                            style={{
+                                                                borderRadius:
+                                                                    "6px",
+                                                                fontWeight:
+                                                                    "600",
+                                                                letterSpacing:
+                                                                    "0.5px",
+                                                            }}
+                                                        >
+                                                            <MDBIcon
+                                                                fas
+                                                                icon="comment-alt me-2"
+                                                            />{" "}
+                                                            Contactar Diseñador
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </MDBCol>
+                                        ))}
                                 </MDBRow>
 
+                                {wishlistProducts.length === 0 &&
+                                    isLoggedIn && (
+                                        <div className="text-center py-5">
+                                            <MDBIcon
+                                                far
+                                                icon="heart"
+                                                size="2.5x"
+                                                className="text-muted mb-3"
+                                            />
+                                            <p className="text-muted">
+                                                Tu lista de deseos está vacía
+                                                por ahora.
+                                            </p>
+                                        </div>
+                                    )}
+
                                 <hr className="my-4" />
 
-                                <div className="pt-5">
+                                <div className="pt-3">
                                     <MDBTypography tag="h6" className="mb-0">
-                                        <MDBTypography
-                                            tag="a"
-                                            href="#!"
-                                            className="text-body"
+                                        <Link
+                                            to="/"
+                                            style={{
+                                                textDecoration: "none",
+                                                color: "#111",
+                                                fontWeight: "600",
+                                                display: "inline-flex",
+                                                alignItems: "center",
+                                            }}
                                         >
                                             <MDBIcon
                                                 fas
                                                 icon="long-arrow-alt-left me-2"
-                                            />{" "}
-                                            <Link
-                                                to="/"
-                                                style={{
-                                                    textDecoration: "none",
-                                                    color: "black",
-                                                }}
-                                            >
-                                                Back to shop
-                                            </Link>
-                                        </MDBTypography>
+                                            />
+                                            Volver a la galería
+                                        </Link>
                                     </MDBTypography>
                                 </div>
                             </MDBCardBody>

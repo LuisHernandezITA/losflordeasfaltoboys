@@ -204,7 +204,6 @@ section, .container, .container-fluid {
 }
 }
 
-
 .card-registration .select-input.form-control[readonly]:not([disabled]) {
 font-size: 1rem;
 line-height: 2.15;
@@ -553,7 +552,6 @@ border-bottom-right-radius: 16px;
     height: 550px; 
     object-fit: cover; /* Recorta los lados sin estirar la imagen */
     object-position: center; /* Asegura que el centro de la imagen sea lo visible */
-    filter: brightness(0.7);
 }
 
 /* Altura en pantallas grandes (Desktop) */

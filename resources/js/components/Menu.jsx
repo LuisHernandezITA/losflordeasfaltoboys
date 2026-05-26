@@ -153,12 +153,12 @@ function Menu() {
                             <div className="d-flex align-items-center gap-3 px-3">
                                 <Nav.Link
                                     as={Link}
-                                    to="cart"
-                                    title="Shopping Cart"
+                                    to="cart" // Ajusta esta ruta según tu App.js / index.js si es diferente
+                                    title="My Wishlist"
                                 >
                                     <MDBIcon
                                         fas
-                                        icon="shopping-cart"
+                                        icon="heart"
                                         className="icon"
                                     />
                                 </Nav.Link>

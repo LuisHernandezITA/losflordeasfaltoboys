@@ -7,26 +7,27 @@ import {
     MDBTabsContent,
     MDBTabsPane,
     MDBBtn,
-    MDBIcon,
     MDBInput,
     MDBCheckbox,
 } from "mdb-react-ui-kit";
+import axios from "axios"; // Aseguramos que axios esté importado para los defaults
 import "/resources/css/app.css";
 
 function Login_B() {
     //NOTIFICATIONS
-
     const [notification, setNotification] = useState(null);
     const [notificationVisible, setNotificationVisible] = useState(false);
 
     useEffect(() => {
         if (notificationVisible) {
             const progressBar = document.querySelector(".notification-bar");
-            progressBar.classList.add("notification-bar-progress");
+            if (progressBar)
+                progressBar.classList.add("notification-bar-progress");
 
-            setTimeout(() => {
+            const timer = setTimeout(() => {
                 setNotificationVisible(false);
             }, 1500);
+            return () => clearTimeout(timer);
         }
     }, [notificationVisible]);
 
@@ -36,19 +37,14 @@ function Login_B() {
     };
 
     //TABS
-
     const [justifyActive, setJustifyActive] = useState("tab1");
 
     const handleJustifyClick = (value) => {
-        if (value === justifyActive) {
-            return;
-        }
-
+        if (value === justifyActive) return;
         setJustifyActive(value);
     };
 
     //VALIDATIONS
-
     const [formData, setFormData] = useState({
         name: "",
         email: "",
@@ -62,6 +58,8 @@ function Login_B() {
         password: "",
         c_password: "",
     });
+
+    const [isButtonEnabled, setIsButtonEnabled] = useState(true);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -97,17 +95,10 @@ function Login_B() {
         Object.values(errors).every((error) => error === "") &&
         Object.values(formData).every((value) => value.trim() !== "");
 
-    const [isButtonEnabled, setIsButtonEnabled] = useState(true);
-
-    const handleButtonClick = () => {
-        setIsButtonEnabled(false);
-    };
-
     //LOGIN
-
     const handleLogin = async (e) => {
         e.preventDefault();
-        setIsButtonEnabled(false); // Deshabilitar al empezar
+        setIsButtonEnabled(false);
 
         const loginData = {
             email: formData.email,
@@ -120,20 +111,17 @@ function Login_B() {
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify(loginData), // Enviamos loginData, no formData
+                body: JSON.stringify(loginData),
             });
 
+            const data = await response.json();
+
             if (response.ok) {
-                const data = await response.json();
-
                 const { success, message, user } = data;
-
-                showNotification(message);
+                showNotification(message || "¡BIENVENIDO DE NUEVO!");
 
                 if (success) {
-                    //console.log("User data:", user);
                     document.cookie = `user_id=${user.user_id}; path=/`;
-
                     axios.defaults.headers.common["Authorization"] =
                         `Bearer ${user.token}`;
 
@@ -142,23 +130,32 @@ function Login_B() {
                     }, 1500);
                 }
             } else {
-                showNotification("Login error. Verify your data.");
-                setIsButtonEnabled(true); // <--- REACTIVAR AQUÍ
-                setTimeout(() => {
-                    window.location.href = "/Login_B";
-                }, 1500);
+                // Manejo sofisticado de respuestas HTTP erróneas del servidor
+                if (response.status === 401) {
+                    showNotification("ERROR: CREDENCIALES INCORRECTAS");
+                } else if (response.status === 422 && data.errors) {
+                    const firstErrorKey = Object.keys(data.errors)[0];
+                    showNotification(
+                        `ERROR: ${data.errors[firstErrorKey][0].toUpperCase()}`,
+                    );
+                } else {
+                    showNotification(
+                        data.message || "ERROR AL VERIFICAR DATOS",
+                    );
+                }
+                setIsButtonEnabled(true);
             }
         } catch (error) {
-            console.error("ERROR DETALLADO:", error); // <-- AGREGA ESTO
-            showNotification("Network Error.");
+            console.error("ERROR DETALLADO:", error);
+            showNotification("ERROR DE CONEXIÓN CON EL SERVIDOR");
             setIsButtonEnabled(true);
         }
     };
 
     //REGISTER
-
     const handleRegister = async (e) => {
         e.preventDefault();
+        setIsButtonEnabled(false); // Deshabilitamos para evitar doble envío en registro
 
         try {
             const response = await fetch("http://127.0.0.1:8000/api/register", {
@@ -169,22 +166,67 @@ function Login_B() {
                 body: JSON.stringify(formData),
             });
 
+            const data = await response.json();
+
             if (response.ok) {
-                showNotification("User registered successfully");
+                showNotification("¡USUARIO REGISTRADO CON ÉXITO!");
                 setTimeout(() => {
-                    window.location.href = "/Login_B";
+                    // En lugar de recargar, lo movemos dinámicamente a la pestaña de Login
+                    setJustifyActive("tab1");
+                    setIsButtonEnabled(true);
                 }, 1500);
             } else {
-                showNotification("Register error. Verify your data.");
-                /*setTimeout(() => {
-                    window.location.href = "/Login_B";
-                }, 1500);*/
+                // Validación sofisticada leyendo las excepciones exactas de la base de datos de Laravel
+                if (response.status === 422 && data.errors) {
+                    const serverErrors = data.errors;
+
+                    if (
+                        serverErrors.email &&
+                        serverErrors.email[0].includes("already")
+                    ) {
+                        showNotification("ERROR: EL EMAIL YA ESTÁ EN USO");
+                        setIsButtonEnabled(true);
+                    } else if (
+                        serverErrors.name &&
+                        serverErrors.name[0].includes("already")
+                    ) {
+                        showNotification(
+                            "ERROR: EL NOMBRE DE USUARIO YA EXISTE",
+                        );
+                        setIsButtonEnabled(true);
+                    } else {
+                        // Atrapa cualquier otro error de base de datos o validación (ej: password corto)
+                        const firstErrorKey = Object.keys(serverErrors)[0];
+                        showNotification(
+                            `ERROR: ${serverErrors[firstErrorKey][0].toUpperCase()}`,
+                        );
+                        setIsButtonEnabled(true);
+                    }
+                } else {
+                    // Si Laravel manda el código 422 y trae errores específicos:
+                    if (response.status === 422 && data.errors) {
+                        // Tomamos el primer error que ocurra (ya sea de email, name o password)
+                        const firstErrorKey = Object.keys(data.errors)[0];
+                        const errorMessage = data.errors[firstErrorKey][0];
+
+                        // Lo mandamos directo a la notificación (Saldrá en mayúsculas gracias al CSS o lo transformamos aquí)
+                        showNotification(
+                            `ERROR: ${errorMessage.toUpperCase()}`,
+                        );
+                        setIsButtonEnabled(true);
+                    } else {
+                        showNotification(
+                            "ERROR EN EL REGISTRO. VERIFICA TUS DATOS.",
+                        );
+                        setIsButtonEnabled(true);
+                    }
+                    setIsButtonEnabled(true);
+                }
             }
         } catch (error) {
-            showNotification("Network Error.");
-            setTimeout(() => {
-                window.location.href = "/Login_B";
-            }, 1500);
+            console.error("ERROR DETALLADO:", error);
+            showNotification("ERROR DE RED O CONEXIÓN");
+            setIsButtonEnabled(true);
         }
     };
 
@@ -222,7 +264,7 @@ function Login_B() {
                         <MDBInput
                             wrapperClass="mb-4"
                             label="Email"
-                            id="email"
+                            id="login_email"
                             type="email"
                             name="email"
                             value={formData.email}
@@ -234,7 +276,7 @@ function Login_B() {
                         <MDBInput
                             wrapperClass="mb-4"
                             label="Password"
-                            id="password"
+                            id="login_password"
                             type="password"
                             name="password"
                             value={formData.password}
@@ -252,14 +294,10 @@ function Login_B() {
                         </div>
 
                         <MDBBtn
-                            class={`custom-button ${
-                                !isButtonEnabled ? "clicked" : ""
-                            }`}
+                            className={`mb-4 w-100 custom-button ${!isButtonEnabled ? "clicked" : ""}`}
                             size="lg"
-                            className="mb-4 w-100"
                             type="submit"
                             disabled={!isButtonEnabled}
-                            //onClick={handleButtonClick}
                         >
                             Sign in
                         </MDBBtn>
@@ -268,7 +306,6 @@ function Login_B() {
                             <a
                                 href="#!"
                                 onClick={() => handleJustifyClick("tab2")}
-                                active={justifyActive === "tab2"}
                             >
                                 Register
                             </a>
@@ -284,7 +321,7 @@ function Login_B() {
                         <MDBInput
                             wrapperClass="mb-4"
                             label="Name"
-                            id="name"
+                            id="register_name"
                             type="text"
                             name="name"
                             value={formData.name}
@@ -296,7 +333,7 @@ function Login_B() {
                         <MDBInput
                             wrapperClass="mb-4"
                             label="Email"
-                            id="email"
+                            id="register_email"
                             type="email"
                             name="email"
                             value={formData.email}
@@ -305,11 +342,10 @@ function Login_B() {
                         {errors.password && (
                             <p className="error-text">{errors.password}</p>
                         )}
-
                         <MDBInput
                             wrapperClass="mb-4"
                             label="Password"
-                            id="password"
+                            id="register_password"
                             type="password"
                             name="password"
                             value={formData.password}
@@ -321,7 +357,7 @@ function Login_B() {
                         <MDBInput
                             wrapperClass="mb-4"
                             label="Confirm Password"
-                            id="c_password"
+                            id="register_c_password"
                             type="password"
                             name="c_password"
                             value={formData.c_password}
@@ -329,22 +365,20 @@ function Login_B() {
                         />
 
                         <MDBBtn
-                            class={`custom-button`}
+                            className="mb-4 w-100 custom-button"
                             size="lg"
-                            className="mb-4 w-100"
                             type="submit"
-                            disabled={!isFormValid}
+                            disabled={!isFormValid || !isButtonEnabled}
                         >
                             Sign up
                         </MDBBtn>
                     </form>
                 </MDBTabsPane>
             </MDBTabsContent>
+
             {notification && (
                 <div
-                    className={`notification ${
-                        notificationVisible ? "show" : ""
-                    }`}
+                    className={`notification ${notificationVisible ? "show" : ""}`}
                 >
                     {notification}
                     <div className="notification-bar"></div>

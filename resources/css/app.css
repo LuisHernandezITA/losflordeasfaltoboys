@@ -752,3 +752,84 @@ input[type="submit"],
     background: #333;
     border-radius: 2px;
 }
+
+/*EVENTOS*/
+
+.event-content-wrapper {
+  position: relative;
+  z-index: 2;
+  background-color: #000000;
+  padding: 40px 20px;
+  border: 1px solid #111111;
+  box-shadow: 0px -10px 30px rgba(0, 0, 0, 0.8);
+  
+  /* En móviles: ocupa casi toda la pantalla */
+  width: 95%;
+  max-width: 100%;
+  margin: -40px auto 0 auto; /* Menos margen negativo en móvil para que no rompa el banner */
+}
+
+/* En Escritorio (pantallas de 992px en adelante) */
+@media (min-width: 992px) {
+  .event-content-wrapper {
+    width: 100%;
+    max-width: 1200px; /* Ya no se ve chiquito, se expande hasta un tope elegante */
+    margin: -80px auto 0 auto;
+  }
+}
+
+/*DROPDOWN DE EVENTOS*/
+
+/* El contenedor flotante del menú */
+#events-nav-dropdown + .dropdown-menu {
+    background-color: rgba(18, 18, 18, 0.85) !important; /* Negro/Gris translúcido igual al Navbar */
+    backdrop-filter: blur(15px) !important; /* Efecto esmerilado/cristal */
+    -webkit-backdrop-filter: blur(15px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important; /* Borde idéntico al del navbar */
+    border-top: none !important; /* Remueve el borde superior para que parezca una sola pieza */
+    border-radius: 0px 0px 4px 4px !important; /* Solo redondeado abajo */
+    margin-top: 0px !important; /* Pegado perfecto al Navbar */
+    box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.7) !important;
+    padding: 5px 0 !important;
+}
+
+/* Los elementos de la lista internos */
+#events-nav-dropdown + .dropdown-menu .dropdown-item {
+    color: #888888 !important; /* Texto gris por defecto */
+    font-size: 0.85rem !important;
+    text-transform: uppercase; /* Estilo sobrio */
+    letter-spacing: 1px;
+    padding: 10px 20px !important;
+    background-color: transparent !important;
+    transition: all 0.3s ease;
+}
+
+/* Comportamiento al pasar el cursor por encima de una opción */
+#events-nav-dropdown + .dropdown-menu .dropdown-item:hover {
+    color: #ffffff !important; /* Cambia a blanco puro */
+    background-color: rgba(255, 255, 255, 0.05) !important; /* Resalte de fondo ultra sutil */
+    padding-left: 24px !important; /* Pequeño desplazamiento técnico al hacer hover */
+}
+
+#events-nav-dropdown:hover {
+    color: white !important;
+}
+
+/* Personalización de la barra de Scroll interna si la lista crece mucho */
+#events-nav-dropdown + .dropdown-menu::-webkit-scrollbar {
+    width: 4px;
+}
+#events-nav-dropdown + .dropdown-menu::-webkit-scrollbar-track {
+    background: transparent;
+}
+#events-nav-dropdown + .dropdown-menu::-webkit-scrollbar-thumb {
+    background: #333;
+    border-radius: 2px;
+}
+
+.menu-date-accent {
+  font-size: 0.85em;
+  color: #888888;
+  margin-left: 8px;
+  font-weight: 400;
+}

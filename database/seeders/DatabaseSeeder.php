@@ -12,6 +12,8 @@ use App\Models\Category;
 use App\Models\Size;
 use App\Models\Banner;
 use App\Models\Music;
+use App\Models\Event;
+use App\Models\EventImage;
 use Illuminate\Support\Facades\Artisan;
 
 class DatabaseSeeder extends Seeder
@@ -39,6 +41,7 @@ class DatabaseSeeder extends Seeder
         $this->call(ShoppingCartSeeder::Class);
         $this->call(BannerSeeder::class);
         $this->call(MusicSeeder::class);
+        $this->call(EventSeeder::class);
         User::factory(8)->create();
     }
 }

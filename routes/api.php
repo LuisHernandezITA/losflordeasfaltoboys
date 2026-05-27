@@ -14,6 +14,7 @@ use App\Http\Controllers\SizeController;
 use App\Http\Controllers\ShoppingCartController;
 use App\Http\Controllers\BannerController;
 use App\Http\Controllers\MusicController;
+use App\Http\Controllers\EventController;
 
 
 
@@ -42,6 +43,9 @@ Route::get('/color_index', [ColorController::class, 'index']);
 Route::get('/size_index', [SizeController::class, 'index']);
 Route::get('/banners_index', [BannerController::class, 'index']);
 Route::get('/music_index', [MusicController::class, 'index']);
+
+Route::get('/events_index', [EventController::class, 'index']); // Carga la lista en el Inicio/Lookbooks
+Route::post('/events_show', [EventController::class, 'show']);
 
 Route::post('/getProductSizes', [ProductSizesController::class, 'getProductSizes']);
 Route::post('/getProductColors', [ProductColorsController::class, 'getProductColors']);
@@ -99,6 +103,12 @@ Route::middleware(['auth:api', 'isAdmin'])->group(function () {
     Route::delete('/productcolors_destroy/{id}', [ProductColorsController::class, 'destroy']);
     Route::post('/productsizes_store', [ProductSizesController::class, 'store']);
     Route::delete('/productsizes_destroy/{id}', [ProductSizesController::class, 'destroy']);
+
+    // --- NUEVO CRUD DE EVENTOS (LOOKBOOKS) ---
+    Route::post('/events_store', [EventController::class, 'store']);       // Crea evento + sube imágenes
+    Route::post('/events_edit', [EventController::class, 'edit']);         // Obtiene datos para editar en el modal
+    Route::put('/events_update/{id}', [EventController::class, 'update']); // Guarda los cambios del evento
+    Route::delete('/events_destroy/{id}', [EventController::class, 'destroy']); // Borra evento y fotos en cascada
 });
 
 

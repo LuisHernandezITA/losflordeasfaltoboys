@@ -10,6 +10,8 @@ import CrudCategory from "./CrudCategory";
 import CrudBanner from "./CrudBanner";
 import CrudMusic from "./CrudMusic";
 import MusicBlog from "./MusicBlog";
+import CrudEvents from "./CrudEvents";
+import EventView from "./EventView";
 
 function Main() {
     return (
@@ -17,7 +19,9 @@ function Main() {
             <Routes>
                 <Route path="/" element={<Menu />}>
                     <Route path="item/:id" element={<Product />} />
+                    <Route path="events/:id" element={<EventView />} />
                     <Route path="products" element={<Crud />} />
+                    <Route path="crudevents" element={<CrudEvents />} />
                     <Route path="categories" element={<CrudCategory />} />
                     <Route path="banners" element={<CrudBanner />} />
                     <Route path="songs" element={<CrudMusic />} />

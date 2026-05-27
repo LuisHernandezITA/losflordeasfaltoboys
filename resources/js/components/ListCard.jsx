@@ -1,26 +1,40 @@
 import React, { useState, useEffect } from "react";
-import { Spinner, Navbar, Nav, Container } from "react-bootstrap";
+import {
+    Spinner,
+    Navbar,
+    Nav,
+    Container,
+    Form,
+    InputGroup,
+    NavDropdown,
+} from "react-bootstrap";
 import axios from "axios";
 import Card_C from "./Card_C";
 import "/resources/css/app.css";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowUp, faArrowDown } from "@fortawesome/free-solid-svg-icons";
+import { MDBIcon } from "mdb-react-ui-kit";
 
 function ListCard() {
     const [productData, setProductData] = useState([]);
     const [categories, setCategories] = useState([]);
+
+    // ESTADOS DE FILTRADO Y BÚSQUEDA
     const [selectedCategory, setSelectedCategory] = useState(null);
-    const [sortByPrice, setSortByPrice] = useState(null);
+    const [selectedBrand, setSelectedBrand] = useState(null);
+    const [searchTerm, setSearchTerm] = useState("");
+
+    // --- NUEVOS ESTADOS PARA PAGINACIÓN ---
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 12; // Modifica este número según cuántos productos quieras ver por página
 
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const response = await axios.get(
-                    "http://127.0.0.1:8000/api/products_index", // Antes localhost
+                    "http://127.0.0.1:8000/api/products_index",
                 );
                 setProductData(response.data);
             } catch (error) {
-                console.log(error);
+                console.error("Error cargando productos:", error);
             }
         };
 
@@ -31,7 +45,7 @@ function ListCard() {
                 );
                 setCategories(response.data);
             } catch (error) {
-                console.log(error);
+                console.error("Error cargando categorías:", error);
             }
         };
 
@@ -39,40 +53,62 @@ function ListCard() {
         fetchCategories();
     }, []);
 
-    const handleCategoryChange = (categoryId) => {
-        setSelectedCategory(categoryId);
-    };
+    // --- EFECTO: Si cambia cualquier filtro, reiniciamos a la primera página ---
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [selectedCategory, selectedBrand, searchTerm]);
 
-    const handleSortByPrice = () => {
-        setSortByPrice((prevSort) => (prevSort === "asc" ? "desc" : "asc"));
-    };
+    // OBTENER MARCAS ÚNICAS DISPONIBLES EN LOS PRODUCTOS
+    const brands = [
+        ...new Set(
+            productData.map((product) => product.designer).filter(Boolean),
+        ),
+    ];
 
+    // FUNCIÓN DE FILTRADO REACTIVO COMBINADO
     const getFilteredProducts = () => {
-        let filteredProducts;
-        if (selectedCategory === null) {
-            filteredProducts = [...productData];
-        } else {
-            filteredProducts = productData.filter(
-                (product) => product.category_id === selectedCategory,
-            );
-        }
+        return productData.filter((product) => {
+            // 1. Filtro por Categoría
+            const matchesCategory =
+                selectedCategory === null ||
+                product.category_id === selectedCategory;
 
-        if (sortByPrice === "asc") {
-            return filteredProducts.sort(
-                (a, b) => parseFloat(a.price) - parseFloat(b.price),
-            );
-        } else if (sortByPrice === "desc") {
-            return filteredProducts.sort(
-                (a, b) => parseFloat(b.price) - parseFloat(a.price),
-            );
-        } else {
-            return filteredProducts;
-        }
+            // 2. Filtro por Marca / Diseñador
+            const matchesBrand =
+                selectedBrand === null || product.designer === selectedBrand;
+
+            // 3. Barra de búsqueda
+            const matchesSearch =
+                product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                (product.designer &&
+                    product.designer
+                        .toLowerCase()
+                        .includes(searchTerm.toLowerCase()));
+
+            return matchesCategory && matchesBrand && matchesSearch;
+        });
+    };
+
+    // --- LÓGICA DE PAGINACIÓN APLICADA SOBRE LA DATA FILTRADA ---
+    const filteredProducts = getFilteredProducts();
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+
+    // Estos son los productos recortados que efectivamente se van a renderizar
+    const currentItems = filteredProducts.slice(
+        indexOfFirstItem,
+        indexOfLastItem,
+    );
+    const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+
+    const paginate = (pageNumber) => {
+        setCurrentPage(pageNumber);
+        window.scrollTo({ top: 0, behavior: "smooth" });
     };
 
     if (productData.length === 0 || categories.length === 0) {
         return (
-            <div className="d-flex flex-wrap justify-content-center">
+            <div className="d-flex flex-wrap justify-content-center py-5">
                 <Spinner animation="border" role="status">
                     <span className="visually-hidden">Loading...</span>
                 </Spinner>
@@ -82,24 +118,23 @@ function ListCard() {
 
     return (
         <div>
-            <br></br>
+            <br />
             <Navbar
                 expand="lg"
-                variant="dark" // Esto hace que el texto sea blanco/claro automáticamente
+                variant="dark"
                 style={{
                     backgroundColor: "rgb(18, 18, 18)",
-                    borderBottom: "1px solid rgba(255,255,255,0.05)", // Línea sutil inferior
+                    borderBottom: "1px solid rgba(255,255,255,0.05)",
                 }}
-                className="shadow-sm py-3 w-100" // Añadimos una sombra sutil y un poco de padding
+                className="shadow-sm py-3 w-100"
             >
-                <Container className="px-4">
-                    {" "}
+                <Container className="px-4 flex-wrap">
                     <Navbar.Toggle
                         aria-controls="basic-navbar-nav"
-                        className="border-0 custom-toggler d-flex align-items-center"
+                        className="border-0 custom-toggler d-flex align-items-center ps-0"
                     >
                         <span
-                            className="glitch-text" // <--- Añadimos la clase aquí
+                            className="glitch-text"
                             style={{
                                 fontSize: "1.2rem",
                                 letterSpacing: "4px",
@@ -110,77 +145,222 @@ function ListCard() {
                             STORE ♱༺༒︎⊰‿̩͙
                         </span>
                     </Navbar.Toggle>
-                    <Navbar.Collapse id="basic-navbar-nav">
-                        <Nav className="me-auto">
-                            {" "}
-                            {/* En Bootstrap 5 se usa 'me-auto' en lugar de 'mr-auto' */}
-                            <Nav.Link
-                                onClick={() => handleCategoryChange(null)}
-                                className="text-uppercase small"
-                            >
-                                All
-                            </Nav.Link>
-                            {categories.map((category) => (
-                                <Nav.Link
-                                    key={category.id}
-                                    className="text-uppercase small"
-                                    onClick={() =>
-                                        handleCategoryChange(category.id)
-                                    }
+
+                    <Navbar.Collapse
+                        id="basic-navbar-nav"
+                        className="w-100 mt-3 mt-lg-0"
+                    >
+                        <Nav className="me-auto d-flex flex-column flex-lg-row gap-2 gap-lg-4 w-100 hierarchical-nav">
+                            {/* BLOQUE: CATEGORÍAS */}
+                            <div className="nav-filter-group">
+                                <span
+                                    className="text-muted small d-block mb-1 tracking-wider"
+                                    style={{
+                                        fontSize: "0.75rem",
+                                        letterSpacing: "1px",
+                                    }}
                                 >
-                                    {category.name}
-                                </Nav.Link>
-                            ))}
+                                    CATEGORIES
+                                </span>
+                                <div className="d-flex flex-wrap gap-2">
+                                    <Nav.Link
+                                        onClick={() =>
+                                            setSelectedCategory(null)
+                                        }
+                                        className={`text-uppercase small p-0 me-2 ${selectedCategory === null ? "text-white fw-bold" : "text-muted"}`}
+                                    >
+                                        All
+                                    </Nav.Link>
+                                    {categories.map((category) => (
+                                        <Nav.Link
+                                            key={category.id}
+                                            className={`text-uppercase small p-0 me-2 ${selectedCategory === category.id ? "text-white fw-bold" : "text-muted"}`}
+                                            onClick={() =>
+                                                setSelectedCategory(category.id)
+                                            }
+                                        >
+                                            {category.name}
+                                        </Nav.Link>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* DIVISOR INTERNO EN MÓVILES */}
+                            <hr className="d-lg-none my-2 border-secondary" />
+
+                            {/* BLOQUE: MARCAS */}
+                            <div className="nav-filter-group">
+                                <span
+                                    className="text-muted small d-block mb-1 tracking-wider"
+                                    style={{
+                                        fontSize: "0.75rem",
+                                        letterSpacing: "1px",
+                                    }}
+                                >
+                                    BRANDS
+                                </span>
+
+                                <NavDropdown
+                                    title={
+                                        selectedBrand === null
+                                            ? "ALL BRANDS"
+                                            : selectedBrand.toUpperCase()
+                                    }
+                                    id="brands-dropdown"
+                                    className="custom-nav-dropdown"
+                                    style={{ fontSize: "0.875rem" }}
+                                >
+                                    <NavDropdown.Item
+                                        onClick={() => setSelectedBrand(null)}
+                                        className={
+                                            selectedBrand === null
+                                                ? "active-dropdown-item"
+                                                : ""
+                                        }
+                                    >
+                                        ALL BRANDS
+                                    </NavDropdown.Item>
+
+                                    <NavDropdown.Divider
+                                        style={{
+                                            backgroundColor:
+                                                "rgba(255,255,255,0.1)",
+                                        }}
+                                    />
+
+                                    <div
+                                        style={{
+                                            maxHeight: "250px",
+                                            overflowY: "auto",
+                                        }}
+                                    >
+                                        {brands.map((brand, idx) => (
+                                            <NavDropdown.Item
+                                                key={idx}
+                                                onClick={() =>
+                                                    setSelectedBrand(brand)
+                                                }
+                                                className={
+                                                    selectedBrand === brand
+                                                        ? "active-dropdown-item"
+                                                        : ""
+                                                }
+                                            >
+                                                {brand}
+                                            </NavDropdown.Item>
+                                        ))}
+                                    </div>
+                                </NavDropdown>
+                            </div>
                         </Nav>
-                        <Nav className="ms-auto">
-                            {" "}
-                            {/* En Bootstrap 5 se usa 'ms-auto' en lugar de 'ml-auto' */}
-                            <Nav.Link
-                                onClick={handleSortByPrice}
-                                className="small"
+
+                        {/* BARRA DE BÚSQUEDA REACTIVA */}
+                        <div className="ms-lg-auto pt-3 pt-lg-0 w-100 w-lg-25">
+                            <InputGroup
+                                size="sm"
+                                style={{ maxWidth: "300px" }}
+                                className="ms-auto"
                             >
-                                Sort by Price{" "}
-                                {sortByPrice === "asc" ? (
-                                    <FontAwesomeIcon
-                                        icon={faArrowDown}
-                                        className="ms-1"
-                                    />
-                                ) : (
-                                    <FontAwesomeIcon
-                                        icon={faArrowUp}
-                                        className="ms-1"
-                                    />
-                                )}
-                            </Nav.Link>
-                        </Nav>
+                                <InputGroup.Text
+                                    style={{
+                                        backgroundColor: "#222",
+                                        border: "1px solid #333",
+                                        color: "#666",
+                                    }}
+                                >
+                                    <MDBIcon fas icon="search" />
+                                </InputGroup.Text>
+                                <Form.Control
+                                    type="text"
+                                    placeholder="Search item or brand..."
+                                    value={searchTerm}
+                                    onChange={(e) =>
+                                        setSearchTerm(e.target.value)
+                                    }
+                                    style={{
+                                        backgroundColor: "#1a1a1a",
+                                        border: "1px solid #333",
+                                        color: "#fff",
+                                        boxShadow: "none",
+                                    }}
+                                    className="search-input-placeholder"
+                                />
+                            </InputGroup>
+                        </div>
                     </Navbar.Collapse>
                 </Container>
             </Navbar>
-            <br></br>
+
+            <br />
+
+            {/* CONTENEDOR DE PRODUCTOS PAGINADOS */}
             <div
                 className="d-flex flex-wrap justify-content-center"
                 style={{ gap: "20px" }}
             >
-                {getFilteredProducts().map((product) => (
+                {currentItems.length > 0 ? (
+                    currentItems.map((product) => (
+                        <div
+                            key={product.id}
+                            className="card-wrapper"
+                            style={{ margin: "10px" }}
+                        >
+                            <Card_C
+                                id={product.id}
+                                name={product.name}
+                                description={product.description}
+                                price={product.price}
+                                image_primary={product.image_primary}
+                                available={product.available}
+                            />
+                        </div>
+                    ))
+                ) : (
                     <div
-                        key={product.id}
-                        className="card-wrapper"
-                        style={{
-                            margin: "10px", // Separación constante en todos los lados
-                        }}
+                        className="text-center w-100 py-5"
+                        style={{ color: "#555" }}
                     >
-                        <Card_C
-                            id={product.id}
-                            name={product.name}
-                            description={product.description}
-                            price={product.price}
-                            images={product.images}
-                            available={product.available}
+                        <MDBIcon
+                            fas
+                            icon="exclamation-circle"
+                            size="2x"
+                            className="mb-2"
                         />
+                        <p className="small text-uppercase tracking-wider">
+                            No products match your filters
+                        </p>
                     </div>
-                ))}
+                )}
             </div>
-            <br></br>
+
+            {/* --- CONTROLES DE PAGINACIÓN DE LA TIENDA (Idénticos a tu Blog de Música) --- */}
+            {totalPages > 1 && (
+                <div className="d-flex justify-content-center gap-3 mt-4 pb-5">
+                    {[...Array(totalPages)].map((_, index) => (
+                        <button
+                            key={index + 1}
+                            onClick={() => paginate(index + 1)}
+                            className={`custom-button ${currentPage === index + 1 ? "clicked" : ""}`}
+                            style={{
+                                width: "50px",
+                                padding: "10px",
+                                fontSize: "0.8rem",
+                                border:
+                                    currentPage === index + 1
+                                        ? "1px solid crimson"
+                                        : "1px solid #333",
+                                background:
+                                    currentPage === index + 1
+                                        ? "rgba(220, 20, 60, 0.1)"
+                                        : "transparent",
+                            }}
+                        >
+                            {index + 1}
+                        </button>
+                    ))}
+                </div>
+            )}
+            <br />
         </div>
     );
 }

@@ -11,26 +11,29 @@ class ProductsController extends Controller
 {
     public function index()
     {
+        // Es mejor usar el Modelo para mantener consistencia, pero dejamos el get original
         $products = DB::table('products')->get();
-        return $products;
+        return response()->json($products, 200);
     }
 
     public function newest()
-{
-    $products = DB::table('products')
-    ->orderBy('id', 'desc') // ORDERS DESC
-    ->take(6) // ONLY 6 PRODUCTS
-    ->get();
+    {
+        $products = DB::table('products')
+            ->orderBy('id', 'desc')
+            ->take(6)
+            ->get();
 
-    return $products;
-}
+        return response()->json($products, 200);
+    }
 
     public function show(Request $request)
     {
-        $product = Products::where('id', $request->id) -> get();
+        // .get() devuelve una colección. Si buscas por ID, .first() o .find() es más limpio,
+        // pero mantenemos tu lógica usando first para que no mande un array vacío si falla
+        $product = Products::where('id', $request->id)->first();
 
         if ($product) {
-            return $product;
+            return response()->json($product, 200);
         } else {
             return response()->json(['message' => 'Product not found'], 404);
         }
@@ -38,32 +41,39 @@ class ProductsController extends Controller
 
     public function store(Request $request)
     {
-        $products = Products::create([
-            'name' => $request->name,
-            'description' => $request->description,
-            'category_id' => $request->category_id,
-            'price' => $request->price,
+        // Aquí ya mapeamos los nuevos campos que venían en el modelo
+        $product = Products::create([
+            'name'            => $request->name,
+            'description'     => $request->description,
+            'category_id'     => $request->category_id,
+            'price'           => $request->price,
             'available_stock' => $request->available_stock,
-            'images' => $request->images,
-            'addition_date' => Carbon::now(),
-            'available' => $request->available
+            'image_primary'   => $request->image_primary,   // Nuevo
+            'image_detail_1'  => $request->image_detail_1,  // Nuevo
+            'image_detail_2'  => $request->image_detail_2,  // Nuevo
+            'seller_url'      => $request->seller_url,      // Nuevo
+            'designer'        => $request->designer,        // Nuevo (Marca/Diseñador)
+            'shipping_type'   => $request->shipping_type,   // Nuevo (Estado de entrega)
+            'addition_date'   => Carbon::now(),
+            'available'       => $request->available ?? true
         ]);
-    
-        $products->save();
 
-        return $products;
+        // Nota: Products::create() ya guarda el registro automáticamente si usas Eloquent, 
+        // no hace falta un $product->save() extra abajo.
+
+        return response()->json($product, 210); // O 201 Created
     }
 
     public function edit(Request $request)
-{
-    $product = Products::find($request->id);
+    {
+        $product = Products::find($request->id);
 
-    if ($product) {
-        return $product;
-    } else {
-        return response()->json(['message' => 'Product not found'], 404);
+        if ($product) {
+            return response()->json($product, 200);
+        } else {
+            return response()->json(['message' => 'Product not found'], 404);
+        }
     }
-}
 
     public function update(Request $request, $id)
     {
@@ -73,33 +83,38 @@ class ProductsController extends Controller
             return response()->json(['message' => 'Product not found'], 404);
         }
 
-        $product->name = $request->input('name');
-        $product->description = $request->input('description');
-        $product->category_id = $request->input('category_id');
-        $product->price = $request->input('price');
+        // Actualización con los nuevos campos asignados
+        $product->name            = $request->input('name');
+        $product->description     = $request->input('description');
+        $product->category_id     = $request->input('category_id');
+        $product->price           = $request->input('price');
         $product->available_stock = $request->input('available_stock');
-        $product->images = $request->input('images');
-        $product->addition_date = $request->input('addition_date');
-        $product->available = $request->input('available');
+        $product->image_primary   = $request->input('image_primary');   // Nuevo
+        $product->image_detail_1  = $request->input('image_detail_1');  // Nuevo
+        $product->image_detail_2  = $request->input('image_detail_2');  // Nuevo
+        $product->seller_url      = $request->input('seller_url');      // Nuevo
+        $product->designer        = $request->input('designer');        // Nuevo
+        $product->shipping_type   = $request->input('shipping_type');   // Nuevo
+        $product->addition_date   = $request->input('addition_date');
+        $product->available       = $request->input('available');
 
         $product->save();
 
-        return response()->json(['message' => 'Succesfully updated product'], 200);
+        return response()->json(['message' => 'Successfully updated product'], 200);
     }
 
     public function destroy($id)
     {
         $product = Products::find($id);
 
-    if (!$product) {
-        return response()->json(['message' => 'Product not found'], 404);
-    }
+        if (!$product) {
+            return response()->json(['message' => 'Product not found'], 404);
+        }
 
-    // DELETES IN SHOPPING CART TOO
-    $product->shoppingCart()->delete();
+        // Elimina en cascada en el carrito antes de borrar el producto
+        $product->shoppingCart()->delete();
+        $product->delete();
 
-    $product->delete();
-
-    return response()->json(['message' => 'Succesfully deleted product'], 200);
+        return response()->json(['message' => 'Successfully deleted product'], 200);
     }
 }

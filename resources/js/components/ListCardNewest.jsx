@@ -54,7 +54,7 @@ function ListCardNewest() {
                             name={product.name}
                             description={product.description}
                             price={product.price}
-                            images={product.images}
+                            image_primary={product.image_primary}
                             available={product.available}
                         />
                     </div>

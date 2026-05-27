@@ -40,13 +40,12 @@ function Crud() {
     const [editMode, setEditMode] = useState(false);
     const [productIdUpdate, setProductIdUpdate] = useState(null);
 
-    // --- CARGAR DATOS (FUNCIÓN REUTILIZABLE) ---
+    // --- CARGAR DATOS ---
     const getProducts = () => {
         axios
             .get("/api/products_index")
             .then((response) => {
                 setProducts(response.data);
-                // Cambio clave: Sincronizar la tabla filtrada de inmediato
                 setFilteredProducts(response.data);
             })
             .catch((error) => console.error(error));
@@ -84,7 +83,6 @@ function Crud() {
 
             setTimeout(() => {
                 setNotificationVisible(false);
-                // En lugar de recargar la página, refrescamos los datos
                 getProducts();
             }, 1500);
         }
@@ -95,13 +93,18 @@ function Crud() {
         setNotificationVisible(true);
     };
 
-    // --- FORMULARIO ---
+    // --- FORMULARIO (CAMPOS ACTUALIZADOS) ---
     const [formData, setFormData] = useState({
         name: "",
         description: "",
         price: "",
         available_stock: "",
-        images: "",
+        image_primary: "",
+        image_detail_1: "",
+        image_detail_2: "",
+        shipping_type: "0",
+        seller_url: "",
+        designer: "",
         available: false,
         category_id: "",
     });
@@ -119,104 +122,87 @@ function Crud() {
             description: "",
             price: "",
             available_stock: "",
-            images: "",
+            image_primary: "",
+            image_detail_1: "",
+            image_detail_2: "",
+            shipping_type: "0",
+            seller_url: "",
+            designer: "",
             available: false,
             category_id: "",
         });
         setSelectedColors([]);
         setSizeFormData({ sizes: [] });
+        setErrors({});
         setEditMode(false);
         setIsButtonAddEnabled(false);
         setShowAddForm(true);
     };
 
     const handleChange = (e) => {
-        const { name, value, type, checked } = e.target;
+        const { name, value } = e.target;
 
-        if (type === "checkbox") {
-            if (name === "colors") {
-                const colorId = parseInt(value, 10);
-                setSelectedColors((prevColors) => {
-                    if (checked) {
-                        return [...prevColors, colorId];
-                    } else {
-                        return prevColors.filter((id) => id !== colorId);
-                    }
-                });
-            } else if (name === "sizes") {
-                setSizeFormData((prevData) => ({
-                    ...prevData,
-                    sizes: checked
-                        ? [...prevData.sizes, parseInt(value, 10)]
-                        : prevData.sizes.filter(
-                              (id) => id !== parseInt(value, 10),
-                          ),
-                }));
-            }
-        } else {
-            setFormData({ ...formData, [name]: value });
+        if (name === "category") {
+            const selectedCategoryId = value ? parseInt(value, 10) : "";
+            setFormData((prev) => ({
+                ...prev,
+                category_id: selectedCategoryId,
+            }));
+            setErrors({
+                ...errors,
+                category: value ? "" : "* Category is required",
+            });
+            return;
         }
 
-        const newErrors = { ...errors };
+        setFormData((prev) => ({ ...prev, [name]: value }));
 
-        const isEmpty = (value) => value === "";
+        // Validaciones rápidas
+        const newErrors = { ...errors };
+        const isEmpty = typeof value === "string" && value.trim() === "";
 
         switch (name) {
             case "name":
             case "description":
-            case "images":
-                newErrors[name] = isEmpty(value)
-                    ? `* ${
-                          name.charAt(0).toUpperCase() + name.slice(1)
-                      } is required`
+                newErrors[name] = isEmpty
+                    ? `* ${name.charAt(0).toUpperCase() + name.slice(1)} is required`
                     : "";
                 break;
-
             case "price":
-                newErrors[name] = isEmpty(value)
+                newErrors[name] = isEmpty
                     ? "* Price is required"
                     : !/^\d+(\.\d{1,2})?$/.test(value)
                       ? "* Invalid price format. Only numbers allowed."
                       : "";
                 break;
-
             case "available_stock":
-                newErrors[name] = isEmpty(value)
+                newErrors[name] = isEmpty
                     ? "* Stock is required"
                     : !/^\d+$/.test(value)
                       ? "* Invalid stock format. Only integers allowed."
                       : "";
                 break;
-
-            case "category":
-                newErrors.category = isEmpty(value)
-                    ? "* Category is required"
-                    : "";
-                if (!isEmpty(value)) {
-                    const selectedCategoryId = parseInt(value, 10);
-                    setFormData({
-                        ...formData,
-                        category_id: selectedCategoryId,
-                    });
-                } else {
-                    setFormData({ ...formData, category_id: "" });
-                }
-                break;
-
             default:
                 break;
         }
-
         setErrors(newErrors);
     };
 
     const handleColorChange = (colorId) => {
-        // ADD OR REMOVE COLORS FROM COLORLIST
-        if (selectedColors.includes(colorId)) {
-            setSelectedColors(selectedColors.filter((id) => id !== colorId));
-        } else {
-            setSelectedColors([...selectedColors, colorId]);
-        }
+        setSelectedColors((prevColors) =>
+            prevColors.includes(colorId)
+                ? prevColors.filter((id) => id !== colorId)
+                : [...prevColors, colorId],
+        );
+    };
+
+    const handleSizeChange = (sizeId) => {
+        setSizeFormData((prevData) => ({
+            ...prevData,
+            sizes: prevData.sizes.includes(sizeId)
+                ? prevData.sizes.filter((id) => id !== sizeId)
+                : [...prevData.sizes, sizeId],
+        }));
     };
 
     const handleSwitchChange = () => {
@@ -226,68 +212,44 @@ function Crud() {
         }));
     };
 
-    //CATEGORYLIST
+    // --- OPCIONES DE SELECTS Y CHECKBOXES ---
     const [categoryOptions, setCategoryOptions] = useState([]);
-
-    useEffect(() => {
-        axios
-            .get("api/category_index")
-            .then((response) => {
-                if (Array.isArray(response.data)) {
-                    setCategoryOptions(response.data);
-                } else {
-                    console.error(
-                        "Unexpected data format for categories:",
-                        response.data,
-                    );
-                }
-            })
-            .catch((error) => {
-                console.error("Error fetching categories:", error);
-            });
-    }, []);
-
-    //COLORLIST & SIZELIST
-
     const [colorOptions, setColorOptions] = useState([]);
     const [sizeOptions, setSizeOptions] = useState([]);
 
     useEffect(() => {
-        // COLORLIST
+        axios
+            .get("/api/category_index")
+            .then((res) =>
+                setCategoryOptions(Array.isArray(res.data) ? res.data : []),
+            )
+            .catch((err) => console.error("Error categories:", err));
+
         axios
             .get("/api/color_index")
-            .then((response) => {
-                setColorOptions(response.data);
-            })
-            .catch((error) => {
-                console.error("Error fetching color options:", error);
-            });
+            .then((res) => setColorOptions(res.data))
+            .catch((err) => console.error("Error colors:", err));
 
-        // SIZELIST
         axios
             .get("/api/size_index")
-            .then((response) => {
-                setSizeOptions(response.data);
-            })
-            .catch((error) => {
-                console.error("Error fetching size options:", error);
-            });
+            .then((res) => setSizeOptions(res.data))
+            .catch((err) => console.error("Error sizes:", err));
     }, []);
 
+    // Validación para habilitar botones de guardar
     const isFormValid =
-        Object.values(errors).every((error) => error === "") &&
-        Object.keys(formData).every((key) => {
-            const value = formData[key];
-            return key === "images" ? value !== "" : value !== "";
-        });
+        formData.name &&
+        formData.description &&
+        formData.price &&
+        formData.available_stock &&
+        formData.category_id &&
+        Object.values(errors).every((error) => !error);
 
-    //ADD PRODUCT
+    // --- ACCIONES CRUD ---
 
     const handleAddProduct = async (e) => {
         e.preventDefault();
-
         try {
-            // ADD PRODUCT
             const productResponse = await fetch("api/products_store", {
                 method: "POST",
                 headers: {
@@ -297,17 +259,13 @@ function Crud() {
                 body: JSON.stringify(formData),
             });
 
-            if (!productResponse.ok) {
-                throw new Error("Error adding product. Check your data.");
-            }
+            if (!productResponse.ok) throw new Error("Error adding product.");
 
             const productData = await productResponse.json();
             const productId = productData.id;
 
-            // VERIFIES SELECTED COLOR
             if (selectedColors.length > 0) {
-                // ADD RELATION BETWEEN PRODUCT AND COLOR
-                const colorResponse = await fetch("api/productcolors_store", {
+                await fetch("api/productcolors_store", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
@@ -318,18 +276,10 @@ function Crud() {
                         color_ids: selectedColors,
                     }),
                 });
-
-                if (!colorResponse.ok) {
-                    throw new Error(
-                        "Error adding product colors. Check your data.",
-                    );
-                }
             }
 
-            // VERIFIES SELECTED SIZES
             if (sizeFormData.sizes.length > 0) {
-                // ADD RELATION BETWEEN PRODUCT AND SIZE
-                const sizeResponse = await fetch("api/productsizes_store", {
+                await fetch("api/productsizes_store", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
@@ -340,26 +290,17 @@ function Crud() {
                         size_ids: sizeFormData.sizes,
                     }),
                 });
-
-                if (!sizeResponse.ok) {
-                    throw new Error(
-                        "Error adding product sizes. Check your data.",
-                    );
-                }
             }
 
             showNotification("Product added successfully");
             setIsButtonEnabled(true);
             setIsButtonAddEnabled(true);
-            getProducts();
-
             setShowAddForm(false);
+            getProducts();
         } catch (error) {
             showNotification(error.message || "Network error.");
         }
     };
-
-    // EDIT
 
     const handleEdit = async (id) => {
         try {
@@ -367,27 +308,45 @@ function Crud() {
             const productData = response.data;
 
             setFormData({
-                name: productData.name,
-                description: productData.description,
-                category_id: productData.category_id,
-                price: productData.price,
-                available_stock: productData.available_stock,
-                images: productData.images,
-                available: productData.available,
+                name: productData.name || "",
+                description: productData.description || "",
+                category_id: productData.category_id || "",
+                price: productData.price || "",
+                available_stock: productData.available_stock || "",
+                image_primary: productData.image_primary || "",
+                image_detail_1: productData.image_detail_1 || "",
+                image_detail_2: productData.image_detail_2 || "",
+                shipping_type:
+                    productData.shipping_type !== undefined
+                        ? String(productData.shipping_type)
+                        : "0",
+                seller_url: productData.seller_url || "",
+                designer: productData.designer || "",
+                available: !!productData.available,
             });
+
+            setSelectedColors(
+                productData.colors ? productData.colors.map((c) => c.id) : [],
+            );
+            setSizeFormData({
+                sizes: productData.sizes
+                    ? productData.sizes.map((s) => s.id)
+                    : [],
+            });
+
             setProductIdUpdate(id);
             setEditMode(true);
             setShowAddForm(true);
         } catch (error) {
             console.error("Error loading product data", error);
+        } finally {
+            setIsButtonEnabled(true);
         }
     };
 
     const handleUpdateProduct = async (e) => {
         e.preventDefault();
-
         try {
-            // UPDATE PRODUCT
             const response = await fetch(
                 `/api/products_update/${productIdUpdate}`,
                 {
@@ -400,115 +359,59 @@ function Crud() {
                 },
             );
 
-            if (!response.ok) {
-                throw new Error("Error updating product. Check your data.");
-            }
+            if (!response.ok) throw new Error("Error updating product.");
 
-            // DELETES RELATIONS BETWEEN PRODUCT AND COLORS
-            try {
-                await axios.delete(
-                    `api/productcolors_destroy/${productIdUpdate}`,
-                    {
-                        headers: {
-                            Authorization: `Bearer ${accessToken}`,
-                        },
-                    },
+            // Sincronizar Colores
+            await axios.delete(`api/productcolors_destroy/${productIdUpdate}`, {
+                headers: { Authorization: `Bearer ${accessToken}` },
+            });
+            if (selectedColors.length > 0) {
+                await axios.post(
+                    "api/productcolors_store",
+                    { product_id: productIdUpdate, color_ids: selectedColors },
+                    { headers: { Authorization: `Bearer ${accessToken}` } },
                 );
-            } catch (error) {
-                console.error("Error deleting product colors", error);
             }
 
-            // ADD NEW RELATIONS BETWEEN PRODUCT AND COLORS
-            try {
-                if (selectedColors.length > 0) {
-                    await axios.post(
-                        "api/productcolors_store",
-                        {
-                            product_id: productIdUpdate,
-                            color_ids: selectedColors,
-                        },
-                        {
-                            headers: {
-                                "Content-Type": "application/json",
-                                Authorization: `Bearer ${accessToken}`,
-                            },
-                        },
-                    );
-                }
-            } catch (error) {
-                console.error("Error adding product colors", error);
-            }
-
-            // DELETES RELATIONS BETWEEN PRODUCT AND SIZES
-            try {
-                await axios.delete(
-                    `api/productsizes_destroy/${productIdUpdate}`,
+            // Sincronizar Tallas
+            await axios.delete(`api/productsizes_destroy/${productIdUpdate}`, {
+                headers: { Authorization: `Bearer ${accessToken}` },
+            });
+            if (sizeFormData.sizes.length > 0) {
+                await axios.post(
+                    "api/productsizes_store",
                     {
-                        headers: {
-                            Authorization: `Bearer ${accessToken}`,
-                        },
+                        product_id: productIdUpdate,
+                        size_ids: sizeFormData.sizes,
                     },
+                    { headers: { Authorization: `Bearer ${accessToken}` } },
                 );
-            } catch (error) {
-                console.error("Error deleting product sizes", error);
-            }
-
-            // ADD NEW RELATIONS BETWEEN PRODUCT AND SIZES
-            try {
-                if (sizeFormData.sizes.length > 0) {
-                    await axios.post(
-                        "api/productsizes_store",
-                        {
-                            product_id: productIdUpdate,
-                            size_ids: sizeFormData.sizes,
-                        },
-                        {
-                            headers: {
-                                "Content-Type": "application/json",
-                                Authorization: `Bearer ${accessToken}`,
-                            },
-                        },
-                    );
-                }
-            } catch (error) {
-                console.error("Error adding product sizes", error);
             }
 
             showNotification("Product Updated successfully");
             setIsButtonEnabled(true);
             setIsButtonAddEnabled(true);
-            getProducts();
             setEditMode(false);
             setShowAddForm(false);
+            getProducts();
         } catch (error) {
             showNotification(error.message || "Network error.");
         }
     };
 
-    // DELETE
-
     const handleDelete = async (productId) => {
         try {
-            // DELETES RELATIONS FIRST
             await axios.delete(`api/productcolors_destroy/${productId}`, {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                },
+                headers: { Authorization: `Bearer ${accessToken}` },
             });
-
             await axios.delete(`api/productsizes_destroy/${productId}`, {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                },
+                headers: { Authorization: `Bearer ${accessToken}` },
             });
 
-            // DELETES PRINCIPAL PRODUCT
             const deleteResponse = await axios.delete(
                 `api/products_destroy/${productId}`,
                 {
-                    headers: {
-                        Authorization: `Bearer ${accessToken}`,
-                    },
+                    headers: { Authorization: `Bearer ${accessToken}` },
                 },
             );
 
@@ -519,13 +422,15 @@ function Crud() {
             }
         } catch (error) {
             console.error("Network error or server issue", error);
+        } finally {
+            setIsButtonEnabled(true);
         }
     };
 
     return (
         <>
-            <br></br>
-            <div className="d-flex ">
+            <br />
+            <div className="d-flex align-items-center justify-content-between px-5">
                 <Container className="mt-5">
                     <Row>
                         <Col sm={4}>
@@ -543,10 +448,6 @@ function Crud() {
                                                 fillRule="evenodd"
                                                 d="M9.5 3a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13zM1 9.5a8.5 8.5 0 1 1 17 0 8.5 8.5 0 0 1-17 0z"
                                             />
-                                            <path
-                                                fillRule="evenodd"
-                                                d="M16.853 16.854a.5.5 0 0 0 .707 0l3.793-3.793a.5.5 0 0 0 0-.707l-3.793-3.793a.5.5 0 0 0-.707.707L19.293 12H10.5a.5.5 0 0 0 0 1h8.793l-2.646 2.646a.5.5 0 0 0 0 .707z"
-                                            />
                                         </svg>
                                     </InputGroup.Text>
                                     <FormControl
@@ -563,19 +464,15 @@ function Crud() {
                 </Container>
 
                 <MDBBtn
-                    class={`custom-button ${
-                        !isButtonAddEnabled ? "clicked" : ""
-                    }`}
+                    className={`mb-4 w-25 custom-button ${!isButtonAddEnabled ? "clicked" : ""}`}
                     size="lg"
-                    className="mb-4 w-100"
-                    type="submit"
                     disabled={!isButtonAddEnabled}
                     onClick={handleButtonAddClick}
                 >
                     ADD NEW PRODUCT
                 </MDBBtn>
             </div>
-            <br></br>
+            <br />
 
             <MDBTable>
                 <MDBTableHead dark>
@@ -587,7 +484,6 @@ function Crud() {
                         <th scope="col">Price</th>
                         <th scope="col">Stock</th>
                         <th scope="col">Images</th>
-                        <th scope="col">Date</th>
                         <th scope="col">Available</th>
                         <th scope="col">Actions</th>
                     </tr>
@@ -601,16 +497,15 @@ function Crud() {
                             <td>{product.category_id}</td>
                             <td>{product.price}</td>
                             <td>{product.available_stock}</td>
-                            <td>{product.images}</td>
-                            <td>{product.addition_date}</td>
-                            <td>{product.available}</td>
+                            <td>
+                                {product.image_primary
+                                    ? "✓ Principal"
+                                    : "✗ Sin imagen"}
+                            </td>
+                            <td>{product.available ? "Yes" : "No"}</td>
                             <td>
                                 <MDBBtn
-                                    class={`custom-button ${!isButtonEnabled ? "clicked" : ""} mb-4 w-100`}
-                                    size="lg"
-                                    style={{ width: "98px" }}
-                                    className="mb-4 w-100"
-                                    type="submit"
+                                    className="mb-2 btn-sm w-100 btn-info"
                                     disabled={!isButtonEnabled}
                                     onClick={() => {
                                         handleButtonClick();
@@ -620,10 +515,7 @@ function Crud() {
                                     EDIT
                                 </MDBBtn>
                                 <MDBBtn
-                                    class={`custom-button ${!isButtonEnabled ? "clicked" : ""} mb-4 w-100`}
-                                    size="lg"
-                                    className="mb-4 w-100"
-                                    type="submit"
+                                    className="btn-sm w-100 btn-danger"
                                     disabled={!isButtonEnabled}
                                     onClick={() => {
                                         handleButtonClick();
@@ -645,32 +537,36 @@ function Crud() {
                     setShowAddForm(false);
                     setIsButtonAddEnabled(true);
                     setIsButtonEnabled(true);
-                    // ENABLES BUTTON AGAIN
                 }}
             >
                 <Modal.Header
-                    className={editMode ? "bg-primary" : "bg-warning"}
-                ></Modal.Header>
+                    className={
+                        editMode ? "bg-primary text-white" : "bg-warning"
+                    }
+                    closeButton
+                >
+                    <Modal.Title>
+                        {editMode ? "Update Product" : "Add Product"}
+                    </Modal.Title>
+                </Modal.Header>
                 <Modal.Body>
                     <img
-                        src="\img\logosmc.svg"
-                        alt="Descripción de la imagen"
+                        src="/img/logosmc.svg"
+                        alt="Logo"
                         style={{
                             maxWidth: "80%",
-                            maxHeight: "80%",
                             margin: "auto",
                             display: "block",
                             marginBottom: "20px",
                         }}
                     />
-                    {/* FORM */}
                     <form
                         onSubmit={
                             editMode ? handleUpdateProduct : handleAddProduct
                         }
                     >
                         {errors.name && (
-                            <p className="error-text">{errors.name}</p>
+                            <p className="text-danger small">{errors.name}</p>
                         )}
                         <MDBInput
                             wrapperClass="mb-4"
@@ -681,8 +577,11 @@ function Crud() {
                             value={formData.name}
                             onChange={handleChange}
                         />
+
                         {errors.description && (
-                            <p className="error-text">{errors.description}</p>
+                            <p className="text-danger small">
+                                {errors.description}
+                            </p>
                         )}
                         <MDBInput
                             wrapperClass="mb-4"
@@ -695,7 +594,7 @@ function Crud() {
                         />
 
                         {errors.price && (
-                            <p className="error-text">{errors.price}</p>
+                            <p className="text-danger small">{errors.price}</p>
                         )}
                         <MDBInput
                             wrapperClass="mb-4"
@@ -706,8 +605,9 @@ function Crud() {
                             value={formData.price}
                             onChange={handleChange}
                         />
+
                         {errors.available_stock && (
-                            <p className="error-text">
+                            <p className="text-danger small">
                                 {errors.available_stock}
                             </p>
                         )}
@@ -720,24 +620,52 @@ function Crud() {
                             value={formData.available_stock}
                             onChange={handleChange}
                         />
-                        {errors.images && (
-                            <p className="error-text">{errors.images}</p>
-                        )}
-                        <MDBInput
-                            wrapperClass="mb-4"
-                            label="Images"
-                            id="images"
-                            type="text"
-                            name="images"
-                            value={formData.images}
-                            onChange={handleChange}
-                        />
-                        {errors.category && (
-                            <p className="error-text">{errors.category}</p>
-                        )}
+
+                        {/* Imagen Principal */}
+                        <div className="mb-3">
+                            <label className="form-label">
+                                Imagen Principal (URL)
+                            </label>
+                            <input
+                                type="text"
+                                className="form-control"
+                                name="image_primary"
+                                value={formData.image_primary}
+                                onChange={handleChange}
+                            />
+                        </div>
+
+                        {/* Imagen Detalle 1 */}
+                        <div className="mb-3">
+                            <label className="form-label">
+                                Imagen Detalle 1 (URL)
+                            </label>
+                            <input
+                                type="text"
+                                className="form-control"
+                                name="image_detail_1"
+                                value={formData.image_detail_1}
+                                onChange={handleChange}
+                            />
+                        </div>
+
+                        {/* Imagen Detalle 2 */}
+                        <div className="mb-3">
+                            <label className="form-label">
+                                Imagen Detalle 2 (URL)
+                            </label>
+                            <input
+                                type="text"
+                                className="form-control"
+                                name="image_detail_2"
+                                value={formData.image_detail_2}
+                                onChange={handleChange}
+                            />
+                        </div>
+
                         <label htmlFor="category">Category:</label>
                         <select
-                            className="form-control"
+                            className="form-control mb-3"
                             id="category"
                             name="category"
                             value={formData.category_id}
@@ -746,22 +674,60 @@ function Crud() {
                             <option value="" hidden>
                                 Select a category
                             </option>
-                            {categoryOptions.map((category) => (
-                                <option key={category.id} value={category.id}>
-                                    {category.name}
+                            {categoryOptions.map((cat) => (
+                                <option key={cat.id} value={cat.id}>
+                                    {cat.name}
                                 </option>
                             ))}
                         </select>
-                        <br></br>
+
+                        <div className="mb-3">
+                            <label className="form-label">Tipo de Envío</label>
+                            <select
+                                className="form-control"
+                                name="shipping_type"
+                                value={formData.shipping_type}
+                                onChange={handleChange}
+                            >
+                                <option value="0">Envío Local</option>
+                                <option value="1">Envío Nacional</option>
+                                <option value="2">
+                                    Envío Internacional / Otro
+                                </option>
+                            </select>
+                        </div>
+
+                        {/* --- NUEVO FIELD: SELLER URL --- */}
+                        <MDBInput
+                            wrapperClass="mb-4"
+                            label="Seller URL (Link del Proveedor)"
+                            id="seller_url"
+                            type="text"
+                            name="seller_url"
+                            value={formData.seller_url}
+                            onChange={handleChange}
+                        />
+
+                        {/* --- NUEVO FIELD: DESIGNER --- */}
+                        <MDBInput
+                            wrapperClass="mb-4"
+                            label="Designer (Diseñador)"
+                            id="designer"
+                            type="text"
+                            name="designer"
+                            value={formData.designer}
+                            onChange={handleChange}
+                        />
+
                         {/* Color List */}
-                        <label>Color (Optional):</label>
+                        <label className="fw-bold d-block mt-2">
+                            Color (Optional):
+                        </label>
                         {colorOptions.map((color) => (
                             <div key={color.id} className="form-check">
                                 <input
                                     type="checkbox"
                                     id={`color-${color.id}`}
-                                    name="colors"
-                                    value={color.id}
                                     checked={selectedColors.includes(color.id)}
                                     onChange={() => handleColorChange(color.id)}
                                     className="form-check-input"
@@ -776,18 +742,18 @@ function Crud() {
                         ))}
 
                         {/* Size List */}
-                        <label>Size (Optional):</label>
+                        <label className="fw-bold d-block mt-3">
+                            Size (Optional):
+                        </label>
                         {sizeOptions.map((size) => (
                             <div key={size.id} className="form-check">
                                 <input
                                     type="checkbox"
                                     id={`size-${size.id}`}
-                                    name="sizes"
-                                    value={size.id}
                                     checked={sizeFormData.sizes.includes(
                                         size.id,
                                     )}
-                                    onChange={handleChange}
+                                    onChange={() => handleSizeChange(size.id)}
                                     className="form-check-input"
                                 />
                                 <label
@@ -798,10 +764,8 @@ function Crud() {
                                 </label>
                             </div>
                         ))}
-                        <br></br>
-                        {errors.available && (
-                            <p className="error-text">{errors.available}</p>
-                        )}
+
+                        <br />
                         <Form.Check
                             type="switch"
                             id="custom-switch"
@@ -810,38 +774,23 @@ function Crud() {
                             checked={formData.available}
                             onChange={handleSwitchChange}
                         />
-                        <br></br>
+                        <br />
 
-                        {editMode ? (
-                            <MDBBtn
-                                class={`custom-button`}
-                                size="lg"
-                                className="mb-4 w-100"
-                                type="submit"
-                                disabled={!isFormValid}
-                            >
-                                UPDATE PRODUCT
-                            </MDBBtn>
-                        ) : (
-                            <MDBBtn
-                                class={`custom-button`}
-                                size="lg"
-                                className="mb-4 w-100"
-                                type="submit"
-                                disabled={!isFormValid}
-                            >
-                                ADD PRODUCT
-                            </MDBBtn>
-                        )}
+                        <MDBBtn
+                            className="w-100"
+                            size="lg"
+                            type="submit"
+                            disabled={!isFormValid}
+                        >
+                            {editMode ? "UPDATE PRODUCT" : "ADD PRODUCT"}
+                        </MDBBtn>
                     </form>
                 </Modal.Body>
             </Modal>
 
             {notification && (
                 <div
-                    className={`notification ${
-                        notificationVisible ? "show" : ""
-                    }`}
+                    className={`notification ${notificationVisible ? "show" : ""}`}
                 >
                     {notification}
                     <div className="notification-bar"></div>

@@ -18,7 +18,12 @@ class Products extends Model
         'category_id',
         'price',
         'available_stock',
-        'images',
+        'image_primary',   // Actualizado
+        'image_detail_1',  // Nuevo
+        'image_detail_2',  // Nuevo
+        'seller_url',      // Nuevo
+        'designer',        // Nuevo
+        'shipping_type',   // Nuevo
         'addition_date',
         'available',
     ];
@@ -27,5 +32,4 @@ class Products extends Model
     {
         return $this->hasMany(ShoppingCart::class, 'product_id');
     }
-
 }

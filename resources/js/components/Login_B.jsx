@@ -10,11 +10,11 @@ import {
     MDBInput,
     MDBCheckbox,
 } from "mdb-react-ui-kit";
-import axios from "axios"; // Aseguramos que axios esté importado para los defaults
+import axios from "axios";
 import "/resources/css/app.css";
 
 function Login_B() {
-    //NOTIFICATIONS
+    // NOTIFICATIONS
     const [notification, setNotification] = useState(null);
     const [notificationVisible, setNotificationVisible] = useState(false);
 
@@ -36,7 +36,7 @@ function Login_B() {
         setNotificationVisible(true);
     };
 
-    //TABS
+    // TABS
     const [justifyActive, setJustifyActive] = useState("tab1");
 
     const handleJustifyClick = (value) => {
@@ -44,7 +44,7 @@ function Login_B() {
         setJustifyActive(value);
     };
 
-    //VALIDATIONS
+    // VALIDATIONS
     const [formData, setFormData] = useState({
         name: "",
         email: "",
@@ -60,6 +60,9 @@ function Login_B() {
     });
 
     const [isButtonEnabled, setIsButtonEnabled] = useState(true);
+
+    // ESTADO DEL CAPTCHA SEGURIDAD
+    const [isRobotChecked, setIsRobotChecked] = useState(false);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -95,9 +98,16 @@ function Login_B() {
         Object.values(errors).every((error) => error === "") &&
         Object.values(formData).every((value) => value.trim() !== "");
 
-    //LOGIN
+    // LOGIN
     const handleLogin = async (e) => {
         e.preventDefault();
+
+        // Doble validación por si intentan saltarse el botón deshabilitado via consola
+        if (!isRobotChecked) {
+            showNotification("ERROR: POR FAVOR VERIFICA QUE NO ERES UN ROBOT");
+            return;
+        }
+
         setIsButtonEnabled(false);
 
         const loginData = {
@@ -130,7 +140,6 @@ function Login_B() {
                     }, 1500);
                 }
             } else {
-                // Manejo sofisticado de respuestas HTTP erróneas del servidor
                 if (response.status === 401) {
                     showNotification("ERROR: CREDENCIALES INCORRECTAS");
                 } else if (response.status === 422 && data.errors) {
@@ -152,10 +161,10 @@ function Login_B() {
         }
     };
 
-    //REGISTER
+    // REGISTER
     const handleRegister = async (e) => {
         e.preventDefault();
-        setIsButtonEnabled(false); // Deshabilitamos para evitar doble envío en registro
+        setIsButtonEnabled(false);
 
         try {
             const response = await fetch("http://127.0.0.1:8000/api/register", {
@@ -171,12 +180,11 @@ function Login_B() {
             if (response.ok) {
                 showNotification("¡USUARIO REGISTRADO CON ÉXITO!");
                 setTimeout(() => {
-                    // En lugar de recargar, lo movemos dinámicamente a la pestaña de Login
                     setJustifyActive("tab1");
                     setIsButtonEnabled(true);
+                    setIsRobotChecked(false); // Resetea el captcha al cambiar
                 }, 1500);
             } else {
-                // Validación sofisticada leyendo las excepciones exactas de la base de datos de Laravel
                 if (response.status === 422 && data.errors) {
                     const serverErrors = data.errors;
 
@@ -185,7 +193,6 @@ function Login_B() {
                         serverErrors.email[0].includes("already")
                     ) {
                         showNotification("ERROR: EL EMAIL YA ESTÁ EN USO");
-                        setIsButtonEnabled(true);
                     } else if (
                         serverErrors.name &&
                         serverErrors.name[0].includes("already")
@@ -193,35 +200,18 @@ function Login_B() {
                         showNotification(
                             "ERROR: EL NOMBRE DE USUARIO YA EXISTE",
                         );
-                        setIsButtonEnabled(true);
                     } else {
-                        // Atrapa cualquier otro error de base de datos o validación (ej: password corto)
                         const firstErrorKey = Object.keys(serverErrors)[0];
                         showNotification(
                             `ERROR: ${serverErrors[firstErrorKey][0].toUpperCase()}`,
                         );
-                        setIsButtonEnabled(true);
                     }
                 } else {
-                    // Si Laravel manda el código 422 y trae errores específicos:
-                    if (response.status === 422 && data.errors) {
-                        // Tomamos el primer error que ocurra (ya sea de email, name o password)
-                        const firstErrorKey = Object.keys(data.errors)[0];
-                        const errorMessage = data.errors[firstErrorKey][0];
-
-                        // Lo mandamos directo a la notificación (Saldrá en mayúsculas gracias al CSS o lo transformamos aquí)
-                        showNotification(
-                            `ERROR: ${errorMessage.toUpperCase()}`,
-                        );
-                        setIsButtonEnabled(true);
-                    } else {
-                        showNotification(
-                            "ERROR EN EL REGISTRO. VERIFICA TUS DATOS.",
-                        );
-                        setIsButtonEnabled(true);
-                    }
-                    setIsButtonEnabled(true);
+                    showNotification(
+                        "ERROR EN EL REGISTRO. VERIFICA TUS DATOS.",
+                    );
                 }
+                setIsButtonEnabled(true);
             }
         } catch (error) {
             console.error("ERROR DETALLADO:", error);
@@ -256,6 +246,7 @@ function Login_B() {
             </MDBTabs>
 
             <MDBTabsContent>
+                {/* PESTAÑA 1: LOGIN */}
                 <MDBTabsPane show={justifyActive === "tab1"}>
                     <form onSubmit={handleLogin}>
                         {errors.email && (
@@ -283,21 +274,45 @@ function Login_B() {
                             onChange={handleChange}
                         />
 
-                        <div className="d-flex justify-content-between mx-4 mb-4">
+                        {/* CAJA DE VERIFICACIÓN ANTI-BOTS */}
+                        <div
+                            className="d-flex align-items-center justify-content-between p-3 mb-4 rounded"
+                            style={{
+                                backgroundColor: "#151515",
+                                border: "1px solid #252525",
+                            }}
+                        >
                             <MDBCheckbox
-                                name="flexCheck"
-                                value=""
-                                id="flexCheckDefault"
-                                label="Remember me"
+                                name="robotCheck"
+                                id="robotCheckDefault"
+                                label="I'm not a robot"
+                                checked={isRobotChecked}
+                                onChange={(e) =>
+                                    setIsRobotChecked(e.target.checked)
+                                }
+                                className="custom-captcha-checkbox"
                             />
-                            <a href="!#">Forgot password?</a>
+                            <div
+                                className="text-end"
+                                style={{
+                                    opacity: 0.4,
+                                    fontSize: "0.65rem",
+                                    letterSpacing: "1px",
+                                }}
+                            >
+                                <span className="d-block text-white fw-bold">
+                                    STORE SECURITY
+                                </span>
+                                <span className="text-muted">v1.0-LOCAL</span>
+                            </div>
                         </div>
 
+                        {/* EL BOTÓN PIDE REQUISITO DEL CAPTCHA ADEMÁS DE DISPONIBILIDAD */}
                         <MDBBtn
                             className={`mb-4 w-100 custom-button ${!isButtonEnabled ? "clicked" : ""}`}
                             size="lg"
                             type="submit"
-                            disabled={!isButtonEnabled}
+                            disabled={!isButtonEnabled || !isRobotChecked}
                         >
                             Sign in
                         </MDBBtn>
@@ -313,6 +328,7 @@ function Login_B() {
                     </form>
                 </MDBTabsPane>
 
+                {/* PESTAÑA 2: REGISTER */}
                 <MDBTabsPane show={justifyActive === "tab2"}>
                     <form onSubmit={handleRegister}>
                         {errors.name && (
@@ -359,6 +375,7 @@ function Login_B() {
                             label="Confirm Password"
                             id="register_c_password"
                             type="password"
+                            name="password"
                             name="c_password"
                             value={formData.c_password}
                             onChange={handleChange}

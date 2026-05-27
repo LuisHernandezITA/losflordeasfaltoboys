@@ -13,16 +13,27 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
-            $table->String('name', 100);
+            $table->string('name', 100);
             $table->text('description');
-            $table->unsignedBigInteger('category_id'); // Debes relacionar la categoría en una migración separada
+            $table->unsignedBigInteger('category_id');
             $table->decimal('price', 10, 2);
             $table->integer('available_stock');
-            $table->text('images');
+            
+            // Las 3 imágenes obligatorias del producto
+            $table->string('image_primary');
+            $table->string('image_detail_1');
+            $table->string('image_detail_2');
+
+            // Nuevos campos de Autor/Marketplace
+            $table->string('seller_url'); // Enlace de Instagram/Web del diseñador
+            $table->string('designer');   // Marca o creador para filtros
+            
+            // Tipo de envío (0=Local, 1=Nacional, 2=Internacional)
+            $table->tinyInteger('shipping_type')->default(0);
+
             $table->timestamp('addition_date');
             $table->boolean('available');
             
-            // Define las restricciones de clave foránea para las relaciones con category, size y color
             $table->foreign('category_id')->references('id')->on('category');
         });
     }

@@ -207,13 +207,8 @@ function Cart() {
                                                         >
                                                             <img
                                                                 src={
-                                                                    product.images
-                                                                        ? Array.isArray(
-                                                                              product.images,
-                                                                          )
-                                                                            ? product
-                                                                                  .images[0]
-                                                                            : product.images
+                                                                    product.image_primary
+                                                                        ? product.image_primary
                                                                         : "https://via.placeholder.com/300"
                                                                 }
                                                                 className="img-fluid w-100"
@@ -284,12 +279,13 @@ function Cart() {
                                                         </div>
                                                     </div>
 
-                                                    {/* BOTÓN DINÁMICO DE CONTACTO / ADQUISICIÓN */}
+                                                    {/* BOTÓN DINÁMICO DE CONTACTO / ADQUISICIÓN CORREGIDO */}
                                                     <div className="mt-2">
                                                         <a
                                                             href={
-                                                                product.contact_url ||
-                                                                "#!"
+                                                                product.seller_url
+                                                                    ? product.seller_url
+                                                                    : "#!"
                                                             }
                                                             target="_blank"
                                                             rel="noopener noreferrer"
@@ -301,12 +297,19 @@ function Cart() {
                                                                     "600",
                                                                 letterSpacing:
                                                                     "0.5px",
+                                                                display: "flex",
+                                                                alignItems:
+                                                                    "center",
+                                                                justifyContent:
+                                                                    "center",
                                                             }}
                                                         >
                                                             <MDBIcon
-                                                                fas
-                                                                icon="comment-alt me-2"
-                                                            />{" "}
+                                                                fab
+                                                                icon="instagram"
+                                                                className="me-2"
+                                                                size="lg"
+                                                            />
                                                             Contactar Diseñador
                                                         </a>
                                                     </div>
@@ -336,7 +339,7 @@ function Cart() {
                                 <div className="pt-3">
                                     <MDBTypography tag="h6" className="mb-0">
                                         <Link
-                                            to="/"
+                                            to="/store"
                                             style={{
                                                 textDecoration: "none",
                                                 color: "#111",

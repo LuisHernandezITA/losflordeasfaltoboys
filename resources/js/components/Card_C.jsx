@@ -11,7 +11,7 @@ function Card_C(props) {
     const firstName = props.name;
     const price = props.price;
     const description = props.description;
-    const images = props.images;
+    const imagePrimary = props.image_primary;
     const available = props.available;
 
     const { userInfo } = useUser(); // USERINFO
@@ -122,7 +122,7 @@ function Card_C(props) {
                         <div className="sold-out-badge">SOLD OUT</div>
                     )}
                     <Card.Img
-                        src={images}
+                        src={imagePrimary} // <-- Ahora usa la imagen principal de la BD
                         alt={firstName}
                         className={`my-card-img ${!available ? "sold-out" : ""}`}
                     />

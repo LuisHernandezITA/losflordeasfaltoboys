@@ -318,10 +318,14 @@ border-bottom-right-radius: 16px;
     gap: 20px; /* Espacio entre imagen y texto */
 }
 
+/* CONTENEDOR PRINCIPAL DE LA IMAGEN: Forzado a ser cuadrado */
 .details .big-img {
     flex: 1 1 400px; /* Permite que crezca y se encoja, base ideal 400px */
     max-width: 600px; /* Controla que no se haga Gigante en monitores 4k */
     width: 100%;
+    aspect-ratio: 1 / 1; /* ¡ESTA ES LA MAGIA! Mantiene proporción 1:1 siempre */
+    position: relative;
+    overflow: hidden;
     margin: 0;
     padding: 0;
 }
@@ -336,7 +340,7 @@ border-bottom-right-radius: 16px;
 /* --- AJUSTES PARA ESCRITORIO (Pantallas grandes) --- */
 @media (min-width: 992px) {
     .details {
-        justify-content: space-between; /* ¡Aquí está la magia! Los separa */
+        justify-content: space-between; 
         padding: 40px;
         align-items: flex-start; /* Alinea el texto arriba junto a la imagen */
     }
@@ -351,6 +355,7 @@ border-bottom-right-radius: 16px;
 @media (max-width: 768px) {
     .details .big-img {
         max-width: 100%;
+        /* El aspect-ratio heredado se encarga de dejarlo cuadrado en móviles automáticamente */
     }
     
     .box .row h2 {
@@ -370,12 +375,14 @@ border-bottom-right-radius: 16px;
     background: #fff;
 }
 
-.big-img img {
+/* Eliminamos las propiedades viejas de '.big-img img' y las adaptamos al contenedor del zoom */
+.zoom-image-container {
     width: 100%;
-    height: auto;   /* Que la altura sea proporcional */
-    max-height: 500px;
+    height: 100%;
     display: block;
-    object-fit: contain; /* 'contain' evita que se corte la imagen del producto */
+    background-repeat: no-repeat;
+    /* Al usar 'contain' de fondo, si la foto original no es cuadrada no se recortará de golpe */
+    background-size: contain; 
 }
 
 /* Media Query para pantallas pequeñas */
@@ -661,4 +668,87 @@ input[type="submit"],
     min-height: 250px; /* Un mínimo para que respire */
     display: flex;
     flex-direction: column;
+}
+
+/*Detalles d eproducto animaciones*/
+
+/* Animación de parpadeo para el borde de cristal */
+.title-flicker {
+    animation: edgePulse 4s infinite alternate;
+}
+
+@keyframes edgePulse {
+    0%, 100% {
+        border-left-color: #ffffff;
+        box-shadow: 5px 5px 0px rgba(0, 0, 0, 0.5), 0 0 10px rgba(255, 255, 255, 0.6);
+    }
+    50% {
+        border-left-color: rgba(255, 255, 255, 0.2);
+        box-shadow: 5px 5px 0px rgba(0, 0, 0, 0.5), 0 0 2px rgba(255, 255, 255, 0.1);
+    }
+    52% {
+        border-left-color: #ffffff;
+    }
+    54% {
+        border-left-color: rgba(255, 255, 255, 0.4);
+    }
+    56% {
+        border-left-color: #ffffff;
+    }
+}
+
+/* Estilos para el Dropdown de Marcas en la Store */
+.custom-nav-dropdown .dropdown-toggle {
+    color: #888 !important;
+    text-transform: uppercase;
+    padding: 0 !important;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+.custom-nav-dropdown .dropdown-toggle:hover {
+    color: #fff !important;
+}
+
+/* La caja flotante del menú */
+.custom-nav-dropdown .dropdown-menu {
+    background-color: #121212 !important;
+    border: 1px solid #222 !important;
+    border-radius: 4px;
+    margin-top: 10px;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.6);
+}
+
+/* Los elementos de la lista */
+.custom-nav-dropdown .dropdown-item {
+    color: #888 !important;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    padding: 8px 16px;
+    transition: all 0.2s ease;
+}
+
+/* Hover de los elementos */
+.custom-nav-dropdown .dropdown-item:hover {
+    background-color: #1a1a1a !important;
+    color: #fff !important;
+}
+
+/* Elemento seleccionado actualmente */
+.custom-nav-dropdown .active-dropdown-item {
+    background-color: #222 !important;
+    color: #fff !important;
+    font-weight: bold;
+}
+
+/* Personalizar barra de scroll interna del desplegable */
+.custom-nav-dropdown ::-webkit-scrollbar {
+    width: 4px;
+}
+.custom-nav-dropdown ::-webkit-scrollbar-track {
+    background: #121212;
+}
+.custom-nav-dropdown ::-webkit-scrollbar-thumb {
+    background: #333;
+    border-radius: 2px;
 }

@@ -12,6 +12,8 @@ import CrudMusic from "./CrudMusic";
 import MusicBlog from "./MusicBlog";
 import CrudEvents from "./CrudEvents";
 import EventView from "./EventView";
+import BlogView from "./BlogView";
+import CrudBlogs from "./CrudBlogs";
 
 function Main() {
     return (
@@ -20,11 +22,13 @@ function Main() {
                 <Route path="/" element={<Menu />}>
                     <Route path="item/:id" element={<Product />} />
                     <Route path="events/:id" element={<EventView />} />
-                    <Route path="products" element={<Crud />} />
+                    <Route path="blog" element={<BlogView />} />
+                    <Route path="crudblogs" element={<CrudBlogs />} />
+                    <Route path="crudproducts" element={<Crud />} />
                     <Route path="crudevents" element={<CrudEvents />} />
-                    <Route path="categories" element={<CrudCategory />} />
-                    <Route path="banners" element={<CrudBanner />} />
-                    <Route path="songs" element={<CrudMusic />} />
+                    <Route path="crudcategories" element={<CrudCategory />} />
+                    <Route path="crudbanners" element={<CrudBanner />} />
+                    <Route path="crudsongs" element={<CrudMusic />} />
                     <Route path="store" element={<ListCard />} />
                     <Route path="music" element={<MusicBlog />} />
                     <Route path="login" element={<Login_B />} />

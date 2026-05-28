@@ -464,8 +464,10 @@ function Crud() {
                 </Container>
 
                 <MDBBtn
-                    className={`mb-4 w-25 custom-button ${!isButtonAddEnabled ? "clicked" : ""}`}
+                    class={`custom-button ${!isButtonAddEnabled ? "clicked" : ""}`}
                     size="lg"
+                    className="mb-4 w-100"
+                    type="submit"
                     disabled={!isButtonAddEnabled}
                     onClick={handleButtonAddClick}
                 >
@@ -505,7 +507,10 @@ function Crud() {
                             <td>{product.available ? "Yes" : "No"}</td>
                             <td>
                                 <MDBBtn
-                                    className="mb-2 btn-sm w-100 btn-info"
+                                    class={`custom-button ${!isButtonEnabled ? "clicked" : ""} mb-4 w-100`}
+                                    size="lg"
+                                    className="mb-4 w-100"
+                                    style={{ width: "98px" }}
                                     disabled={!isButtonEnabled}
                                     onClick={() => {
                                         handleButtonClick();
@@ -515,7 +520,9 @@ function Crud() {
                                     EDIT
                                 </MDBBtn>
                                 <MDBBtn
-                                    className="btn-sm w-100 btn-danger"
+                                    class={`custom-button ${!isButtonEnabled ? "clicked" : ""} mb-4 w-100`}
+                                    size="lg"
+                                    className="mb-4 w-100"
                                     disabled={!isButtonEnabled}
                                     onClick={() => {
                                         handleButtonClick();

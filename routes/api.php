@@ -15,20 +15,13 @@ use App\Http\Controllers\ShoppingCartController;
 use App\Http\Controllers\BannerController;
 use App\Http\Controllers\MusicController;
 use App\Http\Controllers\EventController;
-
-
+use App\Http\Controllers\BlogController; // <-- Namespace del controlador del Blog
 
 /*
 |--------------------------------------------------------------------------
 | API Routes
 |--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "api" middleware group. Make something great!
-|
 */
-
 
 // --- 1. RUTAS PÚBLICAS (Cualquier visitante las ve) ---
 Route::post('register', [RegisterController::class, 'register']);
@@ -44,8 +37,12 @@ Route::get('/size_index', [SizeController::class, 'index']);
 Route::get('/banners_index', [BannerController::class, 'index']);
 Route::get('/music_index', [MusicController::class, 'index']);
 
-Route::get('/events_index', [EventController::class, 'index']); // Carga la lista en el Inicio/Lookbooks
+Route::get('/events_index', [EventController::class, 'index']); 
 Route::post('/events_show', [EventController::class, 'show']);
+
+// --- NUEVAS RUTAS PÚBLICAS PARA EL BLOG ---
+Route::get('/blogs_index', [BlogController::class, 'index']); // Lista el feed general de notas
+Route::post('/blogs_show', [BlogController::class, 'show']);   // Abre la nota por ID o slug desde React
 
 Route::post('/getProductSizes', [ProductSizesController::class, 'getProductSizes']);
 Route::post('/getProductColors', [ProductColorsController::class, 'getProductColors']);
@@ -56,7 +53,7 @@ Route::middleware(['auth:api'])->group(function () {
     
     // Perfil de usuario y Tokens de sesión
     Route::post('/user_show', [UserController::class, 'show']);
-    Route::get('/accesstokens_index', [AccessTokensController::class, 'index']);
+    $table = Route::get('/accesstokens_index', [AccessTokensController::class, 'index']);
     Route::delete('/accesstokens/destroy', [AccessTokensController::class, 'destroy']);
 
     // Carrito de compras
@@ -68,7 +65,6 @@ Route::middleware(['auth:api'])->group(function () {
 
 
 // --- 3. RUTAS EXCLUSIVAS PARA ADMINISTRADORES ---
-// Requieren estar logueados Y ser admin (Middleware isAdmin)
 Route::middleware(['auth:api', 'isAdmin'])->group(function () {
 
     // Gestión de Usuarios
@@ -104,16 +100,15 @@ Route::middleware(['auth:api', 'isAdmin'])->group(function () {
     Route::post('/productsizes_store', [ProductSizesController::class, 'store']);
     Route::delete('/productsizes_destroy/{id}', [ProductSizesController::class, 'destroy']);
 
-    // --- NUEVO CRUD DE EVENTOS (LOOKBOOKS) ---
-    Route::post('/events_store', [EventController::class, 'store']);       // Crea evento + sube imágenes
-    Route::post('/events_edit', [EventController::class, 'edit']);         // Obtiene datos para editar en el modal
-    Route::put('/events_update/{id}', [EventController::class, 'update']); // Guarda los cambios del evento
-    Route::delete('/events_destroy/{id}', [EventController::class, 'destroy']); // Borra evento y fotos en cascada
+    // CRUD DE EVENTOS (LOOKBOOKS)
+    Route::post('/events_store', [EventController::class, 'store']);       
+    Route::post('/events_edit', [EventController::class, 'edit']);         
+    Route::put('/events_update/{id}', [EventController::class, 'update']); 
+    Route::delete('/events_destroy/{id}', [EventController::class, 'destroy']); 
+
+    // --- NUEVO CRUD DE BLOGS PARA EL ADMINISTRADOR ---
+    Route::post('/blogs_store', [BlogController::class, 'store']);         // Crea una nota en el panel
+    Route::post('/blogs_edit', [BlogController::class, 'edit']);           // Carga la información en el modal de edición
+    Route::put('/blogs_update/{id}', [BlogController::class, 'update']);   // Procesa los cambios de la nota
+    Route::delete('/blogs_destroy/{id}', [BlogController::class, 'destroy']); // Borra la nota definitivamente
 });
-
-
-//Route::middleware('auth:api')->get('/index', 'app\Http\Controllers\UserController@index');
-
-/*Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});Nuevo comentado*/

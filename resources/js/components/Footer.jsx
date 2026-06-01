@@ -162,7 +162,7 @@ function Footer() {
             >
                 © 2026 Copyright:
                 <a className="text-reset fw-bold ms-1" href="#">
-                    Los Flor de Asfalto
+                    LOS FLOR DE ASFALTO
                 </a>
             </div>
         </MDBFooter>

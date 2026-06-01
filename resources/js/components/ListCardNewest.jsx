@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Spinner, Container } from "react-bootstrap";
+import { Spinner, Container, Row, Col } from "react-bootstrap";
 import { MDBBtn, MDBIcon } from "mdb-react-ui-kit";
 import axios from "axios";
 import Card_C from "./Card_C";
@@ -136,15 +136,19 @@ function ListCardNewest() {
                                 <Link to="/blog">
                                     <MDBBtn
                                         size="lg"
-                                        className="custom-button d-inline-flex align-items-center justify-content-center"
+                                        className="d-inline-flex align-items-center justify-content-center"
                                         style={{
+                                            backgroundColor: "#8b0000",
+                                            border: "2px solid #8b0000",
+                                            color: "#ffffff",
                                             boxShadow: "none",
                                             outline: "none",
                                             height: "45px",
                                             padding: "0 25px",
                                             transition: "all 0.2s ease",
-                                            fontWeight: "600",
+                                            fontWeight: "700",
                                             borderRadius: "0px",
+                                            letterSpacing: "1px",
                                         }}
                                     >
                                         <MDBIcon
@@ -218,7 +222,7 @@ function ListCardNewest() {
             {/* ==================================================================== */}
             {/* SECCIÓN 2: NUEVOS PRODUCTOS                                          */}
             {/* ==================================================================== */}
-            <div className="pt-2">
+            <div className="pt-2 border-bottom border-secondary pb-5 mb-5">
                 <div className="d-flex align-items-center mb-4 px-2">
                     <h2
                         className="text-white m-0 text-uppercase fw-bold"
@@ -250,10 +254,121 @@ function ListCardNewest() {
                     </div>
                 </div>
 
-                <div className="text-center mt-4 mb-5">
+                <div className="text-center mt-4">
                     <Link to="/store" className="ver-todo-link">
                         IR A LA TIENDA <i className="fas fa-eye ms-1"></i>
                     </Link>
+                </div>
+            </div>
+
+            {/* ==================================================================== */}
+            {/* SECCIÓN 3: MANIFIESTO INFORMATIVO (¿QUÉ ES OUTSIDER?)               */}
+            {/* ==================================================================== */}
+            <div className="pt-2 pb-4 mb-3">
+                <div
+                    className="p-4 p-md-5 position-relative"
+                    style={{
+                        backgroundColor: "#161616",
+                        border: "2px solid #252525",
+                        overflow: "hidden",
+                    }}
+                >
+                    <Row className="align-items-center">
+                        {/* Texto del Manifiesto / Información */}
+                        <Col
+                            lg={7}
+                            className="text-start pe-lg-5 order-2 order-lg-1"
+                        >
+                            <span
+                                className="text-muted d-block mb-2 small fw-bold tracking-wider"
+                                style={{
+                                    fontFamily: "monospace",
+                                    letterSpacing: "2px",
+                                }}
+                            >
+                                @losflordeasfalto
+                            </span>
+
+                            <h2
+                                className="text-white fw-black text-uppercase mb-4 display-5"
+                                style={{
+                                    fontFamily:
+                                        "'Impact', 'Arial Black', sans-serif",
+                                    letterSpacing: "1px",
+                                }}
+                            >
+                                OUTSIDER
+                            </h2>
+
+                            <p
+                                className="text-white-50 mb-4"
+                                style={{
+                                    fontSize: "1.1rem",
+                                    fontWeight: "300",
+                                    lineHeight: "1.6",
+                                }}
+                            >
+                                Outsider es un laboratorio colectivo e
+                                independiente enfocado en la documentación de
+                                entornos urbanos, el desarrollo técnico y la
+                                experimentación visual alternativa. No seguimos
+                                corrientes ni jerarquías tradicionales.
+                            </p>
+
+                            <p
+                                className="text-white-50 mb-5"
+                                style={{
+                                    fontSize: "1.1rem",
+                                    fontWeight: "300",
+                                    lineHeight: "1.6",
+                                }}
+                            >
+                                Funcionamos como un entorno horizontal donde el
+                                diseño web brutalista, el arte digital y el
+                                hacking de infraestructura convergen para crear
+                                artefactos autónomos fuera de las normas de la
+                                industria de consumo masivo.
+                            </p>
+
+                            <div>
+                                <Link to="/about-us">
+                                    <MDBBtn
+                                        size="lg"
+                                        outline
+                                        color="white"
+                                        style={{
+                                            borderRadius: "0px",
+                                            fontWeight: "700",
+                                            letterSpacing: "1px",
+                                            padding: "12px 35px",
+                                            border: "2px solid #fff",
+                                        }}
+                                    >
+                                        SABER MÁS
+                                    </MDBBtn>
+                                </Link>
+                            </div>
+                        </Col>
+
+                        {/* Gráfica Destacada / Logotipo Identitario */}
+                        <Col
+                            lg={5}
+                            className="text-center mb-4 mb-lg-0 order-1 order-lg-2"
+                        >
+                            <div className="p-3 d-inline-block">
+                                <img
+                                    src="/img/perfil.jpg"
+                                    alt="Outsider Iconography"
+                                    className="img-fluid"
+                                    style={{
+                                        maxHeight: "380px",
+                                        objectFit: "contain",
+                                        filter: "drop-shadow(0px 0px 15px rgba(255,255,255,0.05))",
+                                    }}
+                                />
+                            </div>
+                        </Col>
+                    </Row>
                 </div>
             </div>
         </Container>

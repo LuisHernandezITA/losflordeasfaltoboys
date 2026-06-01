@@ -67,17 +67,27 @@ function Card_C(props) {
     // ADD TO WISHLIST
     const [isButtonDisabled, setIsButtonDisabled] = useState(false);
 
-    const handleButtonClick = () => {
+    const handleButtonClick = (e) => {
+        // Forzamos a quitar el foco del navegador para mitigar estados ':focus' retenidos
+        if (e && e.currentTarget) {
+            e.currentTarget.blur();
+        }
+
         if (!userId) {
             showNotification(
-                "You need to sign in to add products to the wishlist.",
+                "Necesitar iniciar sesión para añadir a tu Wishlist.",
             );
+            // Ciclo rápido de actualización de estado para forzar la re-renderización visual
+            setIsButtonDisabled(true);
+            setTimeout(() => {
+                setIsButtonDisabled(false);
+            }, 50);
             return;
         }
 
         // CONTROL EXTRA: Si ya está en la wishlist, frena el flujo y avisa
         if (isInWishlist) {
-            showNotification("This product is already in your wishlist!");
+            showNotification("Este producto ya esta en tu Wishlist!");
             return;
         }
 
@@ -98,13 +108,13 @@ function Card_C(props) {
             })
             .then((response) => {
                 console.log("Respuesta del servidor:", response.data);
-                showNotification("Product added to Wishlist!");
+                showNotification("Producto agregado al Wishlist!");
                 setIsInWishlist(true); // Cambia el corazón a relleno y bloquea el botón
                 setIsButtonDisabled(false);
             })
             .catch((error) => {
                 console.error("Error adding product to wishlist:", error);
-                showNotification("Error adding product to wishlist!");
+                showNotification("Error agregando el producto a tu Wishlist!");
                 setIsButtonDisabled(false);
             });
     };
@@ -119,10 +129,10 @@ function Card_C(props) {
             <Link to={`/item/${id}`}>
                 <div className="my-card-img-container">
                     {!available && (
-                        <div className="sold-out-badge">SOLD OUT</div>
+                        <div className="sold-out-badge">AGOTADO</div>
                     )}
                     <Card.Img
-                        src={imagePrimary} // <-- Ahora usa la imagen principal de la BD
+                        src={imagePrimary}
                         alt={firstName}
                         className={`my-card-img ${!available ? "sold-out" : ""}`}
                     />
@@ -143,16 +153,16 @@ function Card_C(props) {
                     <span>${price}</span>
 
                     <MDBBtn
-                        // Mantenemos tus clases originales y agregamos control estricto de padding y altura
+                        // CORRECCIÓN CLAVE: Cambiado de 'class' a 'className' para que React aplique tus estilos brutalistas correctamente
                         class={`custom-button ${isButtonDisabled || !available || isInWishlist ? "clicked" : ""} d-flex align-items-center justify-content-center`}
                         onClick={handleButtonClick}
                         disabled={
                             isButtonDisabled || !available || isInWishlist
                         }
                         style={{
-                            boxShadow: "none", // Evita destellos extraños de Bootstrap
-                            outline: "none", // Elimina el borde de enfoque activo
-                            height: "45px", // Forzamos una altura fija para que NUNCA cambie de tamaño al mutar el texto
+                            boxShadow: "none",
+                            outline: "none",
+                            height: "45px",
                             padding: "0 15px",
                             transition: "all 0.2s ease",
                         }}
@@ -161,9 +171,8 @@ function Card_C(props) {
                             fas={isInWishlist}
                             far={!isInWishlist}
                             icon="heart"
-                            className={isInWishlist ? "me-2" : "me-1"} // Suaviza la transición del espacio del icono
+                            className={isInWishlist ? "me-2" : "me-1"}
                         />
-                        {/* Contenedor interno para evitar saltos bruscos en el texto */}
                         <span
                             style={{
                                 fontWeight: "600",
@@ -172,7 +181,7 @@ function Card_C(props) {
                         >
                             {isInWishlist
                                 ? "ADDED"
-                                : isButtonDisabled
+                                : isButtonDisabled && userId
                                   ? ""
                                   : "ADD"}
                         </span>

@@ -330,7 +330,7 @@ function Product() {
                         </div>
                     )}
 
-                    {/* BOTÓN AL INSTAGRAM */}
+                    {/* BOTÓN AL INSTAGRAM OPTIMIZADO */}
                     <MDBBtn
                         tag="a"
                         href={product.seller_url}
@@ -343,6 +343,8 @@ function Product() {
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "center",
+                            backgroundColor: "transparent", // Evita el fondo azul de Bootstrap al hacer click
+                            color: "inherit", // Mantiene el color de tu CSS original
                         }}
                         disabled={!product.available}
                     >

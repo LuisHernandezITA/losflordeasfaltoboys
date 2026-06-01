@@ -16,7 +16,7 @@ function Footer() {
             {/* Sección de redes sociales con borde sutil */}
             <section className="d-flex justify-content-center justify-content-lg-between p-4 border-bottom border-secondary">
                 <div className="me-5 d-none d-lg-block">
-                    <span>Conecta con nosotros mi am0o0r!</span>
+                    <span>Conecta con nosotros ₊˚⊹♡!</span>
                 </div>
 
                 <div>

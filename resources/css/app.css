@@ -947,3 +947,52 @@ input[type="submit"],
 .custom-audio-player::-webkit-media-controls-enclosure {
   background-color: #222;
 }
+
+/*LOGIN*/
+
+/* Corrección de color para placeholders y labels de MDBInput */
+.form-outline .form-control {
+    color: #ffffff !important;
+}
+
+.form-outline .form-control ~ .form-label {
+    color: #888888 !important;
+}
+
+/* Cuando el input está activo o enfocado */
+.form-outline .form-control:focus ~ .form-label,
+.form-outline .form-control.active ~ .form-label {
+    color: #ffffff !important;
+}
+
+/* Forzar color blanco en el texto del checkbox del captcha */
+.form-check-label {
+    color: #ffffff !important;
+}
+
+/*ONLINE USER*/
+
+/* Contenedor del estatus del usuario */
+.nav-user-status {
+    font-family: monospace;
+    font-size: 0.85rem;
+    color: #888888;
+    letter-spacing: 1px;
+    padding: 0 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* El punto parpadeante */
+.blink-dot {
+    color: #00ff66; /* Verde neón/industrial. Cambia a rojo o blanco si cuadra mejor */
+    animation: pulse-dot 1.5s infinite ease-in-out;
+}
+
+/* Animación de parpadeo suave tipo terminal */
+@keyframes pulse-dot {
+    0% { opacity: 0.2; }
+    50% { opacity: 1; }
+    100% { opacity: 0.2; }
+}

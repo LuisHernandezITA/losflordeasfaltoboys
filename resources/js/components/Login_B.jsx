@@ -102,7 +102,6 @@ function Login_B() {
     const handleLogin = async (e) => {
         e.preventDefault();
 
-        // Doble validación por si intentan saltarse el botón deshabilitado via consola
         if (!isRobotChecked) {
             showNotification("ERROR: POR FAVOR VERIFICA QUE NO ERES UN ROBOT");
             return;
@@ -182,7 +181,7 @@ function Login_B() {
                 setTimeout(() => {
                     setJustifyActive("tab1");
                     setIsButtonEnabled(true);
-                    setIsRobotChecked(false); // Resetea el captcha al cambiar
+                    setIsRobotChecked(false);
                 }, 1500);
             } else {
                 if (response.status === 422 && data.errors) {
@@ -220,27 +219,66 @@ function Login_B() {
         }
     };
 
+    // ESTILOS EN LÍNEA COMUNES PARA ASEGURAR VISIBILIDAD DE LETRAS
+    const inputStyle = {
+        color: "#ffffff",
+        backgroundColor: "transparent",
+    };
+
     return (
-        <MDBContainer className="p-3 my-5 d-flex flex-column w-50">
+        <MDBContainer
+            className="p-3 my-5 d-flex flex-column w-50"
+            style={{ maxWidth: "500px" }}
+        >
+            {/* TABS CON COHESIÓN VISUAL OSCURA */}
             <MDBTabs
                 pills
                 justify
-                className="mb-3 d-flex flex-row justify-content-between"
+                className="mb-4 d-flex flex-row justify-content-between"
+                style={{ borderBottom: "1px solid #222" }}
             >
                 <MDBTabsItem>
                     <MDBTabsLink
                         onClick={() => handleJustifyClick("tab1")}
                         active={justifyActive === "tab1"}
+                        style={{
+                            backgroundColor:
+                                justifyActive === "tab1"
+                                    ? "#ffffff"
+                                    : "transparent",
+                            color:
+                                justifyActive === "tab1"
+                                    ? "#000000"
+                                    : "#ffffff",
+                            borderRadius: "0px",
+                            fontWeight: "bold",
+                            border: "1px solid #ffffff",
+                            transition: "all 0.2s ease",
+                        }}
                     >
-                        Login
+                        LOGIN
                     </MDBTabsLink>
                 </MDBTabsItem>
                 <MDBTabsItem>
                     <MDBTabsLink
                         onClick={() => handleJustifyClick("tab2")}
                         active={justifyActive === "tab2"}
+                        style={{
+                            backgroundColor:
+                                justifyActive === "tab2"
+                                    ? "#ffffff"
+                                    : "transparent",
+                            color:
+                                justifyActive === "tab2"
+                                    ? "#000000"
+                                    : "#ffffff",
+                            borderRadius: "0px",
+                            fontWeight: "bold",
+                            border: "1px solid #ffffff",
+                            transition: "all 0.2s ease",
+                        }}
                     >
-                        Register
+                        REGISTER
                     </MDBTabsLink>
                 </MDBTabsItem>
             </MDBTabs>
@@ -250,7 +288,15 @@ function Login_B() {
                 <MDBTabsPane show={justifyActive === "tab1"}>
                     <form onSubmit={handleLogin}>
                         {errors.email && (
-                            <p className="error-text">{errors.email}</p>
+                            <p
+                                className="error-text"
+                                style={{
+                                    color: "#ff4444",
+                                    fontSize: "0.85rem",
+                                }}
+                            >
+                                {errors.email}
+                            </p>
                         )}
                         <MDBInput
                             wrapperClass="mb-4"
@@ -260,9 +306,20 @@ function Login_B() {
                             name="email"
                             value={formData.email}
                             onChange={handleChange}
+                            style={inputStyle}
+                            className="text-white"
                         />
+
                         {errors.password && (
-                            <p className="error-text">{errors.password}</p>
+                            <p
+                                className="error-text"
+                                style={{
+                                    color: "#ff4444",
+                                    fontSize: "0.85rem",
+                                }}
+                            >
+                                {errors.password}
+                            </p>
                         )}
                         <MDBInput
                             wrapperClass="mb-4"
@@ -272,14 +329,16 @@ function Login_B() {
                             name="password"
                             value={formData.password}
                             onChange={handleChange}
+                            style={inputStyle}
+                            className="text-white"
                         />
 
                         {/* CAJA DE VERIFICACIÓN ANTI-BOTS */}
                         <div
-                            className="d-flex align-items-center justify-content-between p-3 mb-4 rounded"
+                            className="d-flex align-items-center justify-content-between p-3 mb-4 rounded-0"
                             style={{
-                                backgroundColor: "#151515",
-                                border: "1px solid #252525",
+                                backgroundColor: "#111111",
+                                border: "1px solid #333333",
                             }}
                         >
                             <MDBCheckbox
@@ -290,12 +349,13 @@ function Login_B() {
                                 onChange={(e) =>
                                     setIsRobotChecked(e.target.checked)
                                 }
-                                className="custom-captcha-checkbox"
+                                className="custom-captcha-checkbox text-white"
+                                style={{ cursor: "pointer" }}
                             />
                             <div
                                 className="text-end"
                                 style={{
-                                    opacity: 0.4,
+                                    opacity: 0.5,
                                     fontSize: "0.65rem",
                                     letterSpacing: "1px",
                                 }}
@@ -307,20 +367,27 @@ function Login_B() {
                             </div>
                         </div>
 
-                        {/* EL BOTÓN PIDE REQUISITO DEL CAPTCHA ADEMÁS DE DISPONIBILIDAD */}
                         <MDBBtn
-                            className={`mb-4 w-100 custom-button ${!isButtonEnabled ? "clicked" : ""}`}
+                            className={`mb-4 w-100 ${!isButtonEnabled ? "clicked" : ""}`}
                             size="lg"
                             type="submit"
                             disabled={!isButtonEnabled || !isRobotChecked}
+                            style={{ borderRadius: "0px", fontWeight: "bold" }}
                         >
-                            Sign in
+                            SIGN IN
                         </MDBBtn>
-                        <p className="text-center">
+                        <p
+                            className="text-center style-link"
+                            style={{ color: "#888888" }}
+                        >
                             Not a member?{" "}
                             <a
                                 href="#!"
                                 onClick={() => handleJustifyClick("tab2")}
+                                style={{
+                                    color: "#ffffff",
+                                    textDecoration: "underline",
+                                }}
                             >
                                 Register
                             </a>
@@ -332,7 +399,15 @@ function Login_B() {
                 <MDBTabsPane show={justifyActive === "tab2"}>
                     <form onSubmit={handleRegister}>
                         {errors.name && (
-                            <p className="error-text">{errors.name}</p>
+                            <p
+                                className="error-text"
+                                style={{
+                                    color: "#ff4444",
+                                    fontSize: "0.85rem",
+                                }}
+                            >
+                                {errors.name}
+                            </p>
                         )}
                         <MDBInput
                             wrapperClass="mb-4"
@@ -342,9 +417,20 @@ function Login_B() {
                             name="name"
                             value={formData.name}
                             onChange={handleChange}
+                            style={inputStyle}
+                            className="text-white"
                         />
+
                         {errors.email && (
-                            <p className="error-text">{errors.email}</p>
+                            <p
+                                className="error-text"
+                                style={{
+                                    color: "#ff4444",
+                                    fontSize: "0.85rem",
+                                }}
+                            >
+                                {errors.email}
+                            </p>
                         )}
                         <MDBInput
                             wrapperClass="mb-4"
@@ -354,9 +440,20 @@ function Login_B() {
                             name="email"
                             value={formData.email}
                             onChange={handleChange}
+                            style={inputStyle}
+                            className="text-white"
                         />
+
                         {errors.password && (
-                            <p className="error-text">{errors.password}</p>
+                            <p
+                                className="error-text"
+                                style={{
+                                    color: "#ff4444",
+                                    fontSize: "0.85rem",
+                                }}
+                            >
+                                {errors.password}
+                            </p>
                         )}
                         <MDBInput
                             wrapperClass="mb-4"
@@ -366,28 +463,41 @@ function Login_B() {
                             name="password"
                             value={formData.password}
                             onChange={handleChange}
+                            style={inputStyle}
+                            className="text-white"
                         />
+
                         {errors.c_password && (
-                            <p className="error-text">{errors.c_password}</p>
+                            <p
+                                className="error-text"
+                                style={{
+                                    color: "#ff4444",
+                                    fontSize: "0.85rem",
+                                }}
+                            >
+                                {errors.c_password}
+                            </p>
                         )}
                         <MDBInput
                             wrapperClass="mb-4"
                             label="Confirm Password"
                             id="register_c_password"
                             type="password"
-                            name="password"
                             name="c_password"
                             value={formData.c_password}
                             onChange={handleChange}
+                            style={inputStyle}
+                            className="text-white"
                         />
 
                         <MDBBtn
-                            className="mb-4 w-100 custom-button"
+                            className="mb-4 w-100"
                             size="lg"
                             type="submit"
                             disabled={!isFormValid || !isButtonEnabled}
+                            style={{ borderRadius: "0px", fontWeight: "bold" }}
                         >
-                            Sign up
+                            SIGN UP
                         </MDBBtn>
                     </form>
                 </MDBTabsPane>

@@ -24,7 +24,7 @@ function ListCard() {
 
     // --- NUEVOS ESTADOS PARA PAGINACIÓN ---
     const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 12; // Modifica este número según cuántos productos quieras ver por página
+    const itemsPerPage = 12;
 
     useEffect(() => {
         const fetchData = async () => {
@@ -53,7 +53,6 @@ function ListCard() {
         fetchCategories();
     }, []);
 
-    // --- EFECTO: Si cambia cualquier filtro, reiniciamos a la primera página ---
     useEffect(() => {
         setCurrentPage(1);
     }, [selectedCategory, selectedBrand, searchTerm]);
@@ -68,16 +67,13 @@ function ListCard() {
     // FUNCIÓN DE FILTRADO REACTIVO COMBINADO
     const getFilteredProducts = () => {
         return productData.filter((product) => {
-            // 1. Filtro por Categoría
             const matchesCategory =
                 selectedCategory === null ||
                 product.category_id === selectedCategory;
 
-            // 2. Filtro por Marca / Diseñador
             const matchesBrand =
                 selectedBrand === null || product.designer === selectedBrand;
 
-            // 3. Barra de búsqueda
             const matchesSearch =
                 product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 (product.designer &&
@@ -89,12 +85,10 @@ function ListCard() {
         });
     };
 
-    // --- LÓGICA DE PAGINACIÓN APLICADA SOBRE LA DATA FILTRADA ---
     const filteredProducts = getFilteredProducts();
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
 
-    // Estos son los productos recortados que efectivamente se van a renderizar
     const currentItems = filteredProducts.slice(
         indexOfFirstItem,
         indexOfLastItem,
@@ -104,6 +98,13 @@ function ListCard() {
     const paginate = (pageNumber) => {
         setCurrentPage(pageNumber);
         window.scrollTo({ top: 0, behavior: "smooth" });
+    };
+
+    // Auxiliar para obtener el nombre de la categoría seleccionada en el título del Dropdown
+    const getSelectedCategoryName = () => {
+        if (selectedCategory === null) return "ALL CATEGORIES";
+        const currentCat = categories.find((c) => c.id === selectedCategory);
+        return currentCat ? currentCat.name.toUpperCase() : "ALL CATEGORIES";
     };
 
     if (productData.length === 0 || categories.length === 0) {
@@ -151,7 +152,7 @@ function ListCard() {
                         className="w-100 mt-3 mt-lg-0"
                     >
                         <Nav className="me-auto d-flex flex-column flex-lg-row gap-2 gap-lg-4 w-100 hierarchical-nav">
-                            {/* BLOQUE: CATEGORÍAS */}
+                            {/* BLOQUE: CATEGORÍAS (AHORA DESPLEGABLE) */}
                             <div className="nav-filter-group">
                                 <span
                                     className="text-muted small d-block mb-1 tracking-wider"
@@ -162,27 +163,58 @@ function ListCard() {
                                 >
                                     CATEGORIES
                                 </span>
-                                <div className="d-flex flex-wrap gap-2">
-                                    <Nav.Link
+                                <NavDropdown
+                                    title={getSelectedCategoryName()}
+                                    id="categories-dropdown"
+                                    className="custom-nav-dropdown"
+                                    style={{ fontSize: "0.875rem" }}
+                                >
+                                    <NavDropdown.Item
                                         onClick={() =>
                                             setSelectedCategory(null)
                                         }
-                                        className={`text-uppercase small p-0 me-2 ${selectedCategory === null ? "text-white fw-bold" : "text-muted"}`}
+                                        className={
+                                            selectedCategory === null
+                                                ? "active-dropdown-item"
+                                                : ""
+                                        }
                                     >
-                                        All
-                                    </Nav.Link>
-                                    {categories.map((category) => (
-                                        <Nav.Link
-                                            key={category.id}
-                                            className={`text-uppercase small p-0 me-2 ${selectedCategory === category.id ? "text-white fw-bold" : "text-muted"}`}
-                                            onClick={() =>
-                                                setSelectedCategory(category.id)
-                                            }
-                                        >
-                                            {category.name}
-                                        </Nav.Link>
-                                    ))}
-                                </div>
+                                        ALL CATEGORIES
+                                    </NavDropdown.Item>
+
+                                    <NavDropdown.Divider
+                                        style={{
+                                            backgroundColor:
+                                                "rgba(255,255,255,0.1)",
+                                        }}
+                                    />
+
+                                    <div
+                                        style={{
+                                            maxHeight: "250px",
+                                            overflowY: "auto",
+                                        }}
+                                    >
+                                        {categories.map((category) => (
+                                            <NavDropdown.Item
+                                                key={category.id}
+                                                onClick={() =>
+                                                    setSelectedCategory(
+                                                        category.id,
+                                                    )
+                                                }
+                                                className={
+                                                    selectedCategory ===
+                                                    category.id
+                                                        ? "active-dropdown-item"
+                                                        : ""
+                                                }
+                                            >
+                                                {category.name.toUpperCase()}
+                                            </NavDropdown.Item>
+                                        ))}
+                                    </div>
+                                </NavDropdown>
                             </div>
 
                             {/* DIVISOR INTERNO EN MÓVILES */}
@@ -246,7 +278,7 @@ function ListCard() {
                                                         : ""
                                                 }
                                             >
-                                                {brand}
+                                                {brand.toUpperCase()}
                                             </NavDropdown.Item>
                                         ))}
                                     </div>
@@ -333,7 +365,7 @@ function ListCard() {
                 )}
             </div>
 
-            {/* --- CONTROLES DE PAGINACIÓN DE LA TIENDA (Idénticos a tu Blog de Música) --- */}
+            {/* --- CONTROLES DE PAGINACIÓN --- */}
             {totalPages > 1 && (
                 <div className="d-flex justify-content-center gap-3 mt-4 pb-5">
                     {[...Array(totalPages)].map((_, index) => (

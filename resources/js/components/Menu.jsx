@@ -17,19 +17,25 @@ function Menu() {
     const location = useLocation();
     const [showCarousel, setShowCarousel] = useState(true);
     const { userInfo } = useUser();
-    const userName = userInfo ? userInfo.name : "";
     const userAdmin = userInfo ? userInfo.admin : "";
+
+    // CORTE DE LONGITUD CONTROLADO
+    const formatUserName = (user) => {
+        if (!user || !user.name) return "";
+        const name = user.name.trim();
+        const maxLength = 12;
+        return name.length > maxLength
+            ? `${name.substring(0, maxLength)}...`
+            : name;
+    };
 
     const [scrolled, setScrolled] = useState(false);
     const [events, setEvents] = useState([]);
-
-    // NUEVO: Estado para controlar de forma manual la apertura/cierre del Navbar móvil
     const [navExpanded, setNavExpanded] = useState(false);
 
-    // NUEVO: Efecto que se dispara cada vez que la URL cambia
     useEffect(() => {
-        window.scrollTo(0, 0); // 1. Manda la pantalla hasta arriba del todo
-        setNavExpanded(false); // 2. Cierra automáticamente el menú colapsable en móviles
+        window.scrollTo(0, 0);
+        setNavExpanded(false);
     }, [location]);
 
     useEffect(() => {
@@ -61,7 +67,6 @@ function Menu() {
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 
-    // NOTIFICATIONS
     const [notification, setNotification] = useState(null);
     const [notificationVisible, setNotificationVisible] = useState(false);
 
@@ -99,26 +104,27 @@ function Menu() {
         location.pathname === "/blog";
 
     useEffect(() => {
-        if (
-            location.pathname === "/gallery" ||
-            location.pathname === "/about-us" ||
-            location.pathname === "/legal-notice" ||
-            location.pathname === "/crudgallery" ||
-            location.pathname === "/crudblogs" ||
-            location.pathname === "/crudevents" ||
-            location.pathname === "/login" ||
-            location.pathname === "/cart" ||
-            location.pathname === "/crudproducts" ||
-            location.pathname === "/crudcategories" ||
-            location.pathname === "/crudbanners" ||
-            location.pathname === "/crudsongs" ||
+        const noCarouselPaths = [
+            "/gallery",
+            "/about-us",
+            "/legal-notice",
+            "/crudgallery",
+            "/crudblogs",
+            "/crudevents",
+            "/login",
+            "/cart",
+            "/crudproducts",
+            "/crudcategories",
+            "/crudbanners",
+            "/crudsongs",
+        ];
+
+        const shouldHide =
+            noCarouselPaths.includes(location.pathname) ||
             location.pathname.startsWith("/item") ||
-            location.pathname.startsWith("/events/")
-        ) {
-            setShowCarousel(false);
-        } else {
-            setShowCarousel(true);
-        }
+            location.pathname.startsWith("/events/");
+
+        setShowCarousel(!shouldHide);
     }, [location]);
 
     const formatMenuDate = (dateString) => {
@@ -135,8 +141,8 @@ function Menu() {
                 expand="lg"
                 fixed="top"
                 variant="dark"
-                expanded={navExpanded} // Vinculamos el estado de apertura
-                onToggle={(expanded) => setNavExpanded(expanded)} // Actualiza el estado al dar click al botón hamburguesa
+                expanded={navExpanded}
+                onToggle={(expanded) => setNavExpanded(expanded)}
                 className={
                     scrolled ? "navbar-custom scrolled" : "navbar-custom"
                 }
@@ -159,67 +165,13 @@ function Menu() {
 
                     <Navbar.Collapse id="responsive-navbar-nav">
                         <Nav className="ms-auto align-items-center">
-                            {userName ? (
-                                userAdmin ? (
-                                    <NavDropdown
-                                        title="Admin Panel"
-                                        id="admin-nav-dropdown"
-                                        className="custom-dropdown"
-                                    >
-                                        <NavDropdown.Item
-                                            as={Link}
-                                            to="crudgallery"
-                                            className="dropdown-item"
-                                        >
-                                            Gallery Crud
-                                        </NavDropdown.Item>
-                                        <NavDropdown.Item
-                                            as={Link}
-                                            to="crudblogs"
-                                            className="dropdown-item"
-                                        >
-                                            Blogs Crud
-                                        </NavDropdown.Item>
-                                        <NavDropdown.Item
-                                            as={Link}
-                                            to="crudevents"
-                                            className="dropdown-item"
-                                        >
-                                            Events Crud
-                                        </NavDropdown.Item>
-                                        <NavDropdown.Item
-                                            as={Link}
-                                            to="crudsongs"
-                                            className="dropdown-item"
-                                        >
-                                            Songs Crud
-                                        </NavDropdown.Item>
-                                        <NavDropdown.Item
-                                            as={Link}
-                                            to="crudbanners"
-                                            className="dropdown-item"
-                                        >
-                                            Banners Crud
-                                        </NavDropdown.Item>
-                                        <NavDropdown.Item
-                                            as={Link}
-                                            to="crudcategories"
-                                            className="dropdown-item"
-                                        >
-                                            Categories Crud
-                                        </NavDropdown.Item>
-                                        <NavDropdown.Item
-                                            as={Link}
-                                            to="crudproducts"
-                                            className="dropdown-item"
-                                        >
-                                            Products Crud
-                                        </NavDropdown.Item>
-                                    </NavDropdown>
-                                ) : (
-                                    <Nav.Link>Hi, {userName}</Nav.Link>
-                                )
-                            ) : null}
+                            {/* TEXTO DE IDENTIDAD TEXTUAL BRUTALISTA CORREGIDO */}
+                            {userInfo && (
+                                <span className="nav-user-status text-uppercase">
+                                    <span className="blink-dot">●</span> ONLINE
+                                    // {formatUserName(userInfo)}
+                                </span>
+                            )}
 
                             <Nav.Link as={Link} to="">
                                 Home
@@ -257,7 +209,51 @@ function Menu() {
                                 Store
                             </Nav.Link>
 
-                            <div className="d-flex align-items-center gap-3 px-3">
+                            {/* CRUD ACCESOS RÁPIDOS CON COERCIÓN BOOLEANA ESTRICTA (EVITA EL EL RENDERIZADO DE '0') */}
+                            {userInfo && !!userAdmin && (
+                                <NavDropdown
+                                    title="Admin"
+                                    id="admin-crud-dropdown"
+                                    className="custom-dropdown"
+                                >
+                                    <NavDropdown.Item
+                                        as={Link}
+                                        to="crudgallery"
+                                    >
+                                        Gallery Crud
+                                    </NavDropdown.Item>
+                                    <NavDropdown.Item as={Link} to="crudblogs">
+                                        Blogs Crud
+                                    </NavDropdown.Item>
+                                    <NavDropdown.Item as={Link} to="crudevents">
+                                        Events Crud
+                                    </NavDropdown.Item>
+                                    <NavDropdown.Item as={Link} to="crudsongs">
+                                        Songs Crud
+                                    </NavDropdown.Item>
+                                    <NavDropdown.Item
+                                        as={Link}
+                                        to="crudbanners"
+                                    >
+                                        Banners Crud
+                                    </NavDropdown.Item>
+                                    <NavDropdown.Item
+                                        as={Link}
+                                        to="crudcategories"
+                                    >
+                                        Categories Crud
+                                    </NavDropdown.Item>
+                                    <NavDropdown.Item
+                                        as={Link}
+                                        to="crudproducts"
+                                    >
+                                        Products Crud
+                                    </NavDropdown.Item>
+                                </NavDropdown>
+                            )}
+
+                            {/* ICONOS DE ACCIÓN */}
+                            <div className="d-flex align-items-center gap-3 px-3 execution-icons">
                                 <Nav.Link
                                     as={Link}
                                     to="cart"
@@ -269,18 +265,8 @@ function Menu() {
                                         className="icon"
                                     />
                                 </Nav.Link>
-                                {userName ? (
-                                    <Nav.Link
-                                        onClick={handleLogout}
-                                        title="Logout"
-                                    >
-                                        <MDBIcon
-                                            fas
-                                            icon="user-slash"
-                                            className="icon"
-                                        />
-                                    </Nav.Link>
-                                ) : (
+
+                                {!userInfo ? (
                                     <Nav.Link
                                         as={Link}
                                         to="login"
@@ -292,6 +278,18 @@ function Menu() {
                                             className="icon"
                                         />
                                     </Nav.Link>
+                                ) : (
+                                    <Nav.Link
+                                        onClick={handleLogout}
+                                        title="Logout"
+                                        style={{ cursor: "pointer" }}
+                                    >
+                                        <MDBIcon
+                                            fas
+                                            icon="sign-out-alt"
+                                            className="icon text-muted"
+                                        />
+                                    </Nav.Link>
                                 )}
                             </div>
                         </Nav>
@@ -299,7 +297,7 @@ function Menu() {
                 </Container>
             </Navbar>
 
-            {/* RESTO DEL COMPONENTE (NOTIFICACIONES, OUTLET, ETC.) */}
+            {/* NOTIFICACIONES Y CONTENEDORES */}
             {notification && (
                 <div
                     className={`notification ${notificationVisible ? "show" : ""}`}
@@ -312,7 +310,7 @@ function Menu() {
             {!hideListCardNewest && showCarousel && <ListCardNewest />}
             <section>
                 <Container fluid className="px-0">
-                    <Outlet></Outlet>
+                    <Outlet />
                 </Container>
             </section>
             <Footer />

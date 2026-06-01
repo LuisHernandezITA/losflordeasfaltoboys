@@ -221,7 +221,8 @@ function MusicBlog() {
                     }}
                     className="py-2 w-100"
                 >
-                    <Container className="px-4">
+                    {/* CORREGIDO: Se cambió a fluid y se asignó px-5 para empujar los textos a las orillas */}
+                    <Container fluid className="px-5">
                         <div className="d-flex align-items-center">
                             <span
                                 className="glitch-text"

@@ -109,6 +109,8 @@ function BlogView() {
                 <Container fluid className="px-5">
                     <div className="d-flex align-items-center">
                         <span
+                            className="glitch-text"
+                            data-text="BLOG ARCHIVE ✩°｡⋆⸜"
                             style={{
                                 fontSize: "1.2rem",
                                 letterSpacing: "4px",
@@ -117,7 +119,7 @@ function BlogView() {
                                 color: "#fff",
                             }}
                         >
-                            BLOG ARCHIVE ♱༺༒︎⊰
+                            BLOG ARCHIVE ✩°｡⋆⸜
                         </span>
                     </div>
                     <Nav className="ms-auto d-none d-md-flex align-items-center">

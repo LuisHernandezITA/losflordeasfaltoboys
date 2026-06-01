@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Card, Badge } from "react-bootstrap";
+import { Card } from "react-bootstrap";
 import { MDBBtn, MDBIcon } from "mdb-react-ui-kit";
 import "/resources/css/app.css";
 
@@ -26,94 +26,139 @@ function CardMusic(props) {
 
     return (
         <Card
-            className="my-card-music-list w-100 shadow border-0"
+            className="my-card-music-list w-100"
             style={{
                 maxWidth: "1100px",
-                backgroundColor: "rgb(25, 25, 25)",
+                backgroundColor: "rgb(14, 14, 14)", // Fondo exacto de tu galería underground
                 overflow: "hidden",
-                borderRadius: "15px",
-                border: "1px solid #333 !important",
+                borderRadius: "0px", // Bordes completamente rectos y agresivos (estilo brutalista)
+                border: "1px solid #333", // Unificación con los contenedores superiores
+                boxShadow: "none",
+                margin: "0 auto",
             }}
         >
             <div className="row g-0">
                 {/* IMAGEN / CARÁTULA */}
-                <div className="col-12 col-md-5">
-                    <div style={{ aspectRatio: "1/1", overflow: "hidden" }}>
+                <div
+                    className="col-12 col-md-5"
+                    style={{ borderRight: "1px solid #333" }}
+                >
+                    <div
+                        style={{
+                            aspectRatio: "1/1",
+                            overflow: "hidden",
+                            position: "relative",
+                        }}
+                    >
                         <img
                             src={image}
                             alt={nombre}
                             className="w-100 h-100"
-                            style={{ objectFit: "cover" }}
+                            style={{
+                                objectFit: "cover",
+                                filter: "grayscale(20%) brightness(90%)", // Le da un toque crudo y cinematográfico
+                            }}
                         />
                     </div>
                 </div>
 
                 {/* INFO DE LA CANCIÓN */}
                 <div className="col-12 col-md-7">
-                    <Card.Body className="p-4 p-lg-5 d-flex flex-column h-100">
+                    <Card.Body
+                        className="p-4 p-lg-5 d-flex flex-column h-100"
+                        style={{ backgroundColor: "rgb(18, 18, 18)" }}
+                    >
                         <div>
-                            <Card.Subtitle
-                                className="mb-4 text-white-50"
-                                style={{
-                                    fontSize: "1rem",
-                                    fontWeight: "300",
-                                }}
-                            >
-                                {artista}
-                            </Card.Subtitle>
-                            <div className="d-flex justify-content-between align-items-start mb-2">
-                                <Card.Title className="music-title text-white">
-                                    {nombre}
-                                </Card.Title>
+                            {/* Formato de comentario de código / metadato técnico */}
+                            <div className="d-flex justify-content-between align-items-center mb-4">
+                                <Card.Subtitle
+                                    className="text-white-50"
+                                    style={{
+                                        fontSize: "0.85rem",
+                                        fontFamily:
+                                            "'Roboto', 'Courier New', monospace",
+                                        letterSpacing: "1px",
+                                        textTransform: "uppercase",
+                                    }}
+                                >
+                                    // CRED: @
+                                    {artista
+                                        ?.toLowerCase()
+                                        .replace(/\s+/g, " ")}
+                                </Card.Subtitle>
+
                                 {etiqueta && (
-                                    <Badge
-                                        bg="secondary"
-                                        className="px-3 py-2 text-uppercase"
+                                    <span
+                                        style={{
+                                            fontFamily:
+                                                "'Roboto', 'Courier New', monospace",
+                                            fontSize: "0.75rem",
+                                            color: "#ff3e3e", // Rojo de alerta/sistema underground
+                                            border: "1px solid #ff3e3e",
+                                            padding: "2px 8px",
+                                            letterSpacing: "1px",
+                                        }}
                                     >
                                         {etiqueta}
-                                    </Badge>
+                                    </span>
                                 )}
                             </div>
+
+                            {/* Título de la pista principal en mayúsculas robustas */}
+                            <Card.Title
+                                className="music-title text-white mb-3"
+                                style={{
+                                    fontFamily: "'Roboto', sans-serif",
+                                    fontWeight: "800",
+                                    letterSpacing: "1.5px",
+                                    textTransform: "uppercase",
+                                    fontSize: "1.8rem",
+                                }}
+                            >
+                                {nombre}
+                            </Card.Title>
                         </div>
 
-                        <div className="mt-auto d-flex justify-content-between align-items-center border-top border-secondary pt-4">
+                        {/* SECCIÓN DEL BOTÓN */}
+                        <div
+                            className="mt-auto pt-4"
+                            style={{ borderTop: "1px solid #333" }}
+                        >
                             <MDBBtn
-                                // Mantengo tu atributo class intacto tal como lo usas
-                                class={`custom-button ${isButtonDisabled ? "clicked" : ""} d-flex align-items-center justify-content-center`}
+                                class={`custom-button ${isButtonDisabled ? "clicked" : ""} d-inline-flex align-items-center justify-content-center`}
                                 onClick={handleListenClick}
                                 disabled={isButtonDisabled}
                                 style={{
-                                    boxShadow: "none", // Evita destellos extraños de Bootstrap
-                                    outline: "none", // Elimina el borde de enfoque activo
-                                    height: "45px", // Forzamos una altura fija para que NUNCA cambie de tamaño al mutar el texto
-                                    padding: "0 15px",
-                                    transition: "all 0.2s ease",
-                                    minWidth: "200px", // Mantiene el ancho mínimo original de tu tarjeta de música
+                                    boxShadow: "none",
+                                    outline: "none",
+                                    height: "45px",
+                                    padding: "0 24px",
+                                    transition: "all 0.15s ease-in-out",
+                                    minWidth: "180px",
+                                    borderRadius: "0px", // Recto
+                                    fontFamily: "'Roboto', sans-serif",
+                                    fontSize: "0.85rem",
+                                    letterSpacing: "2px",
 
-                                    // TRUCO CONTROL ESTRICTO PARA EVITAR EL AZUL DE MDB CON DISABLED:
+                                    // Estilo invertido brutalista: botón blanco con texto negro, o borde sólido
                                     backgroundColor: isButtonDisabled
-                                        ? "rgb(45, 45, 45) !important"
-                                        : undefined,
+                                        ? "rgb(30, 30, 30)"
+                                        : "#fff",
                                     borderColor: isButtonDisabled
-                                        ? "#333 !important"
-                                        : undefined,
-                                    color: isButtonDisabled
-                                        ? "#aaa !important"
-                                        : undefined,
+                                        ? "#333"
+                                        : "#fff",
+                                    color: isButtonDisabled ? "#666" : "#000",
+                                    border: "1px solid",
+                                    fontWeight: "700",
                                 }}
                             >
                                 <MDBIcon
                                     fas
                                     icon={isButtonDisabled ? "check" : "play"}
                                     className="me-2"
+                                    style={{ fontSize: "0.8rem" }}
                                 />
-                                {/* Contenedor interno para evitar saltos bruscos en el texto */}
-                                <span
-                                    style={{
-                                        fontWeight: "600",
-                                        letterSpacing: "0.5px",
-                                    }}
-                                >
+                                <span style={{ fontWeight: "800" }}>
                                     {isButtonDisabled ? "OPENED" : "LISTEN NOW"}
                                 </span>
                             </MDBBtn>

@@ -93,15 +93,17 @@ function Menu() {
 
     const hideListCardNewest =
         location.pathname === "/store" ||
-        location.pathname === "/music" ||
+        location.pathname === "/gallery" ||
         location.pathname === "/legal-notice" ||
         location.pathname === "/about-us" ||
         location.pathname === "/blog";
 
     useEffect(() => {
         if (
+            location.pathname === "/gallery" ||
             location.pathname === "/about-us" ||
             location.pathname === "/legal-notice" ||
+            location.pathname === "/crudgallery" ||
             location.pathname === "/crudblogs" ||
             location.pathname === "/crudevents" ||
             location.pathname === "/login" ||
@@ -164,6 +166,13 @@ function Menu() {
                                         id="admin-nav-dropdown"
                                         className="custom-dropdown"
                                     >
+                                        <NavDropdown.Item
+                                            as={Link}
+                                            to="crudgallery"
+                                            className="dropdown-item"
+                                        >
+                                            Gallery Crud
+                                        </NavDropdown.Item>
                                         <NavDropdown.Item
                                             as={Link}
                                             to="crudblogs"
@@ -241,8 +250,8 @@ function Menu() {
                             <Nav.Link as={Link} to="blog">
                                 Blog
                             </Nav.Link>
-                            <Nav.Link as={Link} to="music">
-                                Music
+                            <Nav.Link as={Link} to="gallery">
+                                Gallery
                             </Nav.Link>
                             <Nav.Link as={Link} to="store">
                                 Store

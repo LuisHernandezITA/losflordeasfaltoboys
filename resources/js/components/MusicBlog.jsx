@@ -1,35 +1,42 @@
 import React, { useState, useEffect } from "react";
-import { Spinner, Navbar, Nav, Container, Row, Col } from "react-bootstrap";
+import { Spinner, Navbar, Nav, Container } from "react-bootstrap";
 import axios from "axios";
 import CardMusic from "./CardMusic";
 import "/resources/css/app.css";
 
 function MusicBlog() {
     const [musicData, setMusicData] = useState([]);
+    const [artworks, setArtworks] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    // --- ESTADOS PARA PAGINACIÓN ---
+    // --- ESTADOS PARA PAGINACIÓN ORIGINALES ---
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
 
     useEffect(() => {
-        const fetchMusic = async () => {
+        const fetchDashboardData = async () => {
             try {
-                const response = await axios.get(
-                    "http://127.0.0.1:8000/api/music_index",
-                );
-                // Invertimos la data para que los últimos registros (IDs más altos) salgan primero
-                setMusicData(response.data.reverse());
-                setLoading(false);
+                const [musicRes, galleryRes] = await Promise.all([
+                    axios.get("http://127.0.0.1:8000/api/music_index"),
+                    axios.get("http://localhost:8000/api/gallery_artworks"),
+                ]);
+
+                // Invertimos la data original para que los últimos registros de música salgan primero
+                setMusicData(musicRes.data.reverse());
+                setArtworks(galleryRes.data.data || []);
             } catch (error) {
-                console.error("Error fetching music:", error);
+                console.error(
+                    "Error fetching multimedia dashboard data:",
+                    error,
+                );
+            } finally {
                 setLoading(false);
             }
         };
-        fetchMusic();
+        fetchDashboardData();
     }, []);
 
-    // --- LÓGICA DE PAGINACIÓN ---
+    // --- LÓGICA DE PAGINACIÓN ORIGINAL ---
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
     const currentItems = musicData.slice(indexOfFirstItem, indexOfLastItem);
@@ -53,51 +60,204 @@ function MusicBlog() {
         );
     }
 
-    return (
-        <div>
-            <br />
-            <Navbar
-                expand="lg"
-                variant="dark"
-                style={{
-                    backgroundColor: "rgb(18, 18, 18)",
-                    borderBottom: "1px solid rgba(255,255,255,0.05)",
-                }}
-                className="shadow-sm py-3 w-100"
-            >
-                <Container className="px-4">
-                    <div className="d-flex align-items-center">
-                        <span
-                            className="glitch-text"
-                            style={{
-                                fontSize: "1.2rem",
-                                letterSpacing: "4px",
-                                opacity: "0.8",
-                                fontWeight: "300",
-                            }}
-                        >
-                            MUSIC ARCHIVE ♱༺༒︎⊰
-                        </span>
-                    </div>
-                    <Nav className="ms-auto d-none d-md-flex align-items-center">
-                        <span
-                            className="small text-uppercase"
-                            style={{
-                                color: "rgba(255,255,255,0.3)",
-                                letterSpacing: "2px",
-                                fontSize: "0.7rem",
-                            }}
-                        >
-                            {/* Cambia dinámicamente según la página actual */}
-                            Release Vol.{" "}
-                            {currentPage.toString().padStart(2, "0")} —{" "}
-                            {new Date().getFullYear()}
-                        </span>
-                    </Nav>
-                </Container>
-            </Navbar>
+    // --- LÓGICA DE TEMPORADA / METADATA DINÁMICA ---
+    const currentYearShort = new Date().getFullYear().toString().slice(-2);
+    const currentMonth = new Date().getMonth() + 1;
 
-            <div className="container-fluid px-md-5 mt-5">
+    let seasonNumber = "01";
+    if (currentMonth > 3 && currentMonth <= 6) seasonNumber = "02";
+    if (currentMonth > 6 && currentMonth <= 9) seasonNumber = "03";
+    if (currentMonth > 9) seasonNumber = "04";
+
+    const dynamicSeason = `${seasonNumber}/${currentYearShort}`;
+
+    // Duplicamos el array para que el efecto marquee infinito funcione sin cortes
+    const infiniteArtworks = [...artworks, ...artworks];
+
+    return (
+        <div style={{ backgroundColor: "#121212", minHeight: "100vh" }}>
+            {/* ==================================================================== */}
+            {/* 1. DIGITAL ART SHOWCASE (BANNER GIGANTE / MARQUEE LENTO)             */}
+            {/* ==================================================================== */}
+            {artworks.length > 0 && (
+                <div
+                    className="art-gallery-hero-container"
+                    style={{ borderBottom: "none", paddingTop: "40px" }}
+                >
+                    {/* ENCABEZADO BRUTALISTA UNDERGROUND CON DATOS DINÁMICOS */}
+                    <Container fluid className="px-md-5 mb-4">
+                        <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-end border-bottom border-secondary pb-3 opacity-75">
+                            <div>
+                                <span
+                                    style={{
+                                        fontSize: "0.75rem",
+                                        fontFamily: "monospace",
+                                        color: "crimson",
+                                        letterSpacing: "3px",
+                                        display: "block",
+                                        marginBottom: "4px",
+                                    }}
+                                >
+                                    // SYSTEM_DATA_STREAM
+                                </span>
+                                <h1
+                                    className="text-white m-0 text-uppercase fw-black"
+                                    style={{
+                                        letterSpacing: "3px",
+                                        fontSize: "2.2rem",
+                                        fontFamily:
+                                            "'Courier New', Courier, monospace",
+                                        lineHeight: "1",
+                                    }}
+                                >
+                                    UNDERGROUND_ART_ARCHIVE
+                                </h1>
+                            </div>
+
+                            {/* METADATOS DE TEMPORADA AUTOMATIZADOS */}
+                            <div
+                                className="mt-3 mt-md-0 text-md-end"
+                                style={{ fontFamily: "monospace" }}
+                            >
+                                <div
+                                    style={{
+                                        color: "#fff",
+                                        fontSize: "0.85rem",
+                                        letterSpacing: "2px",
+                                    }}
+                                >
+                                    SEASON:{" "}
+                                    <span className="bg-white text-black px-1 fw-bold">
+                                        {dynamicSeason}
+                                    </span>
+                                </div>
+                                <div
+                                    style={{
+                                        color: "#666",
+                                        fontSize: "0.7rem",
+                                        letterSpacing: "1px",
+                                        marginTop: "2px",
+                                    }}
+                                >
+                                    STATUS: ACTIVE_COLLECTION // VOL_
+                                    {currentPage.toString().padStart(2, "0")}
+                                </div>
+                            </div>
+                        </div>
+                    </Container>
+
+                    {/* CONTENEDOR DE LA GALERÍA (MARQUEE) */}
+                    <div className="art-marquee-container">
+                        {infiniteArtworks.map((art, idx) => (
+                            <div
+                                key={`${art.id}-${idx}`}
+                                className="card-art-exhibit"
+                            >
+                                {/* Marco de la imagen a 380px de alto */}
+                                <div className="art-frame bg-black mb-3">
+                                    <img src={art.image_url} alt={art.title} />
+                                </div>
+
+                                {/* Ficha técnica abajo de la obra */}
+                                <div className="small-mono text-start">
+                                    <div
+                                        className="text-white fw-bold text-uppercase border-bottom border-secondary pb-1 mb-2 text-truncate"
+                                        style={{
+                                            fontSize: "0.95rem",
+                                            letterSpacing: "0.5px",
+                                        }}
+                                    >
+                                        {art.title}
+                                    </div>
+                                    <div className="text-truncate text-secondary">
+                                        <span
+                                            style={{
+                                                color: "#ff0055",
+                                                fontWeight: "bold",
+                                            }}
+                                        >
+                                            CRED:
+                                        </span>{" "}
+                                        {art.autor}
+                                    </div>
+                                    <div className="text-truncate text-muted">
+                                        <span style={{ color: "#555" }}>
+                                            TECH:
+                                        </span>{" "}
+                                        {art.technique}
+                                    </div>
+                                    <div className="mt-2">
+                                        <span
+                                            className="px-2 py-1 bg-secondary text-black fw-bold"
+                                            style={{ fontSize: "0.7rem" }}
+                                        >
+                                            {art.year}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
+
+            {/* ==================================================================== */}
+            {/* 2. TRANSICIÓN CON DEGRADADO Y NAVBAR COMPACTO SIN FONDO             */}
+            {/* ==================================================================== */}
+            <div
+                style={{
+                    background:
+                        "linear-gradient(to bottom, #000000 0%, #0a0a0a 50%, #121212 100%)",
+                    paddingTop: "20px",
+                    paddingBottom: "20px",
+                }}
+            >
+                <Navbar
+                    expand="lg"
+                    variant="dark"
+                    style={{
+                        backgroundColor: "transparent",
+                        borderBottom: "none",
+                    }}
+                    className="py-2 w-100"
+                >
+                    <Container className="px-4">
+                        <div className="d-flex align-items-center">
+                            <span
+                                className="glitch-text"
+                                style={{
+                                    fontSize: "1.2rem",
+                                    letterSpacing: "4px",
+                                    opacity: "0.8",
+                                    fontWeight: "300",
+                                }}
+                            >
+                                DIGITAL ART & MUSIC VAULT ♱༺༒︎⊰
+                            </span>
+                        </div>
+                        <Nav className="ms-auto d-none d-md-flex align-items-center">
+                            <span
+                                className="small text-uppercase"
+                                style={{
+                                    color: "rgba(255,255,255,0.3)",
+                                    letterSpacing: "2px",
+                                    fontSize: "0.7rem",
+                                }}
+                            >
+                                Release Vol.{" "}
+                                {currentPage.toString().padStart(2, "0")} —{" "}
+                                {new Date().getFullYear()}
+                            </span>
+                        </Nav>
+                    </Container>
+                </Navbar>
+            </div>
+
+            {/* ==================================================================== */}
+            {/* 3. SECCIÓN INFERIOR: AUDIO ARCHIVE TRACKS CORRECTOS                 */}
+            {/* ==================================================================== */}
+            <div className="container-fluid px-md-5 mt-4">
+                {/* Lista de música con tus componentes estables */}
                 <div className="d-flex flex-column gap-5 align-items-center pb-5">
                     {currentItems.map((track) => (
                         <CardMusic
@@ -112,7 +272,7 @@ function MusicBlog() {
                     ))}
                 </div>
 
-                {/* --- CONTROLES DE PAGINACIÓN / VOLÚMENES --- */}
+                {/* --- CONTROLES DE PAGINACIÓN ORIGINALES --- */}
                 {totalPages > 1 && (
                     <div className="d-flex justify-content-center gap-3 mt-4 pb-5">
                         {[...Array(totalPages)].map((_, index) => (

@@ -15,6 +15,7 @@ use App\Models\Music;
 use App\Models\Event;
 use App\Models\EventImage;
 use App\Models\Blog;
+use App\Models\Gallery;
 use Illuminate\Support\Facades\Artisan;
 
 class DatabaseSeeder extends Seeder
@@ -44,6 +45,7 @@ class DatabaseSeeder extends Seeder
         $this->call(MusicSeeder::class);
         $this->call(EventSeeder::class);
         $this->call(BlogSeeder::class);
+        $this->call(GallerySeeder::class);
         User::factory(8)->create();
     }
 }

@@ -16,7 +16,8 @@ use App\Http\Controllers\BannerController;
 use App\Http\Controllers\MusicController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\BlogController; 
-use App\Http\Controllers\HomeController; // <-- Namespace importado correctamente
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\GalleryController; // <-- Controlador de Galería y Publicidad Irónica
 
 /*
 |--------------------------------------------------------------------------
@@ -50,6 +51,10 @@ Route::post('/blogs_show', [BlogController::class, 'show']);
 
 Route::post('/getProductSizes', [ProductSizesController::class, 'getProductSizes']);
 Route::post('/getProductColors', [ProductColorsController::class, 'getProductColors']);
+
+// --- NUEVAS RUTAS PÚBLICAS PARA LA GALERÍA Y PUBLICIDAD ---
+Route::get('/gallery_artworks', [GalleryController::class, 'getArtworks']); 
+Route::get('/gallery_active_ad', [GalleryController::class, 'getActiveAd']);
 
 
 // --- 2. RUTAS PARA USUARIOS NORMALES (Clientes logueados) ---
@@ -115,4 +120,11 @@ Route::middleware(['auth:api', 'isAdmin'])->group(function () {
     Route::post('/blogs_edit', [BlogController::class, 'edit']);           
     Route::put('/blogs_update/{id}', [BlogController::class, 'update']);   
     Route::delete('/blogs_destroy/{id}', [BlogController::class, 'destroy']); 
+
+    // --- NUEVO CRUD DE GALERÍA Y PUBLICIDAD PARA EL ADMINISTRADOR ---
+    Route::post('/gallery_store', [GalleryController::class, 'store']);         
+    Route::post('/gallery_edit', [GalleryController::class, 'edit']);           
+    Route::put('/gallery_update/{id}', [GalleryController::class, 'update']);   
+    Route::delete('/gallery_destroy/{id}', [GalleryController::class, 'destroy']); 
+    Route::post('/gallery_update_ad', [GalleryController::class, 'updateParodyAd']); // Ruta directa para el Banner de Publicidad
 });

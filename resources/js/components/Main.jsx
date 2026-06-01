@@ -16,6 +16,7 @@ import BlogView from "./BlogView";
 import CrudBlogs from "./CrudBlogs";
 import AvisoLegal from "./AvisoLegal";
 import AboutUs from "./AboutUs";
+import CrudGallery from "./CrudGallery";
 
 function Main() {
     return (
@@ -27,6 +28,7 @@ function Main() {
                     <Route path="about-us" element={<AboutUs />} />
                     <Route path="legal-notice" element={<AvisoLegal />} />
                     <Route path="blog" element={<BlogView />} />
+                    <Route path="crudgallery" element={<CrudGallery />} />
                     <Route path="crudblogs" element={<CrudBlogs />} />
                     <Route path="crudproducts" element={<Crud />} />
                     <Route path="crudevents" element={<CrudEvents />} />
@@ -34,7 +36,7 @@ function Main() {
                     <Route path="crudbanners" element={<CrudBanner />} />
                     <Route path="crudsongs" element={<CrudMusic />} />
                     <Route path="store" element={<ListCard />} />
-                    <Route path="music" element={<MusicBlog />} />
+                    <Route path="gallery" element={<MusicBlog />} />
                     <Route path="login" element={<Login_B />} />
                     <Route path="cart" element={<Cart />} />
                     <Route path="*" element={<Navigate replace to="/" />} />

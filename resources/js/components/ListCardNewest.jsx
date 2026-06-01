@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Spinner, Container, Badge } from "react-bootstrap";
+import { Spinner, Container } from "react-bootstrap";
 import { MDBBtn, MDBIcon } from "mdb-react-ui-kit";
 import axios from "axios";
 import Card_C from "./Card_C";
@@ -11,18 +11,23 @@ function ListCardNewest() {
         ultimoBlog: null,
         productos: [],
     });
+    const [activeAd, setActiveAd] = useState(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const getHomeData = async () => {
             try {
-                const response = await axios.get(
-                    "http://localhost:8000/api/home_data",
-                );
+                const [homeRes, adRes] = await Promise.all([
+                    axios.get("http://localhost:8000/api/home_data"),
+                    axios.get("http://localhost:8000/api/gallery_active_ad"),
+                ]);
+
                 setHomeData({
-                    ultimoBlog: response.data.ultimoBlog,
-                    productos: response.data.productos || [],
+                    ultimoBlog: homeRes.data.ultimoBlog,
+                    productos: homeRes.data.productos || [],
                 });
+
+                setActiveAd(adRes.data.data);
             } catch (error) {
                 console.error(
                     "Error cargando los datos de la home principal:",
@@ -56,11 +61,12 @@ function ListCardNewest() {
             className="px-3 px-md-5 py-4"
             style={{ backgroundColor: "#121212", minHeight: "100vh" }}
         >
-            {/* SECCIÓN 1: ÚLTIMO BLOG (ALTURA AUMENTADA A 480PX) */}
-            {/* SECCIÓN 1: ÚLTIMO BLOG + PUBLICIDAD PARÓDICA */}
+            {/* ==================================================================== */}
+            {/* SECCIÓN 1: ÚLTIMO BLOG + PUBLICIDAD PARÓDICA DINÁMICA                */}
+            {/* ==================================================================== */}
             {ultimoBlog && (
-                <div className="d-flex flex-column flex-md-row gap-4 mb-5">
-                    {/* CONTENEDOR DEL BLOG (Ocupa el espacio principal) */}
+                <div className="d-flex flex-column flex-md-row gap-4 mb-5 border-bottom border-secondary pb-5">
+                    {/* CONTENEDOR DEL BLOG */}
                     <div
                         className="position-relative rounded-0 shadow flex-grow-1"
                         style={{
@@ -153,54 +159,66 @@ function ListCardNewest() {
                         </div>
                     </div>
 
-                    {/* ESPACIO DE PUBLICIDAD PARÓDICA */}
-                    <div
-                        className="d-flex flex-column justify-content-between text-center align-items-center position-relative"
-                        style={{
-                            flex: "0 0 240px", // Ancho fijo ideal para un banner vertical en web (Skyscraper)
-                            height: "480px",
-                            border: "2px solid #ff0055", // Borde agresivo y chillón típico de anuncios
-                            backgroundColor: "#000",
-                            overflow: "hidden",
-                        }}
-                    >
-                        {/* Pequeña etiqueta de aviso (opcional para simular más realismo web) */}
-                        <span
+                    {/* ESPACIO DE PUBLICIDAD PARÓDICA DINÁMICA */}
+                    {activeAd && (
+                        <div
+                            className="d-flex flex-column justify-content-between text-center align-items-center position-relative"
                             style={{
-                                color: "#ff0055",
-                                fontSize: "10px",
-                                letterSpacing: "2px",
-                                fontWeight: "bold",
-                                paddingTop: "5px",
-                                position: "absolute",
-                                top: 0,
-                                zIndex: 3,
+                                flex: "0 0 240px",
+                                height: "480px",
+                                border: "2px solid #ff0055",
+                                backgroundColor: "#000",
+                                overflow: "hidden",
                             }}
                         >
-                            [ SPONSORED AD ]
-                        </span>
+                            <span
+                                style={{
+                                    color: "#ff0055",
+                                    fontSize: "10px",
+                                    letterSpacing: "2px",
+                                    fontWeight: "bold",
+                                    paddingTop: "5px",
+                                    position: "absolute",
+                                    top: 0,
+                                    zIndex: 3,
+                                    backgroundColor: "rgba(0,0,0,0.7)",
+                                    width: "100%",
+                                }}
+                            >
+                                [ {activeAd.title || "SPONSORED AD"} ]
+                            </span>
 
-                        {/* Imagen del anuncio falso */}
-                        <img
-                            src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=240&auto=format&fit=crop" // Placeholder temporal, cámbialo por tu arte
-                            alt="Parody Advertisement"
-                            className="w-100 h-100 object-fit-cover"
-                            style={{
-                                transition: "transform 0.3s ease",
-                                cursor: "pointer",
-                            }}
-                            onClick={() =>
-                                alert(
-                                    "¡Felicidades, eres el visitante número 1,000,000! ʘ‿ʘ",
-                                )
-                            }
-                        />
-                    </div>
+                            <a
+                                href={activeAd.ad_link_url || "#!"}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="w-100 h-100"
+                            >
+                                <picture>
+                                    <source
+                                        media="(max-width: 767px)"
+                                        srcSet={activeAd.ad_image_mobile}
+                                    />
+                                    <img
+                                        src={activeAd.ad_image_desktop}
+                                        alt="Parody Advertisement"
+                                        className="w-100 h-100 object-fit-cover"
+                                        style={{
+                                            transition: "transform 0.3s ease",
+                                            cursor: "pointer",
+                                        }}
+                                    />
+                                </picture>
+                            </a>
+                        </div>
+                    )}
                 </div>
             )}
 
-            {/* SECCIÓN 2: NUEVOS PRODUCTOS */}
-            <div className="mt-5">
+            {/* ==================================================================== */}
+            {/* SECCIÓN 2: NUEVOS PRODUCTOS                                          */}
+            {/* ==================================================================== */}
+            <div className="pt-2">
                 <div className="d-flex align-items-center mb-4 px-2">
                     <h2
                         className="text-white m-0 text-uppercase fw-bold"
@@ -211,7 +229,6 @@ function ListCardNewest() {
                     <div className="flex-grow-1 ms-3 border-top border-secondary opacity-25"></div>
                 </div>
 
-                {/* CONTENEDOR CARRUSEL UNIFICADO WEB/MÓVIL */}
                 <div className="custom-horizontal-carousel-container position-relative">
                     <div className="custom-horizontal-carousel d-flex flex-nowrap px-2 pb-3">
                         {Array.isArray(productos) &&

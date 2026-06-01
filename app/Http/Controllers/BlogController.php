@@ -9,9 +9,6 @@ use Illuminate\Support\Str;
 
 class BlogController extends Controller
 {
-    /**
-     * Mostrar todos los blogs en el feed público (ordenados por fecha de publicación).
-     */
     public function index()
     {
         try {
@@ -22,9 +19,6 @@ class BlogController extends Controller
         }
     }
 
-    /**
-     * Crear un nuevo post (Admin).
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -34,13 +28,22 @@ class BlogController extends Controller
             'author' => 'required|string|max:255',
             'published_at' => 'required|date',
             'category' => 'nullable|string|max:255',
-            'content' => 'required|string',
+            'content' => 'required|string', // Párrafo principal
+            'content_secondary' => 'nullable|string', // Párrafo secundario opcional
+            'extra_image' => 'nullable|url',
+            'image_position' => 'nullable|in:left,right',
+            'youtube_url' => 'nullable|url',
             'external_url' => 'nullable|url',
         ]);
 
         try {
             if (empty($validated['slug'])) {
                 $validated['slug'] = Str::slug($validated['title']);
+            }
+
+            // Asignar valor por defecto si no se especifica posición
+            if (empty($validated['image_position'])) {
+                $validated['image_position'] = 'left';
             }
 
             $blog = Blog::create($validated);
@@ -50,13 +53,9 @@ class BlogController extends Controller
         }
     }
 
-    /**
-     * Mostrar una sola nota en React (Vía POST amigable por id o por slug).
-     */
     public function show(Request $request)
     {
         try {
-            // Buscamos prioritariamente por ID si React lo provee, de lo contrario usamos el slug para URLs estéticas
             $blog = null;
             if ($request->has('id')) {
                 $blog = Blog::find($request->id);
@@ -74,14 +73,10 @@ class BlogController extends Controller
         }
     }
 
-    /**
-     * Cargar los datos de la nota para el formulario de edición del Admin modal.
-     */
     public function edit(Request $request)
     {
         try {
             $blog = Blog::find($request->id);
-
             if ($blog) {
                 return response()->json($blog, 200);
             } else {
@@ -92,9 +87,6 @@ class BlogController extends Controller
         }
     }
 
-    /**
-     * Actualizar una nota existente.
-     */
     public function update(Request $request, $id)
     {
         $blog = Blog::find($id);
@@ -111,6 +103,10 @@ class BlogController extends Controller
             'published_at' => 'sometimes|required|date',
             'category' => 'nullable|string|max:255',
             'content' => 'sometimes|required|string',
+            'content_secondary' => 'nullable|string',
+            'extra_image' => 'nullable|url',
+            'image_position' => 'nullable|in:left,right',
+            'youtube_url' => 'nullable|url',
             'external_url' => 'nullable|url',
         ]);
 
@@ -126,18 +122,13 @@ class BlogController extends Controller
         }
     }
 
-    /**
-     * Eliminar una nota.
-     */
     public function destroy($id)
     {
         try {
             $blog = Blog::find($id);
-
             if (!$blog) {
                 return response()->json(['message' => 'Post no encontrado'], 404);
             }
-
             $blog->delete();
             return response()->json(['message' => 'Post eliminado correctamente'], 200);
         } catch (\Exception $e) {

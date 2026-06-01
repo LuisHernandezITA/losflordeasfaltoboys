@@ -15,7 +15,8 @@ use App\Http\Controllers\ShoppingCartController;
 use App\Http\Controllers\BannerController;
 use App\Http\Controllers\MusicController;
 use App\Http\Controllers\EventController;
-use App\Http\Controllers\BlogController; // <-- Namespace del controlador del Blog
+use App\Http\Controllers\BlogController; 
+use App\Http\Controllers\HomeController; // <-- Namespace importado correctamente
 
 /*
 |--------------------------------------------------------------------------
@@ -26,6 +27,9 @@ use App\Http\Controllers\BlogController; // <-- Namespace del controlador del Bl
 // --- 1. RUTAS PÚBLICAS (Cualquier visitante las ve) ---
 Route::post('register', [RegisterController::class, 'register']);
 Route::post('login', [RegisterController::class, 'login']);
+
+// RUTA PARA LA VISTA PRINCIPAL (Trae el último blog y los 3 productos)
+Route::get('/home_data', [HomeController::class, 'index']); 
 
 Route::get('/products_index', [ProductsController::class, 'index']);
 Route::get('/products_newest', [ProductsController::class, 'newest']);
@@ -41,8 +45,8 @@ Route::get('/events_index', [EventController::class, 'index']);
 Route::post('/events_show', [EventController::class, 'show']);
 
 // --- NUEVAS RUTAS PÚBLICAS PARA EL BLOG ---
-Route::get('/blogs_index', [BlogController::class, 'index']); // Lista el feed general de notas
-Route::post('/blogs_show', [BlogController::class, 'show']);   // Abre la nota por ID o slug desde React
+Route::get('/blogs_index', [BlogController::class, 'index']); 
+Route::post('/blogs_show', [BlogController::class, 'show']);   
 
 Route::post('/getProductSizes', [ProductSizesController::class, 'getProductSizes']);
 Route::post('/getProductColors', [ProductColorsController::class, 'getProductColors']);
@@ -107,8 +111,8 @@ Route::middleware(['auth:api', 'isAdmin'])->group(function () {
     Route::delete('/events_destroy/{id}', [EventController::class, 'destroy']); 
 
     // --- NUEVO CRUD DE BLOGS PARA EL ADMINISTRADOR ---
-    Route::post('/blogs_store', [BlogController::class, 'store']);         // Crea una nota en el panel
-    Route::post('/blogs_edit', [BlogController::class, 'edit']);           // Carga la información en el modal de edición
-    Route::put('/blogs_update/{id}', [BlogController::class, 'update']);   // Procesa los cambios de la nota
-    Route::delete('/blogs_destroy/{id}', [BlogController::class, 'destroy']); // Borra la nota definitivamente
+    Route::post('/blogs_store', [BlogController::class, 'store']);         
+    Route::post('/blogs_edit', [BlogController::class, 'edit']);           
+    Route::put('/blogs_update/{id}', [BlogController::class, 'update']);   
+    Route::delete('/blogs_destroy/{id}', [BlogController::class, 'destroy']); 
 });

@@ -16,7 +16,11 @@ return new class extends Migration
             $table->string('author');
             $table->date('published_at');
             $table->string('category')->nullable();
-            $table->longText('content');
+            $table->longText('content'); // Actuará como Párrafo 1
+            $table->longText('content_secondary')->nullable(); // Párrafo 2 Opcional
+            $table->string('extra_image')->nullable(); // Imagen Extra Opcional
+            $table->enum('image_position', ['left', 'right'])->default('left'); // Orientación
+            $table->string('youtube_url')->nullable(); // Enlace de video Opcional
             $table->string('external_url')->nullable();
             $table->timestamps();
         });

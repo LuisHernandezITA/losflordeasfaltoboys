@@ -14,6 +14,8 @@ import CrudEvents from "./CrudEvents";
 import EventView from "./EventView";
 import BlogView from "./BlogView";
 import CrudBlogs from "./CrudBlogs";
+import AvisoLegal from "./AvisoLegal";
+import AboutUs from "./AboutUs";
 
 function Main() {
     return (
@@ -22,6 +24,8 @@ function Main() {
                 <Route path="/" element={<Menu />}>
                     <Route path="item/:id" element={<Product />} />
                     <Route path="events/:id" element={<EventView />} />
+                    <Route path="about-us" element={<AboutUs />} />
+                    <Route path="legal-notice" element={<AvisoLegal />} />
                     <Route path="blog" element={<BlogView />} />
                     <Route path="crudblogs" element={<CrudBlogs />} />
                     <Route path="crudproducts" element={<Crud />} />

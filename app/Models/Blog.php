@@ -18,6 +18,10 @@ class Blog extends Model
         'published_at',
         'category',
         'content',
+        'content_secondary',
+        'extra_image',
+        'image_position',
+        'youtube_url',
         'external_url',
     ];
 
@@ -25,7 +29,6 @@ class Blog extends Model
         'published_at' => 'date',
     ];
 
-    // Boot method para generar el slug automáticamente al crear un blog si no se envía de forma explícita
     protected static function boot()
     {
         parent::boot();

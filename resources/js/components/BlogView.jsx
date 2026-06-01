@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Spinner, Container, Navbar, Nav } from "react-bootstrap";
+import { Spinner, Container, Navbar, Nav, Row, Col } from "react-bootstrap";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { MDBTypography, MDBIcon, MDBBtn } from "mdb-react-ui-kit";
@@ -49,6 +49,15 @@ function BlogView() {
             return path;
         }
         return `http://127.0.0.1:8000${path}`;
+    };
+
+    // --- UTILERÍA PARA EXTRAER EL ID DE YOUTUBE ---
+    const getYouTubeId = (url) => {
+        if (!url) return null;
+        const regExp =
+            /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+        const match = url.match(regExp);
+        return match && match[2].length === 11 ? match[2] : null;
     };
 
     if (loading) {
@@ -129,184 +138,292 @@ function BlogView() {
 
             {/* Contenedor del Feed de Blogs */}
             <div className="blog-feed-stream">
-                {currentItems.map((post) => (
-                    <article
-                        key={post.id}
-                        style={{
-                            borderBottom: "2px dashed #222222", // Un poco más sutil que antes
-                            paddingBottom: "40px", // Reducido de 80px a 40px
-                            marginBottom: "40px", // Reducido de 60px a 40px para juntar más los blogs
-                        }}
-                    >
-                        {/* 1. BANNER LARGO CON TÍTULO SOBREPUESTO */}
-                        <div
-                            className="blog-banner-container"
+                {currentItems.map((post) => {
+                    const ytId = getYouTubeId(post.youtube_url);
+
+                    return (
+                        <article
+                            key={post.id}
                             style={{
-                                width: "100%",
-                                height: "65vh",
-                                backgroundImage: `linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.85)), url(${renderImagePath(post.banner)})`,
-                                backgroundSize: "cover",
-                                backgroundPosition: "center",
-                                position: "relative",
-                                display: "flex",
-                                alignItems: "flex-end",
-                                paddingBottom: "4vh",
+                                borderBottom: "2px dashed #222222",
+                                paddingBottom: "40px",
+                                marginBottom: "40px",
                             }}
                         >
+                            {/* 1. BANNER LARGO CON TÍTULO SOBREPUESTO */}
                             <div
+                                className="blog-banner-container"
                                 style={{
-                                    paddingLeft: "5%",
-                                    paddingRight: "5%",
                                     width: "100%",
+                                    height: "65vh",
+                                    backgroundImage: `linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.85)), url(${renderImagePath(post.banner)})`,
+                                    backgroundSize: "cover",
+                                    backgroundPosition: "center",
+                                    position: "relative",
+                                    display: "flex",
+                                    alignItems: "flex-end",
+                                    paddingBottom: "4vh",
                                 }}
-                            >
-                                <h1
-                                    style={{
-                                        backgroundColor: "#ffffff",
-                                        color: "#000000",
-                                        display: "inline-block",
-                                        padding: "10px 25px",
-                                        fontFamily:
-                                            "Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif",
-                                        fontSize: "clamp(2rem, 5vw, 4rem)",
-                                        textTransform: "uppercase",
-                                        lineHeight: "1",
-                                        transform: "rotate(-0.5deg)",
-                                        boxShadow: "6px 6px 0px #000000",
-                                        maxWidth: "90%",
-                                        wordWrap: "break-word",
-                                    }}
-                                >
-                                    {post.title}
-                                </h1>
-                            </div>
-                        </div>
-
-                        {/* 2. DATOS DE LA NOTA */}
-                        <div style={{ padding: "20px 5% 10px 5%" }}>
-                            <Container
-                                fluid
-                                style={{ maxWidth: "700px", padding: 0 }}
                             >
                                 <div
-                                    className="d-flex flex-wrap gap-4 align-items-center"
                                     style={{
-                                        color: "#666",
-                                        fontSize: "0.8rem",
-                                        letterSpacing: "2px",
+                                        paddingLeft: "5%",
+                                        paddingRight: "5%",
+                                        width: "100%",
                                     }}
                                 >
-                                    <span>
-                                        <MDBIcon
-                                            fas
-                                            icon="user"
-                                            className="me-2"
-                                        />{" "}
-                                        {post.author.toUpperCase()}
-                                    </span>
-                                    <span>
-                                        <MDBIcon
-                                            fas
-                                            icon="calendar-alt"
-                                            className="me-2"
-                                        />{" "}
-                                        {post.published_at}
-                                    </span>
-                                    {post.category && (
-                                        <span
-                                            style={{
-                                                backgroundColor: "crimson", // Ajustado a la paleta musical
-                                                color: "#fff",
-                                                padding: "1px 8px",
-                                                fontSize: "0.75rem",
-                                                fontWeight: "bold",
-                                            }}
-                                        >
-                                            {post.category.toUpperCase()}
-                                        </span>
-                                    )}
-                                </div>
-                            </Container>
-                        </div>
-
-                        {/* 3. CONTENIDO DEL CUERPO */}
-                        <div
-                            className="event-content-wrapper"
-                            style={{
-                                marginTop: "15px",
-                                backgroundColor: "transparent",
-                                border: "none",
-                                boxShadow: "none",
-                                padding: "0 5%",
-                            }}
-                        >
-                            <div
-                                className="blog-body-text"
-                                style={{
-                                    fontSize: "1.05rem",
-                                    lineHeight: "1.75",
-                                    color: "#b3b3b3",
-                                    textAlign: "left",
-                                    maxWidth: "950px", // ← Incrementado aquí para que el texto se expanda más a lo ancho
-                                    margin: "0 auto",
-                                }}
-                            >
-                                {post.content
-                                    .split("\n")
-                                    .map((paragraph, index) => (
-                                        <p key={index} className="mb-3">
-                                            {paragraph}
-                                        </p>
-                                    ))}
-                            </div>
-
-                            {/* 4. ENLACE EXTERNO ADAPTADO (Más pequeño y con estilo Music) */}
-                            {post.external_url && (
-                                <div className="text-center mt-4">
-                                    <MDBBtn
-                                        href={post.external_url}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="d-inline-flex align-items-center justify-content-center"
+                                    <h1
                                         style={{
-                                            boxShadow: "none",
-                                            outline: "none",
-                                            backgroundColor: "transparent",
-                                            border: "1px solid crimson",
-                                            color: "#ffffff",
-                                            height: "38px", // Reducido de 45px (Botón más compacto)
-                                            padding: "0 20px", // Más angosto lateralmente
-                                            fontSize: "0.75rem", // Texto más fino y sutil
-                                            letterSpacing: "2px",
+                                            backgroundColor: "#ffffff",
+                                            color: "#000000",
+                                            display: "inline-block",
+                                            padding: "10px 25px",
+                                            fontFamily:
+                                                "Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif",
+                                            fontSize: "clamp(2rem, 5vw, 4rem)",
                                             textTransform: "uppercase",
-                                            borderRadius: "0px", // Manteniendo el corte fanzine recto
-                                            transition: "all 0.2s ease",
-                                        }}
-                                        onMouseOver={(e) => {
-                                            e.currentTarget.style.backgroundColor =
-                                                "rgba(220, 20, 60, 0.1)";
-                                        }}
-                                        onMouseOut={(e) => {
-                                            e.currentTarget.style.backgroundColor =
-                                                "transparent";
+                                            lineHeight: "1",
+                                            transform: "rotate(-0.5deg)",
+                                            boxShadow: "6px 6px 0px #000000",
+                                            maxWidth: "90%",
+                                            wordWrap: "break-word",
                                         }}
                                     >
-                                        VER PROYECTO
-                                        <MDBIcon
-                                            fas
-                                            icon="external-link-alt"
-                                            className="ms-2"
-                                            style={{
-                                                fontSize: "0.7rem",
-                                                color: "crimson",
-                                            }}
-                                        />
-                                    </MDBBtn>
+                                        {post.title}
+                                    </h1>
                                 </div>
-                            )}
-                        </div>
-                    </article>
-                ))}
+                            </div>
+
+                            {/* 2. DATOS DE LA NOTA */}
+                            <div style={{ padding: "20px 5% 10px 5%" }}>
+                                <Container
+                                    fluid
+                                    style={{ maxWidth: "950px", padding: 0 }}
+                                >
+                                    <div
+                                        className="d-flex flex-wrap gap-4 align-items-center"
+                                        style={{
+                                            color: "#666",
+                                            fontSize: "0.8rem",
+                                            letterSpacing: "2px",
+                                        }}
+                                    >
+                                        <span>
+                                            <MDBIcon
+                                                fas
+                                                icon="user"
+                                                className="me-2"
+                                            />{" "}
+                                            {post.author.toUpperCase()}
+                                        </span>
+                                        <span>
+                                            <MDBIcon
+                                                fas
+                                                icon="calendar-alt"
+                                                className="me-2"
+                                            />{" "}
+                                            {post.published_at}
+                                        </span>
+                                        {post.category && (
+                                            <span
+                                                style={{
+                                                    backgroundColor: "crimson",
+                                                    color: "#fff",
+                                                    padding: "1px 8px",
+                                                    fontSize: "0.75rem",
+                                                    fontWeight: "bold",
+                                                }}
+                                            >
+                                                {post.category.toUpperCase()}
+                                            </span>
+                                        )}
+                                    </div>
+                                </Container>
+                            </div>
+
+                            {/* 3. CUERPO DE CONTENIDO DINÁMICO & ASIMÉTRICO */}
+                            <div style={{ padding: "0 5%", marginTop: "15px" }}>
+                                <Container
+                                    fluid
+                                    style={{ maxWidth: "950px", padding: 0 }}
+                                >
+                                    {!post.extra_image ? (
+                                        /* CASO A: Layout Estándar (Sin imagen extra) */
+                                        <div
+                                            style={{
+                                                fontSize: "1.05rem",
+                                                lineHeight: "1.75",
+                                                color: "#b3b3b3",
+                                            }}
+                                        >
+                                            {post.content
+                                                .split("\n")
+                                                .map((p, i) => (
+                                                    <p key={i} className="mb-3">
+                                                        {p}
+                                                    </p>
+                                                ))}
+                                            {post.content_secondary &&
+                                                post.content_secondary
+                                                    .split("\n")
+                                                    .map((p, i) => (
+                                                        <p
+                                                            key={i}
+                                                            className="mb-3"
+                                                        >
+                                                            {p}
+                                                        </p>
+                                                    ))}
+                                        </div>
+                                    ) : (
+                                        /* CASO B: Layout Dinámico (Con imagen extra lateral a la izquierda o derecha) */
+                                        <Row
+                                            className={`align-items-start ${post.image_position === "right" ? "flex-row-reverse" : ""}`}
+                                        >
+                                            {/* Columna de la Imagen */}
+                                            <Col
+                                                xs={12}
+                                                md={5}
+                                                className="mb-4 mb-md-0"
+                                            >
+                                                <div
+                                                    style={{
+                                                        border: "1px solid rgba(255,255,255,0.15)",
+                                                        padding: "6px",
+                                                        backgroundColor: "#111",
+                                                        boxShadow:
+                                                            post.image_position ===
+                                                            "right"
+                                                                ? "-8px 8px 0px #111"
+                                                                : "8px 8px 0px #111",
+                                                    }}
+                                                >
+                                                    <img
+                                                        src={renderImagePath(
+                                                            post.extra_image,
+                                                        )}
+                                                        alt="Extra content visual"
+                                                        className="img-fluid w-100"
+                                                        style={{
+                                                            filter: "grayscale(20%)",
+                                                            display: "block",
+                                                        }}
+                                                    />
+                                                </div>
+                                            </Col>
+
+                                            {/* Columna de los Párrafos */}
+                                            <Col
+                                                xs={12}
+                                                md={7}
+                                                style={{
+                                                    fontSize: "1.05rem",
+                                                    lineHeight: "1.75",
+                                                    color: "#b3b3b3",
+                                                }}
+                                            >
+                                                <div className="mb-3">
+                                                    {post.content
+                                                        .split("\n")
+                                                        .map((p, i) => (
+                                                            <p
+                                                                key={i}
+                                                                className="mb-3"
+                                                            >
+                                                                {p}
+                                                            </p>
+                                                        ))}
+                                                </div>
+                                                {post.content_secondary && (
+                                                    <div>
+                                                        {post.content_secondary
+                                                            .split("\n")
+                                                            .map((p, i) => (
+                                                                <p
+                                                                    key={i}
+                                                                    className="mb-3"
+                                                                >
+                                                                    {p}
+                                                                </p>
+                                                            ))}
+                                                    </div>
+                                                )}
+                                            </Col>
+                                        </Row>
+                                    )}
+
+                                    {/* 4. SECCIÓN DE VIDEO YOUTUBE (Antes del botón interactivo) */}
+                                    {ytId && (
+                                        <div
+                                            className="my-5 mx-auto"
+                                            style={{ maxWidth: "800px" }}
+                                        >
+                                            <div
+                                                className="ratio ratio-16x9 shadow-lg"
+                                                style={{
+                                                    border: "1px solid rgba(255,255,255,0.1)",
+                                                }}
+                                            >
+                                                <iframe
+                                                    src={`https://www.youtube.com/embed/${ytId}`}
+                                                    title="YouTube video player"
+                                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                                    allowFullScreen
+                                                ></iframe>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* 5. ENLACE EXTERNO INTERACTIVO */}
+                                    {post.external_url && (
+                                        <div className="text-center mt-5">
+                                            <MDBBtn
+                                                href={post.external_url}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="d-inline-flex align-items-center justify-content-center"
+                                                style={{
+                                                    boxShadow: "none",
+                                                    outline: "none",
+                                                    backgroundColor:
+                                                        "transparent",
+                                                    border: "1px solid crimson",
+                                                    color: "#ffffff",
+                                                    height: "38px",
+                                                    padding: "0 20px",
+                                                    fontSize: "0.75rem",
+                                                    letterSpacing: "2px",
+                                                    textTransform: "uppercase",
+                                                    borderRadius: "0px",
+                                                    transition: "all 0.2s ease",
+                                                }}
+                                                onMouseOver={(e) => {
+                                                    e.currentTarget.style.backgroundColor =
+                                                        "rgba(220, 20, 60, 0.1)";
+                                                }}
+                                                onMouseOut={(e) => {
+                                                    e.currentTarget.style.backgroundColor =
+                                                        "transparent";
+                                                }}
+                                            >
+                                                VER PROYECTO
+                                                <MDBIcon
+                                                    fas
+                                                    icon="external-link-alt"
+                                                    className="ms-2"
+                                                    style={{
+                                                        fontSize: "0.7rem",
+                                                        color: "crimson",
+                                                    }}
+                                                />
+                                            </MDBBtn>
+                                        </div>
+                                    )}
+                                </Container>
+                            </div>
+                        </article>
+                    );
+                })}
             </div>
 
             {/* CONTROLES DE PAGINACIÓN */}

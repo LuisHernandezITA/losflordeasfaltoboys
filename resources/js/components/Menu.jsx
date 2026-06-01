@@ -94,10 +94,14 @@ function Menu() {
     const hideListCardNewest =
         location.pathname === "/store" ||
         location.pathname === "/music" ||
+        location.pathname === "/legal-notice" ||
+        location.pathname === "/about-us" ||
         location.pathname === "/blog";
 
     useEffect(() => {
         if (
+            location.pathname === "/about-us" ||
+            location.pathname === "/legal-notice" ||
             location.pathname === "/crudblogs" ||
             location.pathname === "/crudevents" ||
             location.pathname === "/login" ||
@@ -140,8 +144,8 @@ function Menu() {
                         <img
                             alt="Logo"
                             src="/img/logosmc.svg"
-                            width="150"
-                            height="45"
+                            width="95"
+                            height="50"
                             className="d-inline-block align-top logo"
                         />
                     </Navbar.Brand>
@@ -297,13 +301,6 @@ function Menu() {
             )}
             {showCarousel && <Carrousel />}
             {!hideListCardNewest && showCarousel && <ListCardNewest />}
-            {!hideListCardNewest && showCarousel && (
-                <div className="text-center mb-5">
-                    <Link to="/store" className="ver-todo-link">
-                        SEE ALL <i className="fas fa-eye"></i>
-                    </Link>
-                </div>
-            )}
             <section>
                 <Container fluid className="px-0">
                     <Outlet></Outlet>

@@ -16,25 +16,41 @@ function Footer() {
             {/* Sección de redes sociales con borde sutil */}
             <section className="d-flex justify-content-center justify-content-lg-between p-4 border-bottom border-secondary">
                 <div className="me-5 d-none d-lg-block">
-                    <span>Get connected with us on social networks:</span>
+                    <span>Conecta con nosotros mi am0o0r!</span>
                 </div>
 
                 <div>
-                    {/* Cambié color="secondary" por "light" para que resalten en el fondo oscuro */}
-                    <a href="" className="me-4 text-reset">
-                        <MDBIcon fab icon="facebook-f" color="light" />
+                    <a
+                        href="https://www.youtube.com/@losflordeasfaltoboys"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="me-4 text-reset custom-footer-icon"
+                    >
+                        <MDBIcon fab icon="youtube" color="light" />
                     </a>
-                    <a href="" className="me-4 text-reset">
-                        <MDBIcon fab icon="twitter" color="light" />
-                    </a>
-                    <a href="" className="me-4 text-reset">
-                        <MDBIcon fab icon="google" color="light" />
-                    </a>
-                    <a href="" className="me-4 text-reset">
+                    <a
+                        href="https://instagram.com/losflordeasfalto"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="me-4 text-reset custom-footer-icon"
+                    >
                         <MDBIcon fab icon="instagram" color="light" />
                     </a>
-                    <a href="" className="me-4 text-reset">
-                        <MDBIcon fab icon="github" color="light" />
+                    <a
+                        href="https://open.spotify.com/intl-es/artist/1Bp0YWLVnkxrJ9SJE4RS1E"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="me-4 text-reset custom-footer-icon"
+                    >
+                        <MDBIcon fab icon="spotify" color="light" />
+                    </a>
+                    <a
+                        href="https://www.tiktok.com/@losflordeasfaltoboys"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="me-4 text-reset custom-footer-icon"
+                    >
+                        <MDBIcon fab icon="tiktok" color="light" />
                     </a>
                 </div>
             </section>
@@ -58,49 +74,42 @@ function Footer() {
                             <p className="text-white-50">
                                 {" "}
                                 {/* Texto un poco más suave que el blanco puro */}
-                                Your store description goes here. Elevating
-                                Mexican culture through premium snuff products.
+                                Hu0la, esta web es para difusión artistica, te
+                                amamos, esperamos verte pronto!
                             </p>
                         </MDBCol>
 
                         <MDBCol md="2" lg="2" xl="2" className="mx-auto mb-4">
                             <h6 className="text-uppercase fw-bold mb-4">
-                                Products
+                                Productos
                             </h6>
                             <p>
-                                <a href="#!" className="text-white-50">
+                                <a href="/store" className="text-white-50">
                                     Store
                                 </a>
                             </p>
                             <p>
-                                <a href="#!" className="text-white-50">
-                                    New Arrivals
-                                </a>
-                            </p>
-                            <p>
-                                <a href="#!" className="text-white-50">
-                                    Featured
+                                <a href="/blogs" className="text-white-50">
+                                    Blogs
                                 </a>
                             </p>
                         </MDBCol>
 
                         <MDBCol md="3" lg="2" xl="2" className="mx-auto mb-4">
                             <h6 className="text-uppercase fw-bold mb-4">
-                                Useful links
+                                Links
                             </h6>
                             <p>
-                                <a href="#!" className="text-white-50">
-                                    Pricing
+                                <a href="/about-us" className="text-white-50">
+                                    Nosotros
                                 </a>
                             </p>
                             <p>
-                                <a href="#!" className="text-white-50">
-                                    Orders
-                                </a>
-                            </p>
-                            <p>
-                                <a href="#!" className="text-white-50">
-                                    Help
+                                <a
+                                    href="/legal-notice"
+                                    className="text-white-50"
+                                >
+                                    Avisos Legales
                                 </a>
                             </p>
                         </MDBCol>
@@ -112,7 +121,7 @@ function Footer() {
                             className="mx-auto mb-md-0 mb-4"
                         >
                             <h6 className="text-uppercase fw-bold mb-4">
-                                Contact
+                                Contacto
                             </h6>
                             <p>
                                 <MDBIcon
@@ -120,7 +129,7 @@ function Footer() {
                                     className="me-2"
                                     color="light"
                                 />{" "}
-                                Mexico City, MX
+                                Aguascalientes, MX
                             </p>
                             <p>
                                 <MDBIcon
@@ -128,7 +137,7 @@ function Footer() {
                                     className="me-3"
                                     color="light"
                                 />{" "}
-                                info@snuffmexa.com
+                                losoutsiders420@gmail.com
                             </p>
                             <p>
                                 <MDBIcon
@@ -136,7 +145,7 @@ function Footer() {
                                     className="me-3"
                                     color="light"
                                 />{" "}
-                                + 52 55 1234 5678
+                                + 01 800 NOTENEMOS
                             </p>
                         </MDBCol>
                     </MDBRow>
@@ -153,7 +162,7 @@ function Footer() {
             >
                 © 2026 Copyright:
                 <a className="text-reset fw-bold ms-1" href="#">
-                    Snuff Mexa Cult
+                    Los Flor de Asfalto
                 </a>
             </div>
         </MDBFooter>

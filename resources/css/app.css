@@ -833,3 +833,53 @@ input[type="submit"],
   margin-left: 8px;
   font-weight: 400;
 }
+
+/*CARRUSEL NEWEST PRODUCTS*/
+
+/* Contenedor padre del carrusel */
+.custom-horizontal-carousel-container {
+    width: 100%;
+    overflow: hidden;
+}
+
+/* El carrusel deslizable */
+.custom-horizontal-carousel {
+    gap: 24px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* CADA ELEMENTO DEL CARRUSEL (Forza el look de móvil en web) */
+.carousel-card-item {
+    flex: 0 0 290px; /* Ancho por defecto en pantallas pequeñas */
+    scroll-snap-align: start;
+    box-sizing: border-box;
+}
+
+/* Media query para pantallas de escritorio (Web) */
+@media (min-width: 768px) {
+    .carousel-card-item {
+        flex: 0 0 330px; /* Tamaño perfecto fijo para que tus Card_C no se deformen en web */
+    }
+}
+
+/* Estilos de la barra de scroll refinados */
+.custom-horizontal-carousel::-webkit-scrollbar {
+    height: 10px;
+}
+
+.custom-horizontal-carousel::-webkit-scrollbar-track {
+    background: rgba(25, 25, 25, 0.5);
+    border-radius: 10px;
+}
+
+.custom-horizontal-carousel::-webkit-scrollbar-thumb {
+    background: #333;
+    border-radius: 10px;
+}
+
+.custom-horizontal-carousel::-webkit-scrollbar-thumb:hover {
+    background: #f7f6f3;
+}

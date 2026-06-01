@@ -78,20 +78,44 @@ function CardMusic(props) {
 
                         <div className="mt-auto d-flex justify-content-between align-items-center border-top border-secondary pt-4">
                             <MDBBtn
-                                size="lg"
+                                // Mantengo tu atributo class intacto tal como lo usas
+                                class={`custom-button ${isButtonDisabled ? "clicked" : ""} d-flex align-items-center justify-content-center`}
                                 onClick={handleListenClick}
-                                style={{ minWidth: "200px" }}
-                                // Aplicamos la clase 'clicked' cuando el botón está deshabilitado
-                                class={`custom-button ${isButtonDisabled ? "clicked" : ""}`}
                                 disabled={isButtonDisabled}
-                                className="mb-4 w-100"
+                                style={{
+                                    boxShadow: "none", // Evita destellos extraños de Bootstrap
+                                    outline: "none", // Elimina el borde de enfoque activo
+                                    height: "45px", // Forzamos una altura fija para que NUNCA cambie de tamaño al mutar el texto
+                                    padding: "0 15px",
+                                    transition: "all 0.2s ease",
+                                    minWidth: "200px", // Mantiene el ancho mínimo original de tu tarjeta de música
+
+                                    // TRUCO CONTROL ESTRICTO PARA EVITAR EL AZUL DE MDB CON DISABLED:
+                                    backgroundColor: isButtonDisabled
+                                        ? "rgb(45, 45, 45) !important"
+                                        : undefined,
+                                    borderColor: isButtonDisabled
+                                        ? "#333 !important"
+                                        : undefined,
+                                    color: isButtonDisabled
+                                        ? "#aaa !important"
+                                        : undefined,
+                                }}
                             >
                                 <MDBIcon
                                     fas
                                     icon={isButtonDisabled ? "check" : "play"}
                                     className="me-2"
                                 />
-                                {isButtonDisabled ? "OPENED" : "LISTEN NOW"}
+                                {/* Contenedor interno para evitar saltos bruscos en el texto */}
+                                <span
+                                    style={{
+                                        fontWeight: "600",
+                                        letterSpacing: "0.5px",
+                                    }}
+                                >
+                                    {isButtonDisabled ? "OPENED" : "LISTEN NOW"}
+                                </span>
                             </MDBBtn>
                         </div>
                     </Card.Body>

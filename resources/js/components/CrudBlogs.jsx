@@ -97,6 +97,10 @@ function CrudBlogs() {
         published_at: "",
         category: "",
         content: "",
+        content_secondary: "",
+        extra_image: "",
+        image_position: "left",
+        youtube_url: "",
         external_url: "",
     });
 
@@ -113,7 +117,6 @@ function CrudBlogs() {
         setFormData({ ...formData, [name]: value });
 
         const newErrors = { ...errors };
-        // Validamos únicamente los campos que tu controlador marca como obligatorios (required)
         if (
             ["banner", "title", "author", "published_at", "content"].includes(
                 name,
@@ -147,6 +150,10 @@ function CrudBlogs() {
             published_at: "",
             category: "",
             content: "",
+            content_secondary: "",
+            extra_image: "",
+            image_position: "left",
+            youtube_url: "",
             external_url: "",
         });
         setIsButtonAddEnabled(false);
@@ -159,7 +166,6 @@ function CrudBlogs() {
     };
 
     // --- CRUD ACTIONS ---
-
     const handleAddBlog = async (e) => {
         e.preventDefault();
         try {
@@ -187,15 +193,19 @@ function CrudBlogs() {
 
     const handleEdit = (blog) => {
         setFormData({
-            banner: blog.banner,
-            title: blog.title,
+            banner: blog.banner || "",
+            title: blog.title || "",
             slug: blog.slug || "",
-            author: blog.author,
+            author: blog.author || "",
             published_at: blog.published_at
                 ? blog.published_at.substring(0, 10)
                 : "",
             category: blog.category || "",
-            content: blog.content,
+            content: blog.content || "",
+            content_secondary: blog.content_secondary || "",
+            extra_image: blog.extra_image || "",
+            image_position: blog.image_position || "left",
+            youtube_url: blog.youtube_url || "",
             external_url: blog.external_url || "",
         });
         setBlogIdUpdate(blog.id);
@@ -248,10 +258,10 @@ function CrudBlogs() {
     return (
         <>
             <br />
-            <div className="d-flex">
+            <div className="d-flex align-items-center justify-content-between JSON-header-container">
                 <Container className="mt-5">
                     <Row>
-                        <Col sm={4}>
+                        <Col sm={6}>
                             <Form className="d-flex">
                                 <InputGroup>
                                     <InputGroup.Text className="bg-white">
@@ -276,29 +286,34 @@ function CrudBlogs() {
                                 </InputGroup>
                             </Form>
                         </Col>
+                        <Col sm={6} className="d-flex justify-content-end">
+                            <MDBBtn
+                                className={`custom-button ${!isButtonAddEnabled ? "clicked" : ""} mb-0`}
+                                size="lg"
+                                style={{ maxWidth: "250px" }}
+                                type="button"
+                                disabled={!isButtonAddEnabled}
+                                onClick={handleButtonAddClick}
+                            >
+                                ADD NEW POST
+                            </MDBBtn>
+                        </Col>
                     </Row>
                 </Container>
-
-                <MDBBtn
-                    class={`custom-button ${!isButtonAddEnabled ? "clicked" : ""}`}
-                    size="lg"
-                    className="mb-4 w-100"
-                    type="submit"
-                    disabled={!isButtonAddEnabled}
-                    onClick={handleButtonAddClick}
-                >
-                    ADD NEW POST
-                </MDBBtn>
             </div>
             <br />
 
-            <MDBTable>
+            <MDBTable responsive align="middle" className="text-white bg-dark">
                 <MDBTableHead dark>
                     <tr>
                         <th scope="col">#</th>
                         <th scope="col">Title</th>
                         <th scope="col">Author</th>
-                        <th scope="col" className="text-center">
+                        <th
+                            scope="col"
+                            className="text-center"
+                            style={{ width: "220px" }}
+                        >
                             Actions
                         </th>
                     </tr>
@@ -309,12 +324,10 @@ function CrudBlogs() {
                             <th scope="row">{b.id}</th>
                             <td>{b.title}</td>
                             <td>{b.author}</td>
-                            <td>
+                            <td className="text-center">
                                 <MDBBtn
-                                    class={`custom-button ${!isButtonEnabled ? "clicked" : ""} mb-4 w-100`}
-                                    size="lg"
-                                    className="mb-4 w-100"
-                                    style={{ width: "98px" }}
+                                    color="link"
+                                    className="text-warning me-2 p-2"
                                     disabled={!isButtonEnabled}
                                     onClick={() => {
                                         handleButtonClick();
@@ -324,13 +337,18 @@ function CrudBlogs() {
                                     EDIT
                                 </MDBBtn>
                                 <MDBBtn
-                                    class={`custom-button ${!isButtonEnabled ? "clicked" : ""} mb-4 w-100`}
-                                    size="lg"
-                                    className="mb-4 w-100"
+                                    color="link"
+                                    className="text-danger p-2"
                                     disabled={!isButtonEnabled}
                                     onClick={() => {
-                                        handleButtonClick();
-                                        handleDelete(b.id);
+                                        if (
+                                            window.confirm(
+                                                "Are you sure you want to delete this post?",
+                                            )
+                                        ) {
+                                            handleButtonClick();
+                                            handleDelete(b.id);
+                                        }
                                     }}
                                 >
                                     DELETE
@@ -349,16 +367,26 @@ function CrudBlogs() {
                     setIsButtonAddEnabled(true);
                     setIsButtonEnabled(true);
                 }}
+                size="lg"
             >
                 <Modal.Header
-                    className={editMode ? "bg-primary" : "bg-warning"}
-                ></Modal.Header>
-                <Modal.Body>
+                    className={
+                        editMode
+                            ? "bg-primary text-white"
+                            : "bg-warning text-dark"
+                    }
+                    closeButton
+                >
+                    <Modal.Title>
+                        {editMode ? "Edit Post" : "Create New Post"}
+                    </Modal.Title>
+                </Modal.Header>
+                <Modal.Body className="bg-dark text-white">
                     <img
                         src="/img/logosmc.svg"
                         alt="Logo"
                         style={{
-                            maxWidth: "80%",
+                            maxWidth: "40%",
                             margin: "auto",
                             display: "block",
                             marginBottom: "20px",
@@ -367,8 +395,13 @@ function CrudBlogs() {
                     <form
                         onSubmit={editMode ? handleUpdateBlog : handleAddBlog}
                     >
+                        {/* --- BLOQUE 1: INFORMACIÓN ESENCIAL --- */}
+                        <h5 className="text-warning border-bottom border-secondary pb-2 mb-3">
+                            1. Primary Information
+                        </h5>
+
                         {errors.title && (
-                            <p className="error-text">{errors.title}</p>
+                            <p className="text-danger small">{errors.title}</p>
                         )}
                         <MDBInput
                             wrapperClass="mb-4"
@@ -376,6 +409,7 @@ function CrudBlogs() {
                             id="title"
                             type="text"
                             name="title"
+                            contrast
                             value={formData.title}
                             onChange={handleChange}
                         />
@@ -386,81 +420,99 @@ function CrudBlogs() {
                             id="slug"
                             type="text"
                             name="slug"
+                            contrast
                             value={formData.slug}
                             onChange={handleChange}
                         />
 
-                        {errors.author && (
-                            <p className="error-text">{errors.author}</p>
-                        )}
-                        <MDBInput
-                            wrapperClass="mb-4"
-                            label="Author"
-                            id="author"
-                            type="text"
-                            name="author"
-                            value={formData.author}
-                            onChange={handleChange}
-                        />
+                        <Row>
+                            <Col md={6}>
+                                {errors.author && (
+                                    <p className="text-danger small">
+                                        {errors.author}
+                                    </p>
+                                )}
+                                <MDBInput
+                                    wrapperClass="mb-4"
+                                    label="Author"
+                                    id="author"
+                                    type="text"
+                                    name="author"
+                                    contrast
+                                    value={formData.author}
+                                    onChange={handleChange}
+                                />
+                            </Col>
+                            <Col md={6}>
+                                <MDBInput
+                                    wrapperClass="mb-4"
+                                    label="Category (Optional)"
+                                    id="category"
+                                    type="text"
+                                    name="category"
+                                    contrast
+                                    value={formData.category}
+                                    onChange={handleChange}
+                                />
+                            </Col>
+                        </Row>
 
-                        {errors.banner && (
-                            <p className="error-text">{errors.banner}</p>
-                        )}
-                        <MDBInput
-                            wrapperClass="mb-4"
-                            label="Banner Image URL"
-                            id="banner"
-                            type="text"
-                            name="banner"
-                            value={formData.banner}
-                            onChange={handleChange}
-                        />
+                        <Row>
+                            <Col md={6}>
+                                {errors.published_at && (
+                                    <p className="text-danger small">
+                                        {errors.published_at}
+                                    </p>
+                                )}
+                                <MDBInput
+                                    wrapperClass="mb-4"
+                                    label="Publish Date"
+                                    id="published_at"
+                                    type="date"
+                                    name="published_at"
+                                    contrast
+                                    value={formData.published_at}
+                                    onChange={handleChange}
+                                />
+                            </Col>
+                            <Col md={6}>
+                                {errors.banner && (
+                                    <p className="text-danger small">
+                                        {errors.banner}
+                                    </p>
+                                )}
+                                <MDBInput
+                                    wrapperClass="mb-4"
+                                    label="Main Banner Image URL"
+                                    id="banner"
+                                    type="text"
+                                    name="banner"
+                                    contrast
+                                    value={formData.banner}
+                                    onChange={handleChange}
+                                />
+                            </Col>
+                        </Row>
 
-                        {errors.published_at && (
-                            <p className="error-text">{errors.published_at}</p>
-                        )}
-                        <MDBInput
-                            wrapperClass="mb-4"
-                            label="Publish Date"
-                            id="published_at"
-                            type="date"
-                            name="published_at"
-                            value={formData.published_at}
-                            onChange={handleChange}
-                        />
-
-                        <MDBInput
-                            wrapperClass="mb-4"
-                            label="Category (Optional)"
-                            id="category"
-                            type="text"
-                            name="category"
-                            value={formData.category}
-                            onChange={handleChange}
-                        />
-
-                        <MDBInput
-                            wrapperClass="mb-4"
-                            label="External URL (Optional)"
-                            id="external_url"
-                            type="text"
-                            name="external_url"
-                            value={formData.external_url}
-                            onChange={handleChange}
-                        />
+                        {/* --- BLOQUE 2: CONTENIDO ASIMÉTRICO --- */}
+                        <h5 className="text-warning border-bottom border-secondary pb-2 mb-3 mt-4">
+                            2. Layout Content & Structure
+                        </h5>
 
                         {errors.content && (
-                            <p className="error-text">{errors.content}</p>
+                            <p className="text-danger small">
+                                {errors.content}
+                            </p>
                         )}
                         <div className="mb-4">
                             <label
                                 htmlFor="content"
-                                className="form-label text-muted"
+                                className="form-label text-muted small mb-1"
                             >
-                                Post Content
+                                Main Text Block (Required)
                             </label>
                             <textarea
-                                className="form-control"
+                                className="form-control bg-dark text-white border-secondary"
                                 id="content"
                                 rows="5"
                                 name="content"
@@ -469,9 +521,87 @@ function CrudBlogs() {
                             ></textarea>
                         </div>
 
+                        <Row className="align-items-center">
+                            <Col md={8}>
+                                <MDBInput
+                                    wrapperClass="mb-4"
+                                    label="Secondary Support Image URL (Optional)"
+                                    id="extra_image"
+                                    type="text"
+                                    name="extra_image"
+                                    contrast
+                                    value={formData.extra_image}
+                                    onChange={handleChange}
+                                />
+                            </Col>
+                            <Col md={4}>
+                                <div className="mb-4">
+                                    <label className="form-label text-muted small mb-1">
+                                        Image Alignment
+                                    </label>
+                                    <select
+                                        className="form-select bg-dark text-white border-secondary"
+                                        name="image_position"
+                                        value={formData.image_position}
+                                        onChange={handleChange}
+                                    >
+                                        <option value="left">Left Side</option>
+                                        <option value="right">
+                                            Right Side
+                                        </option>
+                                    </select>
+                                </div>
+                            </Col>
+                        </Row>
+
+                        <div className="mb-4">
+                            <label
+                                htmlFor="content_secondary"
+                                className="form-label text-muted small mb-1"
+                            >
+                                Secondary Text Block (Optional - Renders
+                                alongside the support image)
+                            </label>
+                            <textarea
+                                className="form-control bg-dark text-white border-secondary"
+                                id="content_secondary"
+                                rows="4"
+                                name="content_secondary"
+                                value={formData.content_secondary}
+                                onChange={handleChange}
+                            ></textarea>
+                        </div>
+
+                        {/* --- BLOQUE 3: RECURSOS EXTERNOS --- */}
+                        <h5 className="text-warning border-bottom border-secondary pb-2 mb-3 mt-4">
+                            3. Media & External Links
+                        </h5>
+
+                        <MDBInput
+                            wrapperClass="mb-4"
+                            label="YouTube Video URL (Optional)"
+                            id="youtube_url"
+                            type="text"
+                            name="youtube_url"
+                            contrast
+                            value={formData.youtube_url}
+                            onChange={handleChange}
+                        />
+
+                        <MDBInput
+                            wrapperClass="mb-4"
+                            label="External Link / Project Action URL (Optional)"
+                            id="external_url"
+                            type="text"
+                            name="external_url"
+                            contrast
+                            value={formData.external_url}
+                            onChange={handleChange}
+                        />
+
                         <MDBBtn
                             size="lg"
-                            className="mb-4 w-100"
+                            className="mt-4 w-100"
                             type="submit"
                             disabled={!isFormValid}
                         >

@@ -20,7 +20,7 @@ class ProductsController extends Controller
     {
         $products = DB::table('products')
             ->orderBy('id', 'desc')
-            ->take(6)
+            ->take(3)
             ->get();
 
         return response()->json($products, 200);

@@ -106,6 +106,7 @@ function Menu() {
     useEffect(() => {
         const noCarouselPaths = [
             "/gallery",
+            "/blog",
             "/about-us",
             "/legal-notice",
             "/crudgallery",

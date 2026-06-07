@@ -147,27 +147,33 @@ function MusicBlog() {
                     </Container>
 
                     {/* CONTENEDOR DE LA GALERÍA (MARQUEE) */}
-                    <div className="art-marquee-container">
+                    {/* Cambiamos el fondo a un gris muy claro (blanco grisáceo #f4f4f4) */}
+                    <div
+                        className="art-marquee-container"
+                        style={{
+                            backgroundColor: "#f4f4f4",
+                            padding: "40px 0",
+                        }}
+                    >
                         {infiniteArtworks.map((art, idx) => (
                             <div
                                 key={`${art.id}-${idx}`}
                                 className="card-art-exhibit"
                             >
-                                {/* Marco de la imagen a 380px de alto */}
-                                <div className="art-frame bg-black mb-3">
-                                    <img src={art.image_url} alt={art.title} />
-                                </div>
+                                {/* El div que actúa como contenedor de la obra tiene la clase para el hover */}
+                                <div className="art-frame-wrapper">
+                                    <div className="art-frame bg-white">
+                                        <img
+                                            src={art.image_url}
+                                            alt={art.title}
+                                        />
+                                    </div>
 
-                                {/* Ficha técnica abajo de la obra */}
-                                <div className="small-mono text-start">
-                                    <div
-                                        className="text-white fw-bold text-uppercase border-bottom border-secondary pb-1 mb-2 text-truncate"
-                                        style={{
-                                            fontSize: "0.95rem",
-                                            letterSpacing: "0.5px",
-                                        }}
-                                    >
-                                        {art.title}
+                                    {/* Ficha técnica */}
+                                    <div className="small-mono text-start mt-3">
+                                        <div className="text-dark fw-bold text-uppercase border-bottom border-secondary pb-1 mb-2 text-truncate">
+                                            {art.title}
+                                        </div>
                                     </div>
                                     <div className="text-truncate text-secondary">
                                         <span

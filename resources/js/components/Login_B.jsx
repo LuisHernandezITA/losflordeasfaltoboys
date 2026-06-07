@@ -398,6 +398,7 @@ function Login_B() {
                 {/* PESTAÑA 2: REGISTER */}
                 <MDBTabsPane show={justifyActive === "tab2"}>
                     <form onSubmit={handleRegister}>
+                        {/* REGISTER NAME - INSTAGRAM STYLE */}
                         {errors.name && (
                             <p
                                 className="error-text"
@@ -409,17 +410,45 @@ function Login_B() {
                                 {errors.name}
                             </p>
                         )}
-                        <MDBInput
-                            wrapperClass="mb-4"
-                            label="Name"
-                            id="register_name"
-                            type="text"
-                            name="name"
-                            value={formData.name}
-                            onChange={handleChange}
-                            style={inputStyle}
-                            className="text-white"
-                        />
+                        <div className="mb-4">
+                            <div className="input-group">
+                                <span
+                                    className="input-group-text rounded-0 border-end-0 text-white"
+                                    style={{
+                                        backgroundColor: "#111",
+                                        border: "1px solid #ffffff",
+                                        fontSize: "0.8rem",
+                                        letterSpacing: "1px",
+                                    }}
+                                >
+                                    instagram.com/
+                                </span>
+                                <MDBInput
+                                    wrapperClass="flex-grow-1"
+                                    label="username"
+                                    id="register_name"
+                                    type="text"
+                                    name="name"
+                                    value={formData.name}
+                                    onChange={handleChange}
+                                    style={{
+                                        ...inputStyle,
+                                        borderLeft: "none",
+                                        borderRadius: "0px",
+                                    }}
+                                    className="text-white"
+                                />
+                            </div>
+                            <small
+                                className="text-white-50 mt-1 d-block"
+                                style={{
+                                    fontSize: "0.65rem",
+                                    letterSpacing: "1px",
+                                }}
+                            >
+                                * Escribe solo tu usuario sin el símbolo @
+                            </small>
+                        </div>
 
                         {errors.email && (
                             <p

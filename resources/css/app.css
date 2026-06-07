@@ -1,6 +1,8 @@
 /*FULL APP*/
 
-html, body, #root {
+html,
+body,
+#root {
     background-color: rgb(14, 14, 14) !important;
     margin: 0;
     padding: 0;
@@ -17,17 +19,17 @@ section, .container, .container-fluid {
 
 .logo {
     transition: all 0.5s; /* Smooth transition */
-  }
-  
-  .logo:hover{
+}
+
+.logo:hover {
     transform: scale(1.2); /* Increases size */
     fill: #f3e5e5; /* Changes color */
-  }
+}
 
 /* 1. Estilos Base (Comunes para PC y Móvil) */
 .my-card {
-    background-color: #111 !important;
-    border: 1px solid #222 !important;
+    /*background-color: #111 !important;*/
+    /*border: 1px solid #222 !important;*/
     border-radius: 0 !important;
     transition: all 0.3s ease-in-out !important; /* Base para el hover */
     margin: 0 auto;
@@ -38,7 +40,7 @@ section, .container, .container-fluid {
 }
 
 .my-card-img-container {
-    aspect-ratio: 1 / 1; 
+    aspect-ratio: 1 / 1;
     overflow: hidden;
     background-color: #000;
     border-radius: 0 !important;
@@ -62,7 +64,7 @@ section, .container, .container-fluid {
 }
 
 .my-card:hover .my-card-img {
-    transform: scale(1.05); 
+    transform: scale(1.05);
 }
 
 /* 3. Media Query para MÓVIL (Ancho Total) */
@@ -71,7 +73,7 @@ section, .container, .container-fluid {
         width: 100vw;
         margin-left: calc(-50vw + 50%);
     }
-    
+
     .my-card {
         border-left: none !important;
         border-right: none !important;
@@ -79,7 +81,7 @@ section, .container, .container-fluid {
 
     /* En móvil solemos desactivar el movimiento vertical para evitar saltos raros */
     .my-card:hover {
-        transform: none !important; 
+        transform: none !important;
     }
 }
 
@@ -90,7 +92,7 @@ section, .container, .container-fluid {
         margin: 20px; /* Espaciado entre tarjetas */
     }
 
-    .my-card, 
+    .my-card,
     .my-card-img-container {
         width: 400px !important;
         max-width: 400px;
@@ -99,7 +101,8 @@ section, .container, .container-fluid {
 
 /*COLUMNS*/
 
-.row.g-1, .row.gx-1 {
+.row.g-1,
+.row.gx-1 {
     --bs-gutter-x: 0.25rem; /* Espacio mínimo de 4px */
 }
 
@@ -126,7 +129,7 @@ section, .container, .container-fluid {
 /* Títulos: Máximo 1 línea */
 .my-card .card-title {
     font-size: 1.2rem !important;
-    height: 1.4em; 
+    height: 1.4em;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -147,165 +150,167 @@ section, .container, .container-fluid {
 /*BUTTON CARD*/
 
 .custom-button {
-  background: white;
-  border: 2px solid #000; 
-  color: #000; 
-  padding: 10px 20px; 
-  transition: background 0.9s ease-in-out, color 0.6s ease-in-out;
+    background: white;
+    border: 2px solid #000;
+    color: #000;
+    padding: 10px 20px;
+    transition:
+        background 0.9s ease-in-out,
+        color 0.6s ease-in-out;
 }
 
 .custom-button:hover {
-  background: linear-gradient(to bottom, #000, #333); 
-  color: #fff; 
+    background: linear-gradient(to bottom, #000, #333);
+    color: #fff;
 }
 
-
 .custom-button.clicked {
-  background: transparent; 
-  border: 2px solid #000; 
+    background: transparent;
+    border: 2px solid #000;
 }
 
 .custom-button.clicked .mdb-icon {
-  display: inline; 
+    display: inline;
 }
 
 .custom-button.clicked:disabled {
-  background: transparent; 
-  border: 2px solid rgb(126, 124, 124); 
-  pointer-events: none; 
-  color:rgb(126, 124, 124);
+    background: transparent;
+    border: 2px solid rgb(126, 124, 124);
+    pointer-events: none;
+    color: rgb(126, 124, 124);
 }
 
 .custom-button:disabled {
-  background: transparent; 
-  border: 2px solid rgb(126, 124, 124); 
-  pointer-events: none; 
-  color:rgb(126, 124, 124);
+    background: transparent;
+    border: 2px solid rgb(126, 124, 124);
+    pointer-events: none;
+    color: rgb(126, 124, 124);
 }
 
 /*ICONS*/
 
 .icon {
-  font-size: 1em; 
-  transition: font-size 0.3s ease ; 
+    font-size: 1em;
+    transition: font-size 0.3s ease;
 }
 
 .nav-link:hover .icon {
-  font-size: 1.2em; 
-  color: red;
+    font-size: 1.2em;
+    color: red;
 }
 
 /*Cart*/
 
 @media (min-width: 1025px) {
-.h-custom {
-  height: 100vh !important;
-  padding: 10px;
-}
+    .h-custom {
+        height: 100vh !important;
+        padding: 10px;
+    }
 }
 
 .card-registration .select-input.form-control[readonly]:not([disabled]) {
-font-size: 1rem;
-line-height: 2.15;
-padding-left: .75em;
-padding-right: .75em;
+    font-size: 1rem;
+    line-height: 2.15;
+    padding-left: 0.75em;
+    padding-right: 0.75em;
 }
 
 .card-registration .select-arrow {
-top: 13px;
+    top: 13px;
 }
 
 .bg-grey {
-background-color: #eae8e8;
+    background-color: #eae8e8;
 }
 
 @media (min-width: 992px) {
-.card-registration-2 .bg-grey {
-border-top-right-radius: 16px;
-border-bottom-right-radius: 16px;
-}
+    .card-registration-2 .bg-grey {
+        border-top-right-radius: 16px;
+        border-bottom-right-radius: 16px;
+    }
 }
 
 @media (max-width: 991px) {
-.card-registration-2 .bg-grey {
-border-bottom-left-radius: 16px;
-border-bottom-right-radius: 16px;
-}
+    .card-registration-2 .bg-grey {
+        border-bottom-left-radius: 16px;
+        border-bottom-right-radius: 16px;
+    }
 }
 
 /*VALIDATION TEXT*/
 
 .error-text {
-  color: red;
-  font-size: 12px; 
+    color: red;
+    font-size: 12px;
 }
 
 /*NOTI*/
 
 .notification {
-  position: fixed;
-  top: -100px; 
-  right: 20px;
-  background-color: white;
-  color: #0e0d0d;
-  padding: 10px;
-  border-radius: 4px;
-  z-index: 9999;
-  transition: top 0.8s, opacity 0.8s; 
+    position: fixed;
+    top: -100px;
+    right: 20px;
+    background-color: white;
+    color: #0e0d0d;
+    padding: 10px;
+    border-radius: 4px;
+    z-index: 9999;
+    transition:
+        top 0.8s,
+        opacity 0.8s;
 }
 
 .notification.show {
-  top: 20px; 
-  display: block;
+    top: 20px;
+    display: block;
 }
 
 .notification.hide {
-  top: -100px; 
-  display: none;
+    top: -100px;
+    display: none;
 }
 
 .notification-bar {
-  height: 4px;
-  background-color: #171718; 
-  position: absolute;
-  bottom: 3px;
-  left: 0;
-  width: 100%;
+    height: 4px;
+    background-color: #171718;
+    position: absolute;
+    bottom: 3px;
+    left: 0;
+    width: 100%;
 }
 
 .notification-bar-progress {
-  animation: progress 1.5s linear;
+    animation: progress 1.5s linear;
 }
 
 @keyframes progress {
-  0% {
-    width: 100%;
-  }
-  100% {
-    width: 0;
-  }
+    0% {
+        width: 100%;
+    }
+    100% {
+        width: 0;
+    }
 }
 
 /* menuStyles.css */
 .labelnew {
-  color: black;
-  padding: 30px 0px 0px 80px;
-  font-size: 24px; 
+    color: black;
+    padding: 30px 0px 0px 80px;
+    font-size: 24px;
 }
 
 /* menuStyles.css */
 .ver-todo-link {
-  display: block;
-  margin-top: 20px; 
-  text-decoration: none;
-  color: rgb(218, 218, 224); 
-  font-size: 14px;
-
+    display: block;
+    margin-top: 20px;
+    text-decoration: none;
+    color: rgb(218, 218, 224);
+    font-size: 14px;
 }
 
 .ver-todo-link:hover {
-  text-decoration: underline;
-  color: rgb(215, 11, 11); 
+    text-decoration: underline;
+    color: rgb(215, 11, 11);
 }
 
 /*PRODUCT DESCRIPTION*/
@@ -340,7 +345,7 @@ border-bottom-right-radius: 16px;
 /* --- AJUSTES PARA ESCRITORIO (Pantallas grandes) --- */
 @media (min-width: 992px) {
     .details {
-        justify-content: space-between; 
+        justify-content: space-between;
         padding: 40px;
         align-items: flex-start; /* Alinea el texto arriba junto a la imagen */
     }
@@ -357,7 +362,7 @@ border-bottom-right-radius: 16px;
         max-width: 100%;
         /* El aspect-ratio heredado se encarga de dejarlo cuadrado en móviles automáticamente */
     }
-    
+
     .box .row h2 {
         font-size: 2.8rem !important;
     }
@@ -382,7 +387,7 @@ border-bottom-right-radius: 16px;
     display: block;
     background-repeat: no-repeat;
     /* Al usar 'contain' de fondo, si la foto original no es cuadrada no se recortará de golpe */
-    background-size: contain; 
+    background-size: contain;
 }
 
 /* Media Query para pantallas pequeñas */
@@ -391,7 +396,7 @@ border-bottom-right-radius: 16px;
         margin: 10px auto;
         box-shadow: none; /* Opcional: quitar sombra en móvil para limpieza */
     }
-    
+
     .details {
         padding: 15px;
     }
@@ -413,129 +418,161 @@ border-bottom-right-radius: 16px;
     }
 }
 
-.box .row{
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 15px;
+.box .row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
 }
-.box .row h2{
-  text-transform: uppercase;
-  letter-spacing: 2px;
+.box .row h2 {
+    text-transform: uppercase;
+    letter-spacing: 2px;
 }
-.box .row span{
-  color: crimson;
+.box .row span {
+    color: crimson;
 }
-.box .colors button{
-  width: 30px;
-  height: 30px;
-  border: 1px solid #333;
-  outline: none;
-  margin-right: 5px;
-  cursor: pointer;
+.box .colors button {
+    width: 30px;
+    height: 30px;
+    border: 1px solid #333;
+    outline: none;
+    margin-right: 5px;
+    cursor: pointer;
 }
-.box p{
-  line-height: 1.5;
-  margin: 15px 0;
+.box p {
+    line-height: 1.5;
+    margin: 15px 0;
 }
-.thumb{
-  width: 100%;
-  height: 100px;
-  display: flex;
-  cursor: pointer;
-  margin: 10px 0;
+.thumb {
+    width: 100%;
+    height: 100px;
+    display: flex;
+    cursor: pointer;
+    margin: 10px 0;
 }
-.thumb img{
-  width: 90px;
-  height: 100%;
-  display: block;
-  object-fit: cover;
-  border: 1px solid #ddd;
-  margin-right: 5px;
-  opacity: 0.7;
-  border-radius: 5px;
+.thumb img {
+    width: 90px;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    border: 1px solid #ddd;
+    margin-right: 5px;
+    opacity: 0.7;
+    border-radius: 5px;
 }
-.thumb img.active{
-  opacity: 1;
-  border: 1px solid lightseagreen;
+.thumb img.active {
+    opacity: 1;
+    border: 1px solid lightseagreen;
 }
-.box .cart{
-  background: #333;
-  color: white;
-  outline: none;
-  border: none;
-  cursor: pointer;
-  padding: 10px 25px;
-  margin-top: 15px;
+.box .cart {
+    background: #333;
+    color: white;
+    outline: none;
+    border: none;
+    cursor: pointer;
+    padding: 10px 25px;
+    margin-top: 15px;
 }
 
 .color-button-detail,
 .size-button-detail {
-  background: transparent;
-  border: none;
-  text-decoration: underline;
-  transition: all 0.2s ease; 
+    background: transparent;
+    border: none;
+    text-decoration: underline;
+    transition: all 0.2s ease;
 }
 
 .color-button-detail:hover,
 .size-button-detail:hover {
-  transform: scale(1.2); 
-  opacity: 0.3; 
+    transform: scale(1.2);
+    opacity: 0.3;
 }
 
 .color-button-detail.selected,
 .size-button-detail.selected {
-  opacity: 1; 
+    opacity: 1;
 }
 
-@media (max-width: 500px){
-  .thumb{
-    height: 50px;
-  }
-  .thumb img{
-    width: 50px;
-  }
+@media (max-width: 500px) {
+    .thumb {
+        height: 50px;
+    }
+    .thumb img {
+        width: 50px;
+    }
 }
-
 
 /*ARROW*/
 
 .arrow {
-  display: inline-block;
-  width: 0;
-  height: 0;
-  margin-left: 5px; 
+    display: inline-block;
+    width: 0;
+    height: 0;
+    margin-left: 5px;
 }
 
 .asc::after {
-  content: '↑';
-  font-size: 1.2em;
+    content: "↑";
+    font-size: 1.2em;
 }
 
 .desc::after {
-  content: '↓';
-  font-size: 1.2em;
+    content: "↓";
+    font-size: 1.2em;
 }
 
 /*SOLD OUT*/
 
 .sold-out-badge {
-  position: absolute;
-  top: 120px; 
-  right: 0px; 
-  z-index: 1;
-  padding: 20px;
-  background-color: rgb(194, 23, 23);
-  color: rgb(245, 239, 239);
-  font-weight: bold;
-  border-radius: 6px 0px 0px 6px;
+    position: absolute;
+    inset: 0; /* Cubre todo el contenedor */
+    z-index: 10;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    /* Cristal industrial */
+    background: rgba(255, 255, 255, 0.45);
+    backdrop-filter: blur(1px); /* Desenfoque más profundo */
+    -webkit-backdrop-filter: blur(2px);
+
+    /* Tipografía */
+    color: #000000;
+    text-align: center;
+    font-weight: 900;
+    font-size: 0.5rem;
+  
+  /* Elimina cualquier evento de click */
+    pointer-events: none;
+}
+
+.sold-out-label {
+    position: absolute; /* Esto la hace flotar dentro del overlay */
+    top: 150px;          /* Ajusta esto para subir o bajar la etiqueta */
+    right: 90px;        /* Ajusta esto para moverla más a la derecha o izquierda */
+    
+    background: #4a0101ee;
+    color: #ffffff;
+    padding: 8px 16px;
+    font-family: 'Courier', monospace; /* 'Courier' suele ser mejor como 'monospace' */
+    font-weight: 900;
+    letter-spacing: 2px;
+    font-size: 1rem;
+    
+    /* Efecto "sticker" */
+    transform: rotate(-3deg);
+    pointer-events: none;
+    z-index: 11; /* Asegura que esté por encima del cristal */
 }
 
 .my-card-img-container {
-  position: relative; 
+    position: relative;
 }
 
 .my-card-img.sold-out {
-  opacity: 0.7;
+    opacity: 0.5;
+    /*filter: grayscale(100%) brightness(0.8) contrast(1.2);
+  border: 2px solid #161515;*/
 }
 
 /*MENU MOBILE*/
@@ -546,7 +583,12 @@ border-bottom-right-radius: 16px;
 
 /* Opcional: Quitar el borde gris del botón */
 .custom-toggler-icon {
-    border-color: rgba(255, 255, 255, 0.5) !important; /* Un borde sutil blanco */
+    border-color: rgba(
+        255,
+        255,
+        255,
+        0.5
+    ) !important; /* Un borde sutil blanco */
 }
 
 /*CARROUSEL*/
@@ -556,7 +598,7 @@ border-bottom-right-radius: 16px;
 .custom-carousel-img {
     width: 100%;
     /* Altura en móviles: esto lo hará ver más "cuadrado" */
-    height: 550px; 
+    height: 550px;
     object-fit: cover; /* Recorta los lados sin estirar la imagen */
     object-position: center; /* Asegura que el centro de la imagen sea lo visible */
 }
@@ -568,17 +610,25 @@ border-bottom-right-radius: 16px;
     }
 }
 
+/*NAVBAR PRINCIPAL*/
+
 /* Estilo base del Navbar */
 .navbar-custom {
     background-color: #000000 !important; /* Negro puro inicial */
-    transition: background-color 0.4s ease, backdrop-filter 0.4s ease;
+    transition:
+        background-color 0.4s ease,
+        backdrop-filter 0.4s ease;
     padding: 10px 0;
 }
 
 /* Efecto Vidrio Negro Transparente */
 /* Se activa cuando hay contenido detrás o puedes usar JS para cambiar la clase al bajar */
 .navbar-custom {
-    background-color: rgb(18, 18, 18) !important; /* Negro con 70% de opacidad */
+    background-color: rgb(
+        18,
+        18,
+        18
+    ) !important; /* Negro con 70% de opacidad */
     backdrop-filter: blur(10px); /* El efecto de desenfoque/vidrio */
     -webkit-backdrop-filter: blur(10px); /* Compatibilidad con Safari */
     border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Línea sutil elegante */
@@ -596,37 +646,63 @@ body {
 
 /* Animación específica para el Texto */
 @keyframes text-glitch {
-  0% { transform: translate(0); text-shadow: none; }
-  20% { transform: translate(-1px, 1px); text-shadow: -1px 0 rgba(255,255,255,0.2), 1px 0 rgba(255,0,0,0.1); }
-  40% { transform: translate(-1px, -1px); text-shadow: 1px 0 rgba(255,255,255,0.2), -1px 0 rgba(0,255,255,0.1); }
-  60% { transform: translate(1px, 1px); text-shadow: -1px 0 rgba(255,255,255,0.2), 1px 0 rgba(255,0,0,0.1); }
-  80% { transform: translate(1px, -1px); text-shadow: 1px 0 rgba(255,255,255,0.2), -1px 0 rgba(0,255,255,0.1); }
-  100% { transform: translate(0); text-shadow: none; }
+    0% {
+        transform: translate(0);
+        text-shadow: none;
+    }
+    20% {
+        transform: translate(-1px, 1px);
+        text-shadow:
+            -1px 0 rgba(255, 255, 255, 0.2),
+            1px 0 rgba(255, 0, 0, 0.1);
+    }
+    40% {
+        transform: translate(-1px, -1px);
+        text-shadow:
+            1px 0 rgba(255, 255, 255, 0.2),
+            -1px 0 rgba(0, 255, 255, 0.1);
+    }
+    60% {
+        transform: translate(1px, 1px);
+        text-shadow:
+            -1px 0 rgba(255, 255, 255, 0.2),
+            1px 0 rgba(255, 0, 0, 0.1);
+    }
+    80% {
+        transform: translate(1px, -1px);
+        text-shadow:
+            1px 0 rgba(255, 255, 255, 0.2),
+            -1px 0 rgba(0, 255, 255, 0.1);
+    }
+    100% {
+        transform: translate(0);
+        text-shadow: none;
+    }
 }
 
 .glitch-text {
-  display: inline-block; /* Necesario para que el transform funcione */
-  animation: text-glitch 5s infinite; /* Un poco más lento que el ojo para que no sea molesto */
-  color: grey;
-  transition: all 0.3s ease;
+    display: inline-block; /* Necesario para que el transform funcione */
+    animation: text-glitch 5s infinite; /* Un poco más lento que el ojo para que no sea molesto */
+    color: grey;
+    transition: all 0.3s ease;
 }
 
 /* Efecto al pasar el mouse (opcional) */
 .glitch-text:hover {
-  color: white;
-  text-shadow: 0 0 8px rgba(255,255,255,0.5);
-  cursor: crosshair; /* Cambia el cursor por una cruz para estilo técnico */
+    color: white;
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+    cursor: crosshair; /* Cambia el cursor por una cruz para estilo técnico */
 }
 
 /* CURSOR TÉCNICO GLOBAL */
 
 /* Se aplica a enlaces, botones, inputs de tipo botón y cualquier elemento con clase 'btn' */
-a, 
-button, 
-.btn, 
-input[type="button"], 
-input[type="submit"], 
-.nav-link, 
+a,
+button,
+.btn,
+input[type="button"],
+input[type="submit"],
+.nav-link,
 .custom-button,
 [role="button"] {
     cursor: crosshair !important;
@@ -634,7 +710,7 @@ input[type="submit"],
 
 /*TABLE*/
 
-.table td, 
+.table td,
 .table th,
 .table tbody td {
     color: #ffffff !important;
@@ -654,7 +730,7 @@ input[type="submit"],
     word-wrap: break-word !important;
     hyphens: auto; /* Agrega guiones si el navegador lo soporta */
     max-width: 70%;
-    
+
     /* Liberamos las restricciones que tenías antes */
     height: auto !important;
     white-space: normal !important;
@@ -664,7 +740,7 @@ input[type="submit"],
 
 /* Ajuste para que el cuerpo de la tarjeta de música no limite el crecimiento */
 .my-card-music-list .card-body {
-    height: auto !important; 
+    height: auto !important;
     min-height: 250px; /* Un mínimo para que respire */
     display: flex;
     flex-direction: column;
@@ -678,13 +754,18 @@ input[type="submit"],
 }
 
 @keyframes edgePulse {
-    0%, 100% {
+    0%,
+    100% {
         border-left-color: #ffffff;
-        box-shadow: 5px 5px 0px rgba(0, 0, 0, 0.5), 0 0 10px rgba(255, 255, 255, 0.6);
+        box-shadow:
+            5px 5px 0px rgba(0, 0, 0, 0.5),
+            0 0 10px rgba(255, 255, 255, 0.6);
     }
     50% {
         border-left-color: rgba(255, 255, 255, 0.2);
-        box-shadow: 5px 5px 0px rgba(0, 0, 0, 0.5), 0 0 2px rgba(255, 255, 255, 0.1);
+        box-shadow:
+            5px 5px 0px rgba(0, 0, 0, 0.5),
+            0 0 2px rgba(255, 255, 255, 0.1);
     }
     52% {
         border-left-color: #ffffff;
@@ -756,33 +837,38 @@ input[type="submit"],
 /*EVENTOS*/
 
 .event-content-wrapper {
-  position: relative;
-  z-index: 2;
-  background-color: #000000;
-  padding: 40px 20px;
-  border: 1px solid #111111;
-  box-shadow: 0px -10px 30px rgba(0, 0, 0, 0.8);
-  
-  /* En móviles: ocupa casi toda la pantalla */
-  width: 95%;
-  max-width: 100%;
-  margin: -40px auto 0 auto; /* Menos margen negativo en móvil para que no rompa el banner */
+    position: relative;
+    z-index: 2;
+    background-color: #000000;
+    padding: 40px 20px;
+    border: 1px solid #111111;
+    box-shadow: 0px -10px 30px rgba(0, 0, 0, 0.8);
+
+    /* En móviles: ocupa casi toda la pantalla */
+    width: 95%;
+    max-width: 100%;
+    margin: -40px auto 0 auto; /* Menos margen negativo en móvil para que no rompa el banner */
 }
 
 /* En Escritorio (pantallas de 992px en adelante) */
 @media (min-width: 992px) {
-  .event-content-wrapper {
-    width: 100%;
-    max-width: 1200px; /* Ya no se ve chiquito, se expande hasta un tope elegante */
-    margin: -80px auto 0 auto;
-  }
+    .event-content-wrapper {
+        width: 100%;
+        max-width: 1200px; /* Ya no se ve chiquito, se expande hasta un tope elegante */
+        margin: -80px auto 0 auto;
+    }
 }
 
 /*DROPDOWN DE EVENTOS*/
 
 /* El contenedor flotante del menú */
 #events-nav-dropdown + .dropdown-menu {
-    background-color: rgba(18, 18, 18, 0.85) !important; /* Negro/Gris translúcido igual al Navbar */
+    background-color: rgba(
+        18,
+        18,
+        18,
+        0.85
+    ) !important; /* Negro/Gris translúcido igual al Navbar */
     backdrop-filter: blur(15px) !important; /* Efecto esmerilado/cristal */
     -webkit-backdrop-filter: blur(15px) !important;
     border: 1px solid rgba(255, 255, 255, 0.1) !important; /* Borde idéntico al del navbar */
@@ -807,7 +893,12 @@ input[type="submit"],
 /* Comportamiento al pasar el cursor por encima de una opción */
 #events-nav-dropdown + .dropdown-menu .dropdown-item:hover {
     color: #ffffff !important; /* Cambia a blanco puro */
-    background-color: rgba(255, 255, 255, 0.05) !important; /* Resalte de fondo ultra sutil */
+    background-color: rgba(
+        255,
+        255,
+        255,
+        0.05
+    ) !important; /* Resalte de fondo ultra sutil */
     padding-left: 24px !important; /* Pequeño desplazamiento técnico al hacer hover */
 }
 
@@ -828,10 +919,10 @@ input[type="submit"],
 }
 
 .menu-date-accent {
-  font-size: 0.85em;
-  color: #888888;
-  margin-left: 8px;
-  font-weight: 400;
+    font-size: 0.85em;
+    color: #888888;
+    margin-left: 8px;
+    font-weight: 400;
 }
 
 /*CARRUSEL NEWEST PRODUCTS*/
@@ -886,66 +977,74 @@ input[type="submit"],
 
 /*GALLERY*/
 
-/* Contenedor del Banner de la Galería Real */
+/* --- PASILLO EXTERIOR (FONDO OSCURO) --- */
 .art-gallery-hero-container {
-  width: 100%;
-  background-color: #050505;
-  padding: 50px 0;
-  overflow: hidden;
-  border-bottom: 2px solid #111;
-  box-shadow: inset 0 0 100px rgba(0,0,0,0.9);
+    width: 100%;
+    background-color: #050505;
+    padding: 80px 0;
+    overflow: hidden;
+    border-top: 1px solid #1a1a1a;
+    border-bottom: 1px solid #1a1a1a;
 }
 
-/* El riel interno con animación súper lenta (55s) */
+/* --- LA PARED DE EXPOSICIÓN (MARQUEE) --- */
 .art-marquee-container {
-  display: flex;
-  gap: 50px; 
-  width: max-content;
-  animation: marquee-slow 55s linear infinite;
+    display: flex;
+    align-items: flex-start; /* Alinea los cuadros arriba para que no se estiren */
+    gap: 50px;
+    width: max-content;
+    background-color: #ddd8d8;
+    padding: 40px 0;
+    animation: marquee-slow 55s linear infinite;
 }
 
-/* Pausa la exhibición al hacer hover para inspeccionar detalles */
-.art-gallery-hero-container:hover .art-marquee-container {
-  animation-play-state: paused;
-}
-
-/* Cuadro de Exposición Gigante */
+/* --- CUADRO DE EXPOSICIÓN --- */
 .card-art-exhibit {
-  width: 550px; 
-  flex-shrink: 0;
-  background: #0d0d0d;
-  border: 1px solid #222;
-  padding: 20px;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
-  transition: border-color 0.3s ease;
+    width: 550px; /* Ancho fijo para el contenedor */
+    flex-shrink: 0;
+    background: transparent;
+    transition: all 0.4s ease;
 }
 
 .card-art-exhibit:hover {
-  border-color: #dc3545; /* Destello sutil rojo brutalista al enfocar un cuadro */
+    animation-play-state: paused;
+    transform: translateY(-15px) scale(1.02);
+    z-index: 10;
 }
 
 .art-frame img {
-  width: 100%;
-  height: 380px;
-  object-fit: cover;
-  border: 1px solid #151515;
+    width: 100%; /* Ocupa el ancho del marco */
+    height: auto; /* IMPORTANTE: Calcula la altura automáticamente según el ancho */
+    display: block;
 }
 
-/* Tipografía Mono utilitaria */
+/* --- BLOQUE DE TEXTO NEGRO --- */
+.art-frame-wrapper {
+    background: #0d0d0d;
+    padding: 20px;
+    border: 1px solid #222;
+    margin-top: 10px; /* Separación entre el marco de la obra y el texto */
+    transition: border-color 0.3s ease;
+}
+
+.card-art-exhibit:hover .art-frame-wrapper {
+    border-color: #dc3545;
+}
+
+/* --- TIPOGRAFÍA --- */
 .small-mono {
-  font-family: 'Courier New', Courier, monospace;
-  font-size: 0.85rem;
+    font-family: "Courier New", Courier, monospace;
+    font-size: 0.85rem;
+    color: #ccc;
 }
 
-/* Animación fluida de traslación */
 @keyframes marquee-slow {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
-}
-
-/* Ajustes para reproductores de audio e interfaz */
-.custom-audio-player::-webkit-media-controls-enclosure {
-  background-color: #222;
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-50%);
+    }
 }
 
 /*LOGIN*/
@@ -992,7 +1091,13 @@ input[type="submit"],
 
 /* Animación de parpadeo suave tipo terminal */
 @keyframes pulse-dot {
-    0% { opacity: 0.2; }
-    50% { opacity: 1; }
-    100% { opacity: 0.2; }
+    0% {
+        opacity: 0.2;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0.2;
+    }
 }

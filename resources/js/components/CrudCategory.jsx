@@ -15,7 +15,6 @@ import {
     Col,
     Modal,
 } from "react-bootstrap";
-import "/resources/css/app.css";
 import axios from "axios";
 import { Navigate } from "react-router-dom";
 import { useUser } from "./UserContext";
@@ -24,17 +23,24 @@ function CrudCategory() {
     const { userInfo } = useUser();
     const userAdmin = userInfo ? userInfo.admin : "";
 
-    if (!userAdmin) {
-        return <Navigate to="/" />;
-    }
+    if (!userAdmin) return <Navigate to="/" />;
 
     const accessToken = userInfo ? userInfo.token : "";
-
     const [search, setSearch] = useState("");
     const [categories, setCategories] = useState([]);
     const [filteredCategories, setFilteredCategories] = useState([]);
+    const [notification, setNotification] = useState(null);
+    const [notificationVisible, setNotificationVisible] = useState(false);
 
-    // --- CARGAR CATEGORÍAS ---
+    // Estados del formulario
+    const [formData, setFormData] = useState({ name: "", description: "" });
+    const [errors, setErrors] = useState({ name: "" });
+    const [isButtonEnabled, setIsButtonEnabled] = useState(true);
+    const [showAddForm, setShowAddForm] = useState(false);
+    const [editMode, setEditMode] = useState(false);
+    const [categoryIdUpdate, setCategoryIdUpdate] = useState(null);
+    const [isButtonAddEnabled, setIsButtonAddEnabled] = useState(true);
+
     useEffect(() => {
         getCategories();
     }, []);
@@ -42,86 +48,51 @@ function CrudCategory() {
     const getCategories = () => {
         axios
             .get("/api/category_index")
-            .then((response) => {
-                setCategories(response.data);
-                setFilteredCategories(response.data);
+            .then((res) => {
+                setCategories(res.data);
+                setFilteredCategories(res.data);
             })
-            .catch((error) => {
-                console.error("Error fetching categories:", error);
-            });
+            .catch((err) => console.error("Error fetching categories:", err));
     };
 
-    // --- BÚSQUEDA ---
     const handleSearchChange = (e) => {
         const searchText = e.target.value;
         setSearch(searchText);
-        const filtered = searchText
-            ? categories.filter(
-                  (cat) =>
-                      cat.name
-                          .toLowerCase()
-                          .includes(searchText.toLowerCase()) ||
-                      (cat.description &&
-                          cat.description
+        setFilteredCategories(
+            searchText
+                ? categories.filter(
+                      (cat) =>
+                          cat.name
                               .toLowerCase()
-                              .includes(searchText.toLowerCase())),
-              )
-            : categories;
-        setFilteredCategories(filtered);
+                              .includes(searchText.toLowerCase()) ||
+                          (cat.description &&
+                              cat.description
+                                  .toLowerCase()
+                                  .includes(searchText.toLowerCase())),
+                  )
+                : categories,
+        );
     };
-
-    // --- NOTIFICACIONES ---
-    const [notification, setNotification] = useState(null);
-    const [notificationVisible, setNotificationVisible] = useState(false);
-
-    useEffect(() => {
-        if (notificationVisible) {
-            const progressBar = document.querySelector(".notification-bar");
-            if (progressBar)
-                progressBar.classList.add("notification-bar-progress");
-
-            setTimeout(() => {
-                setNotificationVisible(false);
-                // Aquí podrías decidir si recargar o no.
-                // Para mantener consistencia con tu código:
-                getCategories();
-            }, 1500);
-        }
-    }, [notificationVisible]);
 
     const showNotification = (message) => {
         setNotification(message);
         setNotificationVisible(true);
+        setTimeout(() => setNotificationVisible(false), 1500);
     };
-
-    // --- FORMULARIO Y VALIDACIONES ---
-    const [formData, setFormData] = useState({
-        name: "",
-        description: "",
-    });
-
-    const [errors, setErrors] = useState({
-        name: "",
-    });
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
-
-        const newErrors = { ...errors };
-        if (name === "name") {
-            newErrors.name = value === "" ? "* Name is required" : "";
-        }
-        setErrors(newErrors);
+        setErrors({
+            ...errors,
+            [name]:
+                value === ""
+                    ? `* ${name.charAt(0).toUpperCase() + name.slice(1)} is required`
+                    : "",
+        });
     };
 
     const isFormValid = formData.name !== "" && errors.name === "";
-
-    // --- BOTONES DE CONTROL ---
-    const [isButtonEnabled, setIsButtonEnabled] = useState(true);
-    const [showAddForm, setShowAddForm] = useState(false);
-    const [editMode, setEditMode] = useState(false);
-    const [categoryIdUpdate, setCategoryIdUpdate] = useState(null);
 
     const handleButtonAddClick = () => {
         setFormData({ name: "", description: "" });
@@ -130,18 +101,10 @@ function CrudCategory() {
         setShowAddForm(true);
     };
 
-    const [isButtonAddEnabled, setIsButtonAddEnabled] = useState(true);
-
-    const handleButtonClick = () => {
-        setIsButtonEnabled(false);
-    };
-
-    // --- CRUD ACTIONS ---
-
     const handleAddCategory = async (e) => {
         e.preventDefault();
         try {
-            const response = await fetch("/api/categories_store", {
+            await fetch("/api/categories_store", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -149,17 +112,13 @@ function CrudCategory() {
                 },
                 body: JSON.stringify(formData),
             });
-
-            if (!response.ok) throw new Error("Error adding category.");
-
             showNotification("Category added successfully");
             setShowAddForm(false);
-
-            // REHABILITAR BOTONES
             setIsButtonEnabled(true);
             setIsButtonAddEnabled(true);
-        } catch (error) {
-            showNotification(error.message);
+            getCategories();
+        } catch (err) {
+            showNotification(err.message);
             setIsButtonEnabled(true);
             setIsButtonAddEnabled(true);
         }
@@ -178,29 +137,21 @@ function CrudCategory() {
     const handleUpdateCategory = async (e) => {
         e.preventDefault();
         try {
-            const response = await fetch(
-                `/api/categories_update/${categoryIdUpdate}`,
-                {
-                    method: "PUT",
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${accessToken}`,
-                    },
-                    body: JSON.stringify(formData),
+            await fetch(`/api/categories_update/${categoryIdUpdate}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${accessToken}`,
                 },
-            );
-
-            if (!response.ok) throw new Error("Error updating category.");
-
+                body: JSON.stringify(formData),
+            });
             showNotification("Category Updated successfully");
             setShowAddForm(false);
-
-            // REHABILITAR BOTONES
             setIsButtonEnabled(true);
             setIsButtonAddEnabled(true);
-        } catch (error) {
-            showNotification(error.message);
-            // REHABILITAR EN CASO DE ERROR PARA PODER REINTENTAR
+            getCategories();
+        } catch (err) {
+            showNotification(err.message);
             setIsButtonEnabled(true);
             setIsButtonAddEnabled(true);
         }
@@ -208,22 +159,13 @@ function CrudCategory() {
 
     const handleDelete = async (id) => {
         try {
-            const response = await axios.delete(
-                `/api/categories_destroy/${id}`,
-                {
-                    headers: { Authorization: `Bearer ${accessToken}` },
-                },
-            );
-
-            if (response.status === 200) {
-                showNotification("Category deleted successfully");
-                // Nota: El showNotification que tienes recarga la página,
-                // pero es buena práctica habilitarlos aquí también por si acaso.
-                setIsButtonEnabled(true);
-            }
-        } catch (error) {
-            console.error(error);
-            // Si hay un error, los habilitamos para que el usuario pueda reintentar
+            await axios.delete(`/api/categories_destroy/${id}`, {
+                headers: { Authorization: `Bearer ${accessToken}` },
+            });
+            showNotification("Category deleted successfully");
+            setIsButtonEnabled(true);
+            getCategories();
+        } catch (err) {
             setIsButtonEnabled(true);
             alert("Error deleting category");
         }
@@ -232,100 +174,87 @@ function CrudCategory() {
     return (
         <>
             <br />
-            <div className="d-flex">
-                <Container className="mt-5">
-                    <Row>
-                        <Col sm={4}>
-                            <Form className="d-flex">
-                                <InputGroup>
-                                    <InputGroup.Text className="bg-white">
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            viewBox="0 0 24 24"
-                                            width="16"
-                                            height="16"
-                                            fill="currentColor"
-                                        >
-                                            <path d="M9.5 3a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13zM1 9.5a8.5 8.5 0 1 1 17 0 8.5 8.5 0 0 1-17 0z" />
-                                            <path d="M16.853 16.854a.5.5 0 0 0 .707 0l3.793-3.793a.5.5 0 0 0 0-.707l-3.793-3.793a.5.5 0 0 0-.707.707L19.293 12H10.5a.5.5 0 0 0 0 1h8.793l-2.646 2.646a.5.5 0 0 0 0 .707z" />
-                                        </svg>
-                                    </InputGroup.Text>
-                                    <FormControl
-                                        type="search"
-                                        className="me-2"
-                                        placeholder="Search Categories"
-                                        value={search}
-                                        onChange={handleSearchChange}
-                                    />
-                                </InputGroup>
-                            </Form>
-                        </Col>
-                    </Row>
-                </Container>
+            <Container className="mt-5">
+                <div className="d-flex mb-4">
+                    <Form className="flex-grow-1">
+                        <InputGroup>
+                            <InputGroup.Text
+                                style={{
+                                    borderRadius: "0px",
+                                    backgroundColor: "#fff",
+                                }}
+                            >
+                                🔍
+                            </InputGroup.Text>
+                            <FormControl
+                                placeholder="Search Categories"
+                                value={search}
+                                onChange={handleSearchChange}
+                                style={{ borderRadius: "0px" }}
+                            />
+                        </InputGroup>
+                    </Form>
+                    <MDBBtn
+                        color="dark"
+                        size="lg"
+                        className="ms-3"
+                        style={{ borderRadius: "0px" }}
+                        disabled={!isButtonAddEnabled}
+                        onClick={handleButtonAddClick}
+                    >
+                        ADD NEW CATEGORY
+                    </MDBBtn>
+                </div>
 
-                <MDBBtn
-                    class={`custom-button ${!isButtonAddEnabled ? "clicked" : ""}`}
-                    size="lg"
-                    className="mb-4 w-100"
-                    type="submit"
-                    disabled={!isButtonAddEnabled}
-                    onClick={handleButtonAddClick}
-                >
-                    ADD NEW CATEGORY
-                </MDBBtn>
-            </div>
-            <br />
-
-            <MDBTable>
-                <MDBTableHead dark>
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Name</th>
-                        <th scope="col">Description</th>
-                        <th scope="col" className="text-center">
-                            Actions
-                        </th>
-                    </tr>
-                </MDBTableHead>
-                <MDBTableBody>
-                    {filteredCategories.map((cat) => (
-                        <tr key={cat.id}>
-                            <th scope="row">{cat.id}</th>
-                            <td>{cat.name}</td>
-                            <td>{cat.description || "No description"}</td>
-                            <td>
-                                <MDBBtn
-                                    class={`custom-button ${!isButtonEnabled ? "clicked" : ""} mb-4 w-100`}
-                                    size="lg"
-                                    className="mb-4 w-100"
-                                    style={{ width: "98px" }}
-                                    disabled={!isButtonEnabled}
-                                    onClick={() => {
-                                        handleButtonClick();
-                                        handleEdit(cat);
-                                    }}
-                                >
-                                    EDIT
-                                </MDBBtn>
-                                <MDBBtn
-                                    class={`custom-button ${!isButtonEnabled ? "clicked" : ""} mb-4 w-100`}
-                                    size="lg"
-                                    className="mb-4 w-100"
-                                    disabled={!isButtonEnabled}
-                                    onClick={() => {
-                                        handleButtonClick();
-                                        handleDelete(cat.id);
-                                    }}
-                                >
-                                    DELETE
-                                </MDBBtn>
-                            </td>
+                <MDBTable style={{ verticalAlign: "middle" }}>
+                    <MDBTableHead dark>
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th className="text-center">Actions</th>
                         </tr>
-                    ))}
-                </MDBTableBody>
-            </MDBTable>
+                    </MDBTableHead>
+                    <MDBTableBody>
+                        {filteredCategories.map((cat) => (
+                            <tr key={cat.id}>
+                                <th scope="row">{cat.id}</th>
+                                <td>{cat.name}</td>
+                                <td>{cat.description || "No description"}</td>
+                                <td className="text-center">
+                                    <MDBBtn
+                                        size="sm"
+                                        color="light"
+                                        style={{
+                                            borderRadius: "0px",
+                                            marginRight: "10px",
+                                        }}
+                                        onClick={() => {
+                                            setIsButtonEnabled(false);
+                                            handleEdit(cat);
+                                        }}
+                                    >
+                                        EDIT
+                                    </MDBBtn>
+                                    <MDBBtn
+                                        size="sm"
+                                        color="dark"
+                                        style={{ borderRadius: "0px" }}
+                                        onClick={() => {
+                                            setIsButtonEnabled(false);
+                                            handleDelete(cat.id);
+                                        }}
+                                    >
+                                        DELETE
+                                    </MDBBtn>
+                                </td>
+                            </tr>
+                        ))}
+                    </MDBTableBody>
+                </MDBTable>
+            </Container>
 
-            {/* MODAL | ADD & UPDATE */}
+            {/* MODAL ESTILO BRUTALISTA */}
             <Modal
                 show={showAddForm}
                 onHide={() => {
@@ -333,19 +262,34 @@ function CrudCategory() {
                     setIsButtonAddEnabled(true);
                     setIsButtonEnabled(true);
                 }}
+                centered
             >
                 <Modal.Header
-                    className={editMode ? "bg-primary" : "bg-warning"}
-                ></Modal.Header>
-                <Modal.Body>
+                    className={
+                        editMode
+                            ? "bg-primary text-white"
+                            : "bg-warning text-dark"
+                    }
+                    style={{ borderRadius: "0px" }}
+                >
+                    <Modal.Title
+                        style={{ fontSize: "1rem", fontFamily: "monospace" }}
+                    >
+                        {editMode
+                            ? "// SYSTEM_UPDATE_CATEGORY"
+                            : "// SYSTEM_NEW_CATEGORY"}
+                    </Modal.Title>
+                </Modal.Header>
+                <Modal.Body
+                    style={{ backgroundColor: "#121212", padding: "2rem" }}
+                >
                     <img
                         src="/img/logosmc.svg"
                         alt="Logo"
                         style={{
-                            maxWidth: "80%",
-                            margin: "auto",
+                            maxWidth: "40%",
+                            margin: "0 auto 20px",
                             display: "block",
-                            marginBottom: "20px",
                         }}
                     />
                     <form
@@ -353,34 +297,33 @@ function CrudCategory() {
                             editMode ? handleUpdateCategory : handleAddCategory
                         }
                     >
-                        {errors.name && (
-                            <p className="error-text">{errors.name}</p>
-                        )}
                         <MDBInput
                             wrapperClass="mb-4"
-                            label="Category Name"
-                            id="name"
-                            type="text"
+                            label="CATEGORY NAME"
                             name="name"
                             value={formData.name}
                             onChange={handleChange}
+                            contrast
+                            style={{ borderRadius: "0px" }}
                         />
-
                         <MDBInput
                             wrapperClass="mb-4"
-                            label="Description"
-                            id="description"
-                            type="text"
+                            label="DESCRIPTION"
                             name="description"
                             value={formData.description}
                             onChange={handleChange}
+                            contrast
+                            style={{ borderRadius: "0px" }}
                         />
-
                         <MDBBtn
-                            class={`custom-button ${!isButtonEnabled ? "clicked" : ""} mb-4 w-100`}
-                            size="lg"
-                            className="mb-4 w-100"
                             type="submit"
+                            size="lg"
+                            className="w-100"
+                            style={{
+                                borderRadius: "0px",
+                                backgroundColor: "#fff",
+                                color: "#000",
+                            }}
                             disabled={!isFormValid}
                         >
                             {editMode ? "UPDATE CATEGORY" : "ADD CATEGORY"}
@@ -388,16 +331,6 @@ function CrudCategory() {
                     </form>
                 </Modal.Body>
             </Modal>
-
-            {/* NOTIFICATION UI */}
-            {notification && (
-                <div
-                    className={`notification ${notificationVisible ? "show" : ""}`}
-                >
-                    {notification}
-                    <div className="notification-bar"></div>
-                </div>
-            )}
         </>
     );
 }

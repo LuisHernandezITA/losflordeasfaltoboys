@@ -53,7 +53,6 @@ function CrudGallery() {
         axios
             .get("/api/gallery_artworks")
             .then((response) => {
-                // Adaptado al formato estructurado de tu controlador { success: true, data: [...] }
                 const data = response.data.data || [];
                 setArtworks(data);
                 setFilteredArtworks(data);
@@ -220,7 +219,6 @@ function CrudGallery() {
     };
 
     const handleEdit = async (artwork) => {
-        // Sigue tu estándar enviando el ID en la petición para recuperar datos
         try {
             const response = await axios.post(
                 "/api/gallery_edit",
@@ -339,7 +337,6 @@ function CrudGallery() {
             </Container>
 
             {activeTab === "artworks" ? (
-                /* --- SECCIÓN SECTOR OBRAS DE ARTE --- */
                 <>
                     <div className="d-flex">
                         <Container>
@@ -443,7 +440,6 @@ function CrudGallery() {
                     </MDBTable>
                 </>
             ) : (
-                /* --- SECCIÓN EXCLUSIVA PARA LA PUBLICIDAD PARÓDICA --- */
                 <Container
                     className="p-4"
                     style={{
@@ -533,7 +529,9 @@ function CrudGallery() {
             >
                 <Modal.Header
                     className={
-                        editMode ? "bg-dark text-white" : "bg-dark text-white"
+                        editMode
+                            ? "bg-primary text-white"
+                            : "bg-warning text-dark"
                     }
                     style={{
                         borderRadius: "0px",
@@ -549,6 +547,16 @@ function CrudGallery() {
                     </Modal.Title>
                 </Modal.Header>
                 <Modal.Body style={{ backgroundColor: "rgb(20, 20, 20)" }}>
+                    <img
+                        src="/img/logosmc.svg"
+                        alt="Logo"
+                        style={{
+                            maxWidth: "40%",
+                            margin: "auto",
+                            display: "block",
+                            marginBottom: "20px",
+                        }}
+                    />
                     <form
                         onSubmit={
                             editMode ? handleUpdateArtwork : handleAddArtwork

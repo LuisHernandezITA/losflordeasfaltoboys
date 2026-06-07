@@ -5,7 +5,7 @@ import {
     MDBTableBody,
     MDBBtn,
     MDBInput,
-    MDBIcon, // <-- Importación corregida aquí
+    MDBIcon,
 } from "mdb-react-ui-kit";
 import {
     Form,
@@ -16,20 +16,18 @@ import {
     Col,
     Modal,
 } from "react-bootstrap";
-import "/resources/css/app.css";
 import axios from "axios";
 import { Navigate } from "react-router-dom";
-import { useUser } from "./UserContext"; // <-- Sintaxis de importación corregida aquí
+import { useUser } from "./UserContext";
 
 function CrudEvents() {
     const { userInfo } = useUser();
     const userAdmin = userInfo ? userInfo.admin : "";
+    const accessToken = userInfo ? userInfo.token : "";
 
     if (!userAdmin) {
         return <Navigate to="/" />;
     }
-
-    const accessToken = userInfo ? userInfo.token : "";
 
     // --- ESTADOS GENERALES ---
     const [search, setSearch] = useState("");
@@ -57,17 +55,21 @@ function CrudEvents() {
     const handleSearchChange = (e) => {
         const searchText = e.target.value;
         setSearch(searchText);
-        const filtered = searchText
-            ? events.filter(
-                  (evt) =>
-                      evt.title
-                          .toLowerCase()
-                          .includes(searchText.toLowerCase()) ||
-                      evt.location
-                          .toLowerCase()
-                          .includes(searchText.toLowerCase()),
-              )
-            : events;
+        if (!searchText) {
+            setFilteredEvents(events);
+            return;
+        }
+        const filtered = events.filter(
+            (evt) =>
+                (evt.title &&
+                    evt.title
+                        .toLowerCase()
+                        .includes(searchText.toLowerCase())) ||
+                (evt.location &&
+                    evt.location
+                        .toLowerCase()
+                        .includes(searchText.toLowerCase())),
+        );
         setFilteredEvents(filtered);
     };
 
@@ -81,10 +83,12 @@ function CrudEvents() {
             if (progressBar)
                 progressBar.classList.add("notification-bar-progress");
 
-            setTimeout(() => {
+            const timer = setTimeout(() => {
                 setNotificationVisible(false);
                 getEvents();
             }, 1500);
+
+            return () => clearTimeout(timer);
         }
     }, [notificationVisible]);
 
@@ -108,7 +112,6 @@ function CrudEvents() {
         banner_path: "",
     });
 
-    // Estado para añadir una nueva foto dinámica a la subtabla de la galería
     const [newImageUrl, setNewImageUrl] = useState("");
     const [eventImages, setEventImages] = useState([]);
 
@@ -116,18 +119,21 @@ function CrudEvents() {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
 
-        const newErrors = { ...errors };
-        if (name === "title" || name === "location" || name === "banner_path") {
-            newErrors[name] =
-                value === "" ? `* ${name.replace("_", " ")} is required` : "";
+        if (["title", "location", "banner_path"].includes(name)) {
+            setErrors({
+                ...errors,
+                [name]:
+                    value.trim() === ""
+                        ? `* ${name.replace("_", " ")} is required`
+                        : "",
+            });
         }
-        setErrors(newErrors);
     };
 
     const isFormValid =
-        formData.title !== "" &&
-        formData.location !== "" &&
-        formData.banner_path !== "" &&
+        formData.title.trim() !== "" &&
+        formData.location.trim() !== "" &&
+        formData.banner_path.trim() !== "" &&
         errors.title === "" &&
         errors.location === "" &&
         errors.banner_path === "";
@@ -154,16 +160,17 @@ function CrudEvents() {
         setShowAddForm(true);
     };
 
-    const handleButtonClick = () => {
-        setIsButtonEnabled(false);
+    const handleCloseModal = () => {
+        setShowAddForm(false);
+        setIsButtonAddEnabled(true);
+        setIsButtonEnabled(true);
     };
 
-    // --- ACCIONES CRUD ACCESIBLES POR LAS RUTAS backend ---
-
+    // --- ACCIONES CRUD ---
     const handleAddEvent = async (e) => {
         e.preventDefault();
+        setIsButtonEnabled(false);
         try {
-            // Nota: Mapeamos los campos principales junto con el set inicial de imágenes
             const response = await fetch("/api/events_store", {
                 method: "POST",
                 headers: {
@@ -172,7 +179,7 @@ function CrudEvents() {
                 },
                 body: JSON.stringify({
                     ...formData,
-                    gallery_images: eventImages, // Pasa las imágenes añadidas dinámicamente en el modal
+                    gallery_images: eventImages,
                 }),
             });
 
@@ -180,29 +187,27 @@ function CrudEvents() {
 
             showNotification("Event added successfully");
             setShowAddForm(false);
-            setIsButtonEnabled(true);
             setIsButtonAddEnabled(true);
         } catch (error) {
             showNotification(error.message);
+        } finally {
             setIsButtonEnabled(true);
-            setIsButtonAddEnabled(true);
         }
     };
 
     const handleEdit = async (event) => {
         try {
-            // Petición POST idéntica al flujo reactivo que usa tu products_show
             const response = await axios.post("/api/events_edit", {
                 id: event.id,
             });
             const eventData = response.data;
 
             setFormData({
-                title: eventData.title,
-                date: eventData.date || "",
+                title: eventData.title || "",
+                date: eventData.date ? eventData.date.substring(0, 10) : "",
                 description: eventData.description || "",
-                location: eventData.location,
-                banner_path: eventData.banner_path,
+                location: eventData.location || "",
+                banner_path: eventData.banner_path || "",
             });
 
             setEventImages(eventData.images || []);
@@ -211,12 +216,12 @@ function CrudEvents() {
             setShowAddForm(true);
         } catch (error) {
             console.error("Error cargando evento:", error);
-            setIsButtonEnabled(true);
         }
     };
 
     const handleUpdateEvent = async (e) => {
         e.preventDefault();
+        setIsButtonEnabled(false);
         try {
             const response = await fetch(
                 `/api/events_update/${eventIdUpdate}`,
@@ -228,7 +233,7 @@ function CrudEvents() {
                     },
                     body: JSON.stringify({
                         ...formData,
-                        gallery_images: eventImages, // Sincroniza la tabla cruzada en cascada
+                        gallery_images: eventImages,
                     }),
                 },
             );
@@ -237,60 +242,88 @@ function CrudEvents() {
 
             showNotification("Event Updated successfully");
             setShowAddForm(false);
-            setIsButtonEnabled(true);
             setIsButtonAddEnabled(true);
         } catch (error) {
             showNotification(error.message);
+        } finally {
             setIsButtonEnabled(true);
-            setIsButtonAddEnabled(true);
         }
     };
 
     const handleDelete = async (id) => {
+        setIsButtonEnabled(false);
         try {
             const response = await axios.delete(`/api/events_destroy/${id}`, {
                 headers: { Authorization: `Bearer ${accessToken}` },
             });
-
             if (response.status === 200) {
                 showNotification("Event deleted successfully");
-                setIsButtonEnabled(true);
             }
         } catch (error) {
             console.error(error);
-            setIsButtonEnabled(true);
             alert("Error deleting event");
+        } finally {
+            setIsButtonEnabled(true);
         }
     };
 
-    // --- MANEJADORES DE LA SUBTABLA DINÁMICA DE IMÁGENES ---
+    // --- MANEJADORES DE LA SUBTABLA GALERÍA ---
     const handleAddImageToGallery = () => {
         if (newImageUrl.trim() === "") return;
-
-        // Añadir elemento temporal con id único para manejar el mapeo de react
         const newImgObj = {
-            id: Date.now(), // ID Temporal si es nuevo, Laravel creará el definitivo en base de datos al guardar
+            id: Date.now(),
             image_path: newImageUrl,
         };
-
         setEventImages([...eventImages, newImgObj]);
-        setNewImageUrl(""); // Limpiar input
+        setNewImageUrl("");
     };
 
     const handleRemoveImageFromGallery = (imgId) => {
         setEventImages(eventImages.filter((img) => img.id !== imgId));
     };
 
+    // --- ESTILOS DE ADAPTACIÓN BASE VISUAL ---
+    const brutalistButtonStyles = {
+        backgroundColor: "#ffffff",
+        color: "#000000",
+        borderRadius: "0px",
+        border: "none",
+        fontWeight: "normal",
+        fontSize: "0.85rem",
+        padding: "10px 24px",
+        boxShadow: "none",
+    };
+
+    const tableActionBtnStyles = {
+        backgroundColor: "#ffffff",
+        color: "#000000",
+        borderRadius: "0px",
+        border: "none",
+        fontWeight: "normal",
+        fontSize: "0.8rem",
+        padding: "6px 18px",
+        boxShadow: "none",
+        minWidth: "85px",
+    };
+
     return (
         <>
             <br />
-            <div className="d-flex align-items-center justify-content-between px-5">
-                <Container className="mt-5">
-                    <Row>
-                        <Col sm={4}>
-                            <Form className="d-flex">
-                                <InputGroup>
-                                    <InputGroup.Text className="bg-white">
+            <div className="d-flex align-items-center justify-content-between JSON-header-container">
+                <Container className="mt-4 px-0">
+                    <Row className="align-items-center">
+                        <Col md={6}>
+                            <Form onSubmit={(e) => e.preventDefault()}>
+                                <InputGroup
+                                    style={{
+                                        borderRadius: "0px",
+                                        maxWidth: "400px",
+                                    }}
+                                >
+                                    <InputGroup.Text
+                                        className="bg-white border-0"
+                                        style={{ borderRadius: "0px" }}
+                                    >
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
                                             viewBox="0 0 24 24"
@@ -299,114 +332,246 @@ function CrudEvents() {
                                             fill="currentColor"
                                         >
                                             <path d="M9.5 3a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13zM1 9.5a8.5 8.5 0 1 1 17 0 8.5 8.5 0 0 1-17 0z" />
+                                            <path d="M16.853 16.854a.5.5 0 0 0 .707 0l3.793-3.793a.5.5 0 0 0 0-.707l-3.793-3.793a.5.5 0 0 0-.707.707L19.293 12H10.5a.5.5 0 0 0 0 1h8.793l-2.646 2.646a.5.5 0 0 0 0 .707z" />
                                         </svg>
                                     </InputGroup.Text>
                                     <FormControl
                                         type="search"
-                                        className="me-2"
-                                        placeholder="Search Events"
+                                        style={{
+                                            borderRadius: "0px",
+                                            border: "none",
+                                        }}
+                                        placeholder="Buscar eventos por título o locación..."
                                         value={search}
                                         onChange={handleSearchChange}
                                     />
                                 </InputGroup>
                             </Form>
                         </Col>
+                        <Col md={6} className="d-flex justify-content-end">
+                            <MDBBtn
+                                style={brutalistButtonStyles}
+                                type="button"
+                                disabled={!isButtonAddEnabled}
+                                onClick={handleButtonAddClick}
+                            >
+                                ADD NEW EVENT
+                            </MDBBtn>
+                        </Col>
                     </Row>
                 </Container>
-
-                <MDBBtn
-                    class={`custom-button ${!isButtonAddEnabled ? "clicked" : ""}`}
-                    size="lg"
-                    className="mb-4 w-100"
-                    type="submit"
-                    disabled={!isButtonAddEnabled}
-                    onClick={handleButtonAddClick}
-                >
-                    ADD NEW EVENT
-                </MDBBtn>
             </div>
             <br />
 
-            <MDBTable>
-                <MDBTableHead dark>
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Title</th>
-                        <th scope="col">Date</th>
-                        <th scope="col">Location</th>
-                        <th scope="col">Gallery Photos</th>
-                        <th scope="col" className="text-center">
-                            Actions
-                        </th>
-                    </tr>
-                </MDBTableHead>
-                <MDBTableBody>
-                    {filteredEvents.map((evt) => (
-                        <tr key={evt.id}>
-                            <th scope="row">{evt.id}</th>
-                            <td className="fw-bold">{evt.title}</td>
-                            <td>{evt.date || "No date set"}</td>
-                            <td>{evt.location}</td>
-                            <td>
-                                <MDBIcon fas icon="images" className="me-2" />
-                                {evt.images ? evt.images.length : 0} photos
-                            </td>
-                            <td>
-                                <MDBBtn
-                                    class={`custom-button ${!isButtonEnabled ? "clicked" : ""} mb-4 w-100`}
-                                    size="lg"
-                                    className="mb-4 w-100"
-                                    style={{ width: "98px" }}
-                                    disabled={!isButtonEnabled}
-                                    onClick={() => {
-                                        handleButtonClick();
-                                        handleEdit(evt);
-                                    }}
-                                >
-                                    EDIT
-                                </MDBBtn>
-                                <MDBBtn
-                                    class={`custom-button ${!isButtonEnabled ? "clicked" : ""} mb-4 w-100`}
-                                    size="lg"
-                                    className="mb-4 w-100"
-                                    disabled={!isButtonEnabled}
-                                    onClick={() => {
-                                        handleButtonClick();
-                                        handleDelete(evt.id);
-                                    }}
-                                >
-                                    DELETE
-                                </MDBBtn>
-                            </td>
+            <div className="px-4">
+                <MDBTable
+                    responsive
+                    align="middle"
+                    className="text-white border-0"
+                    style={{ backgroundColor: "#121212" }}
+                >
+                    <MDBTableHead>
+                        <tr style={{ borderBottom: "1px solid #222" }}>
+                            <th
+                                scope="col"
+                                style={{
+                                    fontWeight: "normal",
+                                    color: "#ffffff",
+                                    fontSize: "0.85rem",
+                                }}
+                            >
+                                #
+                            </th>
+                            <th
+                                scope="col"
+                                style={{
+                                    fontWeight: "normal",
+                                    color: "#ffffff",
+                                    fontSize: "0.85rem",
+                                }}
+                            >
+                                Title
+                            </th>
+                            <th
+                                scope="col"
+                                style={{
+                                    fontWeight: "normal",
+                                    color: "#ffffff",
+                                    fontSize: "0.85rem",
+                                }}
+                            >
+                                Date
+                            </th>
+                            <th
+                                scope="col"
+                                style={{
+                                    fontWeight: "normal",
+                                    color: "#ffffff",
+                                    fontSize: "0.85rem",
+                                }}
+                            >
+                                Location
+                            </th>
+                            <th
+                                scope="col"
+                                style={{
+                                    fontWeight: "normal",
+                                    color: "#ffffff",
+                                    fontSize: "0.85rem",
+                                }}
+                            >
+                                Gallery Photos
+                            </th>
+                            <th
+                                scope="col"
+                                className="text-end"
+                                style={{
+                                    fontWeight: "normal",
+                                    color: "#ffffff",
+                                    fontSize: "0.85rem",
+                                    width: "240px",
+                                    paddingRight: "24px",
+                                }}
+                            >
+                                Actions
+                            </th>
                         </tr>
-                    ))}
-                </MDBTableBody>
-            </MDBTable>
+                    </MDBTableHead>
+                    <MDBTableBody>
+                        {filteredEvents.map((evt) => (
+                            <tr
+                                key={evt.id}
+                                style={{ borderBottom: "1px solid #222" }}
+                            >
+                                <td
+                                    style={{
+                                        color: "#ffffff",
+                                        fontWeight: "normal",
+                                        fontSize: "0.9rem",
+                                    }}
+                                >
+                                    {evt.id}
+                                </td>
+                                <td
+                                    style={{
+                                        color: "#ffffff",
+                                        fontWeight: "normal",
+                                        fontSize: "0.9rem",
+                                    }}
+                                >
+                                    {evt.title}
+                                </td>
+                                <td
+                                    style={{
+                                        color: "#ffffff",
+                                        fontWeight: "normal",
+                                        fontSize: "0.9rem",
+                                    }}
+                                >
+                                    {evt.date || "No date set"}
+                                </td>
+                                <td
+                                    style={{
+                                        color: "#ffffff",
+                                        fontWeight: "normal",
+                                        fontSize: "0.9rem",
+                                    }}
+                                >
+                                    {evt.location}
+                                </td>
+                                <td
+                                    style={{
+                                        color: "#ffffff",
+                                        fontWeight: "normal",
+                                        fontSize: "0.9rem",
+                                    }}
+                                >
+                                    <MDBIcon
+                                        fas
+                                        icon="images"
+                                        className="me-2"
+                                        style={{ color: "#666" }}
+                                    />
+                                    {evt.images ? evt.images.length : 0} photos
+                                </td>
+                                <td
+                                    className="text-end"
+                                    style={{ paddingRight: "24px" }}
+                                >
+                                    <MDBBtn
+                                        style={{
+                                            ...tableActionBtnStyles,
+                                            marginRight: "10px",
+                                        }}
+                                        disabled={!isButtonEnabled}
+                                        onClick={() => handleEdit(evt)}
+                                    >
+                                        EDIT
+                                    </MDBBtn>
+                                    <MDBBtn
+                                        style={tableActionBtnStyles}
+                                        disabled={!isButtonEnabled}
+                                        onClick={() => {
+                                            if (
+                                                window.confirm(
+                                                    "Are you sure you want to delete this event?",
+                                                )
+                                            ) {
+                                                handleDelete(evt.id);
+                                            }
+                                        }}
+                                    >
+                                        DELETE
+                                    </MDBBtn>
+                                </td>
+                            </tr>
+                        ))}
+                    </MDBTableBody>
+                </MDBTable>
+            </div>
 
-            {/* MODAL PRINCIPAL | ADD & UPDATE */}
+            {/* MODAL PRINCIPAL TOTALMENTE AJUSTADO */}
             <Modal
                 show={showAddForm}
-                size="lg" // Cambiado a 'lg' para dar espacio a la subtabla de fotos fijas
-                onHide={() => {
-                    setShowAddForm(false);
-                    setIsButtonAddEnabled(true);
-                    setIsButtonEnabled(true);
-                }}
+                onHide={handleCloseModal}
+                size="lg"
+                centered
             >
                 <Modal.Header
-                    className={
-                        editMode ? "bg-primary text-white" : "bg-warning"
-                    }
+                    className="bg-dark text-white border-secondary"
                     closeButton
+                    style={{ borderRadius: "0px" }}
                 >
-                    <Modal.Title>
+                    <Modal.Title
+                        style={{ fontSize: "1.1rem", fontWeight: "normal" }}
+                    >
                         {editMode ? "Update Event Lookbook" : "Add New Event"}
                     </Modal.Title>
                 </Modal.Header>
-                <Modal.Body>
+                <Modal.Body
+                    className="bg-dark text-white"
+                    style={{ borderRadius: "0px" }}
+                >
+                    <img
+                        src="/img/logosmc.svg"
+                        alt="Logo"
+                        style={{
+                            maxWidth: "35%",
+                            margin: "auto",
+                            display: "block",
+                            marginBottom: "30px",
+                        }}
+                    />
                     <form
                         onSubmit={editMode ? handleUpdateEvent : handleAddEvent}
                     >
+                        <h5
+                            className="text-muted small border-bottom border-secondary pb-2 mb-3"
+                            style={{ letterSpacing: "1px" }}
+                        >
+                            1. EVENT MAIN DETAILS
+                        </h5>
+
                         {errors.title && (
                             <p className="text-danger small">{errors.title}</p>
                         )}
@@ -416,48 +581,61 @@ function CrudEvents() {
                             id="title"
                             type="text"
                             name="title"
+                            contrast
                             value={formData.title}
                             onChange={handleChange}
                         />
 
-                        <MDBInput
-                            wrapperClass="mb-4"
-                            label="Date"
-                            id="date"
-                            type="date"
-                            name="date"
-                            value={formData.date}
-                            onChange={handleChange}
-                        />
+                        <Row>
+                            <Col md={6}>
+                                <MDBInput
+                                    wrapperClass="mb-4"
+                                    label="Date"
+                                    id="date"
+                                    type="date"
+                                    name="date"
+                                    contrast
+                                    value={formData.date}
+                                    onChange={handleChange}
+                                />
+                            </Col>
+                            <Col md={6}>
+                                {errors.location && (
+                                    <p className="text-danger small">
+                                        {errors.location}
+                                    </p>
+                                )}
+                                <MDBInput
+                                    wrapperClass="mb-4"
+                                    label="Location"
+                                    id="location"
+                                    type="text"
+                                    name="location"
+                                    contrast
+                                    value={formData.location}
+                                    onChange={handleChange}
+                                />
+                            </Col>
+                        </Row>
 
-                        {errors.location && (
-                            <p className="text-danger small">
-                                {errors.location}
-                            </p>
-                        )}
-                        <MDBInput
-                            wrapperClass="mb-4"
-                            label="Location"
-                            id="location"
-                            type="text"
-                            name="location"
-                            value={formData.location}
-                            onChange={handleChange}
-                        />
-
-                        <Form.Group className="mb-4">
-                            <Form.Label className="small text-muted">
-                                Description
-                            </Form.Label>
-                            <Form.Control
-                                as="textarea"
-                                rows={2}
+                        <div className="mb-4">
+                            <label
+                                htmlFor="description"
+                                className="form-label text-muted small mb-1"
+                            >
+                                Description Overview
+                            </label>
+                            <textarea
+                                className="form-control bg-dark text-white border-secondary"
+                                id="description"
+                                rows="3"
                                 name="description"
                                 value={formData.description}
                                 onChange={handleChange}
                                 placeholder="Write collection overview..."
-                            />
-                        </Form.Group>
+                                style={{ borderRadius: "0px" }}
+                            ></textarea>
+                        </div>
 
                         {errors.banner_path && (
                             <p className="text-danger small">
@@ -466,42 +644,54 @@ function CrudEvents() {
                         )}
                         <MDBInput
                             wrapperClass="mb-4"
-                            label="Banner Principal (URL de portada)"
+                            label="Main Banner URL (Cover Path)"
                             id="banner_path"
                             type="text"
                             name="banner_path"
+                            contrast
                             value={formData.banner_path}
                             onChange={handleChange}
                         />
 
-                        {/* ------------------------------------------------------------- */}
-                        {/* SUBTABLA INTERNA: GESTIÓN DE GALERÍA DE IMÁGENES DINÁMICAS     */}
-                        {/* ------------------------------------------------------------- */}
-                        <div className="p-3 my-4 border border-dark rounded bg-light">
-                            <h5 className="fw-bold text-uppercase tracking-wider mb-3 text-dark">
+                        {/* SUBTABLA INTERNA REESTILIZADA SIN NEGRITAS O BORDES REDONDEADOS */}
+                        <div
+                            className="p-4 my-4 border border-secondary"
+                            style={{ backgroundColor: "#151515" }}
+                        >
+                            <h5
+                                className="text-muted small border-bottom border-secondary pb-2 mb-3"
+                                style={{ letterSpacing: "1px" }}
+                            >
                                 <MDBIcon
                                     fas
                                     icon="photo-video"
                                     className="me-2"
                                 />
-                                Galería Dinámica del Evento
+                                2. DYNAMIC GALLERY LOOKS
                             </h5>
 
-                            {/* Input rápido para meter imágenes mediante URLs directas */}
-                            <InputGroup className="mb-3">
+                            <InputGroup
+                                className="mb-3"
+                                style={{ borderRadius: "0px" }}
+                            >
                                 <FormControl
-                                    placeholder="Pegar URL de foto de Unsplash / Postimages..."
+                                    className="bg-dark text-white border-secondary"
+                                    placeholder="Paste photo source URL (Unsplash, Postimages...)"
                                     value={newImageUrl}
                                     onChange={(e) =>
                                         setNewImageUrl(e.target.value)
                                     }
+                                    style={{ borderRadius: "0px" }}
                                 />
                                 <MDBBtn
                                     type="button"
-                                    className="btn-dark"
+                                    style={{
+                                        ...brutalistButtonStyles,
+                                        padding: "0 20px",
+                                    }}
                                     onClick={handleAddImageToGallery}
                                 >
-                                    Añadir Foto
+                                    ADD PHOTO
                                 </MDBBtn>
                             </InputGroup>
 
@@ -512,48 +702,104 @@ function CrudEvents() {
                                 }}
                             >
                                 <MDBTable
-                                    small
+                                    responsive
                                     align="middle"
-                                    className="mb-0 bg-white"
+                                    className="text-white m-0 border-0"
                                 >
-                                    <MDBTableHead light>
-                                        <tr>
-                                            <th>Previsualización</th>
-                                            <th>Enlace/Ruta del archivo</th>
-                                            <th className="text-center">
-                                                Acción
+                                    <MDBTableHead>
+                                        <tr
+                                            style={{
+                                                borderBottom: "1px solid #333",
+                                            }}
+                                        >
+                                            <th
+                                                scope="col"
+                                                style={{
+                                                    fontWeight: "normal",
+                                                    fontSize: "0.8rem",
+                                                    color: "#aaa",
+                                                }}
+                                            >
+                                                Preview
+                                            </th>
+                                            <th
+                                                scope="col"
+                                                style={{
+                                                    fontWeight: "normal",
+                                                    fontSize: "0.8rem",
+                                                    color: "#aaa",
+                                                }}
+                                            >
+                                                Image Asset Path
+                                            </th>
+                                            <th
+                                                scope="col"
+                                                className="text-end"
+                                                style={{
+                                                    fontWeight: "normal",
+                                                    fontSize: "0.8rem",
+                                                    color: "#aaa",
+                                                    paddingRight: "15px",
+                                                }}
+                                            >
+                                                Action
                                             </th>
                                         </tr>
                                     </MDBTableHead>
-                                    <MDBTableBody>
+                                    <MDBTableBody
+                                        style={{ backgroundColor: "#1c1c1c" }}
+                                    >
                                         {eventImages.length > 0 ? (
                                             eventImages.map((img) => (
-                                                <tr key={img.id}>
+                                                <tr
+                                                    key={img.id}
+                                                    style={{
+                                                        borderBottom:
+                                                            "1px solid #252525",
+                                                    }}
+                                                >
                                                     <td>
                                                         <img
                                                             src={img.image_path}
-                                                            alt="Miniatura"
+                                                            alt="Look preview"
                                                             style={{
                                                                 width: "45px",
                                                                 height: "45px",
                                                                 objectFit:
                                                                     "cover",
+                                                                borderRadius:
+                                                                    "0px",
                                                             }}
-                                                            className="rounded border border-secondary"
+                                                            className="border border-secondary"
                                                         />
                                                     </td>
                                                     <td
                                                         className="small text-truncate"
                                                         style={{
-                                                            maxWidth: "250px",
+                                                            maxWidth: "300px",
+                                                            color: "#ccc",
+                                                            fontWeight:
+                                                                "normal",
                                                         }}
                                                     >
                                                         {img.image_path}
                                                     </td>
-                                                    <td className="text-center">
+                                                    <td
+                                                        className="text-end"
+                                                        style={{
+                                                            paddingRight:
+                                                                "15px",
+                                                        }}
+                                                    >
                                                         <MDBBtn
                                                             type="button"
-                                                            className="btn-sm btn-danger px-2"
+                                                            style={{
+                                                                ...tableActionBtnStyles,
+                                                                minWidth:
+                                                                    "40px",
+                                                                padding:
+                                                                    "6px 12px",
+                                                            }}
                                                             onClick={() =>
                                                                 handleRemoveImageFromGallery(
                                                                     img.id,
@@ -573,9 +819,12 @@ function CrudEvents() {
                                                 <td
                                                     colSpan="3"
                                                     className="text-center text-muted small py-3"
+                                                    style={{
+                                                        fontWeight: "normal",
+                                                    }}
                                                 >
-                                                    Sin fotos en la galería.
-                                                    Añade URLs arriba.
+                                                    No looks added to this event
+                                                    yet.
                                                 </td>
                                             </tr>
                                         )}
@@ -583,13 +832,12 @@ function CrudEvents() {
                                 </MDBTable>
                             </div>
                         </div>
-                        {/* ------------------------------------------------------------- */}
 
                         <MDBBtn
-                            className="w-100"
-                            size="lg"
+                            style={{ ...brutalistButtonStyles, width: "100%" }}
+                            className="mt-3"
                             type="submit"
-                            disabled={!isFormValid}
+                            disabled={!isFormValid || !isButtonEnabled}
                         >
                             {editMode ? "UPDATE LOOKBOOK" : "SAVE EVENT"}
                         </MDBBtn>
@@ -597,7 +845,7 @@ function CrudEvents() {
                 </Modal.Body>
             </Modal>
 
-            {/* NOTIFICACIONES GENERALES */}
+            {/* NOTIFICACIONES */}
             {notification && (
                 <div
                     className={`notification ${notificationVisible ? "show" : ""}`}

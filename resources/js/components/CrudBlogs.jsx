@@ -22,18 +22,49 @@ import { useUser } from "./UserContext";
 function CrudBlogs() {
     const { userInfo } = useUser();
     const userAdmin = userInfo ? userInfo.admin : "";
+    const accessToken = userInfo ? userInfo.token : "";
 
     if (!userAdmin) {
         return <Navigate to="/" />;
     }
 
-    const accessToken = userInfo ? userInfo.token : "";
-
     const [search, setSearch] = useState("");
     const [blogs, setBlogs] = useState([]);
     const [filteredBlogs, setFilteredBlogs] = useState([]);
 
-    // --- CARGAR BLOGS ---
+    const [isButtonEnabled, setIsButtonEnabled] = useState(true);
+    const [showAddForm, setShowAddForm] = useState(false);
+    const [editMode, setEditMode] = useState(false);
+    const [blogIdUpdate, setBlogIdUpdate] = useState(null);
+    const [isButtonAddEnabled, setIsButtonAddEnabled] = useState(true);
+
+    const [notification, setNotification] = useState(null);
+    const [notificationVisible, setNotificationVisible] = useState(false);
+
+    const initialFormState = {
+        banner: "",
+        title: "",
+        slug: "",
+        author: "",
+        published_at: "",
+        category: "",
+        content: "",
+        content_secondary: "",
+        extra_image: "",
+        image_position: "left",
+        youtube_url: "",
+        external_url: "",
+    };
+
+    const [formData, setFormData] = useState(initialFormState);
+    const [errors, setErrors] = useState({
+        banner: "",
+        title: "",
+        author: "",
+        published_at: "",
+        content: "",
+    });
+
     useEffect(() => {
         getBlogs();
     }, []);
@@ -50,36 +81,18 @@ function CrudBlogs() {
             });
     };
 
-    // --- BÚSQUEDA ---
-    const handleSearchChange = (e) => {
-        const searchText = e.target.value;
-        setSearch(searchText);
-        const filtered = searchText
-            ? blogs.filter(
-                  (b) =>
-                      b.title
-                          .toLowerCase()
-                          .includes(searchText.toLowerCase()) ||
-                      b.author.toLowerCase().includes(searchText.toLowerCase()),
-              )
-            : blogs;
-        setFilteredBlogs(filtered);
-    };
-
-    // --- NOTIFICACIONES ---
-    const [notification, setNotification] = useState(null);
-    const [notificationVisible, setNotificationVisible] = useState(false);
-
     useEffect(() => {
         if (notificationVisible) {
             const progressBar = document.querySelector(".notification-bar");
             if (progressBar)
                 progressBar.classList.add("notification-bar-progress");
 
-            setTimeout(() => {
+            const timer = setTimeout(() => {
                 setNotificationVisible(false);
                 getBlogs();
             }, 1500);
+
+            return () => clearTimeout(timer);
         }
     }, [notificationVisible]);
 
@@ -88,106 +101,89 @@ function CrudBlogs() {
         setNotificationVisible(true);
     };
 
-    // --- FORMULARIO Y VALIDACIONES ---
-    const [formData, setFormData] = useState({
-        banner: "",
-        title: "",
-        slug: "",
-        author: "",
-        published_at: "",
-        category: "",
-        content: "",
-        content_secondary: "",
-        extra_image: "",
-        image_position: "left",
-        youtube_url: "",
-        external_url: "",
-    });
+    const handleSearchChange = (e) => {
+        const searchText = e.target.value;
+        setSearch(searchText);
 
-    const [errors, setErrors] = useState({
-        banner: "",
-        title: "",
-        author: "",
-        published_at: "",
-        content: "",
-    });
+        if (!searchText) {
+            setFilteredBlogs(blogs);
+            return;
+        }
+
+        const filtered = blogs.filter(
+            (b) =>
+                (b.title &&
+                    b.title.toLowerCase().includes(searchText.toLowerCase())) ||
+                (b.author &&
+                    b.author.toLowerCase().includes(searchText.toLowerCase())),
+        );
+        setFilteredBlogs(filtered);
+    };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
 
-        const newErrors = { ...errors };
         if (
             ["banner", "title", "author", "published_at", "content"].includes(
                 name,
             )
         ) {
-            newErrors[name] = value === "" ? `* ${name} is required` : "";
+            setErrors({
+                ...errors,
+                [name]: value.trim() === "" ? `* ${name} is required` : "",
+            });
         }
-        setErrors(newErrors);
     };
 
     const isFormValid =
-        formData.banner !== "" &&
-        formData.title !== "" &&
-        formData.author !== "" &&
-        formData.published_at !== "" &&
-        formData.content !== "";
-
-    // --- BOTONES DE CONTROL ---
-    const [isButtonEnabled, setIsButtonEnabled] = useState(true);
-    const [showAddForm, setShowAddForm] = useState(false);
-    const [editMode, setEditMode] = useState(false);
-    const [blogIdUpdate, setBlogIdUpdate] = useState(null);
-    const [isButtonAddEnabled, setIsButtonAddEnabled] = useState(true);
+        formData.banner.trim() !== "" &&
+        formData.title.trim() !== "" &&
+        formData.author.trim() !== "" &&
+        formData.published_at.trim() !== "" &&
+        formData.content.trim() !== "";
 
     const handleButtonAddClick = () => {
-        setFormData({
+        setFormData(initialFormState);
+        setErrors({
             banner: "",
             title: "",
-            slug: "",
             author: "",
             published_at: "",
-            category: "",
             content: "",
-            content_secondary: "",
-            extra_image: "",
-            image_position: "left",
-            youtube_url: "",
-            external_url: "",
         });
         setIsButtonAddEnabled(false);
         setEditMode(false);
         setShowAddForm(true);
     };
 
-    const handleButtonClick = () => {
-        setIsButtonEnabled(false);
+    const handleCloseModal = () => {
+        setShowAddForm(false);
+        setIsButtonAddEnabled(true);
+        setIsButtonEnabled(true);
     };
 
-    // --- CRUD ACTIONS ---
+    const configHeaders = {
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+        },
+    };
+
     const handleAddBlog = async (e) => {
         e.preventDefault();
+        setIsButtonEnabled(false);
         try {
-            const response = await fetch("/api/blogs_store", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${accessToken}`,
-                },
-                body: JSON.stringify(formData),
-            });
-
-            if (!response.ok) throw new Error("Error adding post.");
-
+            await axios.post("/api/blogs_store", formData, configHeaders);
             showNotification("Post added successfully");
             setShowAddForm(false);
-            setIsButtonEnabled(true);
             setIsButtonAddEnabled(true);
         } catch (error) {
-            showNotification(error.message);
+            showNotification(
+                error.response?.data?.message || "Error adding post.",
+            );
+        } finally {
             setIsButtonEnabled(true);
-            setIsButtonAddEnabled(true);
         }
     };
 
@@ -215,56 +211,84 @@ function CrudBlogs() {
 
     const handleUpdateBlog = async (e) => {
         e.preventDefault();
+        setIsButtonEnabled(false);
         try {
-            const response = await fetch(`/api/blogs_update/${blogIdUpdate}`, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${accessToken}`,
-                },
-                body: JSON.stringify(formData),
-            });
-
-            if (!response.ok) throw new Error("Error updating post.");
-
+            await axios.put(
+                `/api/blogs_update/${blogIdUpdate}`,
+                formData,
+                configHeaders,
+            );
             showNotification("Post updated successfully");
             setShowAddForm(false);
-            setIsButtonEnabled(true);
             setIsButtonAddEnabled(true);
         } catch (error) {
-            showNotification(error.message);
+            showNotification(
+                error.response?.data?.message || "Error updating post.",
+            );
+        } finally {
             setIsButtonEnabled(true);
-            setIsButtonAddEnabled(true);
         }
     };
 
     const handleDelete = async (id) => {
+        setIsButtonEnabled(false);
         try {
             const response = await axios.delete(`/api/blogs_destroy/${id}`, {
                 headers: { Authorization: `Bearer ${accessToken}` },
             });
-
             if (response.status === 200) {
                 showNotification("Post deleted successfully");
-                setIsButtonEnabled(true);
             }
         } catch (error) {
             console.error(error);
-            setIsButtonEnabled(true);
             alert("Error deleting post");
+        } finally {
+            setIsButtonEnabled(true);
         }
+    };
+
+    // --- ESTILOS DE ADAPTACIÓN BASE ARTWORK (image_40cce5.png) ---
+    const brutalistButtonStyles = {
+        backgroundColor: "#ffffff",
+        color: "#000000",
+        borderRadius: "0px",
+        border: "none",
+        fontWeight: "normal",
+        fontSize: "0.85rem",
+        padding: "10px 24px",
+        boxShadow: "none",
+    };
+
+    const tableActionBtnStyles = {
+        backgroundColor: "#ffffff",
+        color: "#000000",
+        borderRadius: "0px",
+        border: "none",
+        fontWeight: "normal",
+        fontSize: "0.8rem",
+        padding: "6px 18px",
+        boxShadow: "none",
+        minWidth: "85px",
     };
 
     return (
         <>
             <br />
             <div className="d-flex align-items-center justify-content-between JSON-header-container">
-                <Container className="mt-5">
-                    <Row>
-                        <Col sm={6}>
-                            <Form className="d-flex">
-                                <InputGroup>
-                                    <InputGroup.Text className="bg-white">
+                <Container className="mt-4 px-0">
+                    <Row className="align-items-center">
+                        <Col md={6}>
+                            <Form onSubmit={(e) => e.preventDefault()}>
+                                <InputGroup
+                                    style={{
+                                        borderRadius: "0px",
+                                        maxWidth: "400px",
+                                    }}
+                                >
+                                    <InputGroup.Text
+                                        className="bg-white border-0"
+                                        style={{ borderRadius: "0px" }}
+                                    >
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
                                             viewBox="0 0 24 24"
@@ -278,19 +302,20 @@ function CrudBlogs() {
                                     </InputGroup.Text>
                                     <FormControl
                                         type="search"
-                                        className="me-2"
-                                        placeholder="Search Post"
+                                        style={{
+                                            borderRadius: "0px",
+                                            border: "none",
+                                        }}
+                                        placeholder="Buscar por Título, Autor o Técnica..."
                                         value={search}
                                         onChange={handleSearchChange}
                                     />
                                 </InputGroup>
                             </Form>
                         </Col>
-                        <Col sm={6} className="d-flex justify-content-end">
+                        <Col md={6} className="d-flex justify-content-end">
                             <MDBBtn
-                                className={`custom-button ${!isButtonAddEnabled ? "clicked" : ""} mb-0`}
-                                size="lg"
-                                style={{ maxWidth: "250px" }}
+                                style={brutalistButtonStyles}
                                 type="button"
                                 disabled={!isButtonAddEnabled}
                                 onClick={handleButtonAddClick}
@@ -303,101 +328,169 @@ function CrudBlogs() {
             </div>
             <br />
 
-            <MDBTable responsive align="middle" className="text-white bg-dark">
-                <MDBTableHead dark>
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Title</th>
-                        <th scope="col">Author</th>
-                        <th
-                            scope="col"
-                            className="text-center"
-                            style={{ width: "220px" }}
-                        >
-                            Actions
-                        </th>
-                    </tr>
-                </MDBTableHead>
-                <MDBTableBody>
-                    {filteredBlogs.map((b) => (
-                        <tr key={b.id}>
-                            <th scope="row">{b.id}</th>
-                            <td>{b.title}</td>
-                            <td>{b.author}</td>
-                            <td className="text-center">
-                                <MDBBtn
-                                    color="link"
-                                    className="text-warning me-2 p-2"
-                                    disabled={!isButtonEnabled}
-                                    onClick={() => {
-                                        handleButtonClick();
-                                        handleEdit(b);
-                                    }}
-                                >
-                                    EDIT
-                                </MDBBtn>
-                                <MDBBtn
-                                    color="link"
-                                    className="text-danger p-2"
-                                    disabled={!isButtonEnabled}
-                                    onClick={() => {
-                                        if (
-                                            window.confirm(
-                                                "Are you sure you want to delete this post?",
-                                            )
-                                        ) {
-                                            handleButtonClick();
-                                            handleDelete(b.id);
-                                        }
-                                    }}
-                                >
-                                    DELETE
-                                </MDBBtn>
-                            </td>
+            <div className="px-4">
+                <MDBTable
+                    responsive
+                    align="middle"
+                    className="text-white border-0"
+                    style={{ backgroundColor: "#121212" }}
+                >
+                    <MDBTableHead>
+                        <tr style={{ borderBottom: "1px solid #222" }}>
+                            <th
+                                scope="col"
+                                style={{
+                                    fontWeight: "normal",
+                                    color: "#ffffff",
+                                    fontSize: "0.85rem",
+                                }}
+                            >
+                                #
+                            </th>
+                            <th
+                                scope="col"
+                                style={{
+                                    fontWeight: "normal",
+                                    color: "#ffffff",
+                                    fontSize: "0.85rem",
+                                }}
+                            >
+                                Título
+                            </th>
+                            <th
+                                scope="col"
+                                style={{
+                                    fontWeight: "normal",
+                                    color: "#ffffff",
+                                    fontSize: "0.85rem",
+                                }}
+                            >
+                                Autor
+                            </th>
+                            <th
+                                scope="col"
+                                className="text-end"
+                                style={{
+                                    fontWeight: "normal",
+                                    color: "#ffffff",
+                                    fontSize: "0.85rem",
+                                    width: "240px",
+                                    paddingRight: "24px",
+                                }}
+                            >
+                                Actions
+                            </th>
                         </tr>
-                    ))}
-                </MDBTableBody>
-            </MDBTable>
+                    </MDBTableHead>
+                    <MDBTableBody>
+                        {filteredBlogs.map((b) => (
+                            <tr
+                                key={b.id}
+                                style={{ borderBottom: "1px solid #222" }}
+                            >
+                                <td
+                                    style={{
+                                        color: "#ffffff",
+                                        fontWeight: "normal",
+                                        fontSize: "0.9rem",
+                                    }}
+                                >
+                                    {b.id}
+                                </td>
+                                <td
+                                    style={{
+                                        color: "#ffffff",
+                                        fontWeight: "normal",
+                                        fontSize: "0.9rem",
+                                    }}
+                                >
+                                    {b.title}
+                                </td>
+                                <td
+                                    style={{
+                                        color: "#ffffff",
+                                        fontWeight: "normal",
+                                        fontSize: "0.9rem",
+                                    }}
+                                >
+                                    {b.author}
+                                </td>
+                                <td
+                                    className="text-end"
+                                    style={{ paddingRight: "24px" }}
+                                >
+                                    <MDBBtn
+                                        style={{
+                                            ...tableActionBtnStyles,
+                                            marginRight: "10px",
+                                        }}
+                                        disabled={!isButtonEnabled}
+                                        onClick={() => handleEdit(b)}
+                                    >
+                                        EDIT
+                                    </MDBBtn>
+                                    <MDBBtn
+                                        style={tableActionBtnStyles}
+                                        disabled={!isButtonEnabled}
+                                        onClick={() => {
+                                            if (
+                                                window.confirm(
+                                                    "Are you sure you want to delete this post?",
+                                                )
+                                            ) {
+                                                handleDelete(b.id);
+                                            }
+                                        }}
+                                    >
+                                        DELETE
+                                    </MDBBtn>
+                                </td>
+                            </tr>
+                        ))}
+                    </MDBTableBody>
+                </MDBTable>
+            </div>
 
-            {/* MODAL | ADD & UPDATE */}
+            {/* MODAL COMPLETAMENTE CORREGIDA Y OPERATIVA */}
             <Modal
                 show={showAddForm}
-                onHide={() => {
-                    setShowAddForm(false);
-                    setIsButtonAddEnabled(true);
-                    setIsButtonEnabled(true);
-                }}
+                onHide={handleCloseModal}
                 size="lg"
+                centered
             >
                 <Modal.Header
-                    className={
-                        editMode
-                            ? "bg-primary text-white"
-                            : "bg-warning text-dark"
-                    }
+                    className="bg-dark text-white border-secondary"
                     closeButton
+                    style={{ borderRadius: "0px" }}
                 >
-                    <Modal.Title>
+                    <Modal.Title
+                        style={{ fontSize: "1.1rem", fontWeight: "normal" }}
+                    >
                         {editMode ? "Edit Post" : "Create New Post"}
                     </Modal.Title>
                 </Modal.Header>
-                <Modal.Body className="bg-dark text-white">
+                <Modal.Body
+                    className="bg-dark text-white"
+                    style={{ borderRadius: "0px" }}
+                >
                     <img
                         src="/img/logosmc.svg"
                         alt="Logo"
                         style={{
-                            maxWidth: "40%",
+                            maxWidth: "35%",
                             margin: "auto",
                             display: "block",
-                            marginBottom: "20px",
+                            marginBottom: "30px",
                         }}
                     />
                     <form
                         onSubmit={editMode ? handleUpdateBlog : handleAddBlog}
                     >
-                        {/* --- BLOQUE 1: INFORMACIÓN ESENCIAL --- */}
-                        <h5 className="text-warning border-bottom border-secondary pb-2 mb-3">
-                            1. Primary Information
+                        <h5
+                            className="text-muted small border-bottom border-secondary pb-2 mb-3"
+                            style={{ letterSpacing: "1px" }}
+                        >
+                            1. PRIMARY INFORMATION
                         </h5>
 
                         {errors.title && (
@@ -494,9 +587,11 @@ function CrudBlogs() {
                             </Col>
                         </Row>
 
-                        {/* --- BLOQUE 2: CONTENIDO ASIMÉTRICO --- */}
-                        <h5 className="text-warning border-bottom border-secondary pb-2 mb-3 mt-4">
-                            2. Layout Content & Structure
+                        <h5
+                            className="text-muted small border-bottom border-secondary pb-2 mb-3 mt-4"
+                            style={{ letterSpacing: "1px" }}
+                        >
+                            2. LAYOUT CONTENT & STRUCTURE
                         </h5>
 
                         {errors.content && (
@@ -518,6 +613,7 @@ function CrudBlogs() {
                                 name="content"
                                 value={formData.content}
                                 onChange={handleChange}
+                                style={{ borderRadius: "0px" }}
                             ></textarea>
                         </div>
 
@@ -544,6 +640,7 @@ function CrudBlogs() {
                                         name="image_position"
                                         value={formData.image_position}
                                         onChange={handleChange}
+                                        style={{ borderRadius: "0px" }}
                                     >
                                         <option value="left">Left Side</option>
                                         <option value="right">
@@ -559,8 +656,7 @@ function CrudBlogs() {
                                 htmlFor="content_secondary"
                                 className="form-label text-muted small mb-1"
                             >
-                                Secondary Text Block (Optional - Renders
-                                alongside the support image)
+                                Secondary Text Block (Optional)
                             </label>
                             <textarea
                                 className="form-control bg-dark text-white border-secondary"
@@ -569,12 +665,15 @@ function CrudBlogs() {
                                 name="content_secondary"
                                 value={formData.content_secondary}
                                 onChange={handleChange}
+                                style={{ borderRadius: "0px" }}
                             ></textarea>
                         </div>
 
-                        {/* --- BLOQUE 3: RECURSOS EXTERNOS --- */}
-                        <h5 className="text-warning border-bottom border-secondary pb-2 mb-3 mt-4">
-                            3. Media & External Links
+                        <h5
+                            className="text-muted small border-bottom border-secondary pb-2 mb-3 mt-4"
+                            style={{ letterSpacing: "1px" }}
+                        >
+                            3. MEDIA & EXTERNAL LINKS
                         </h5>
 
                         <MDBInput
@@ -600,10 +699,10 @@ function CrudBlogs() {
                         />
 
                         <MDBBtn
-                            size="lg"
-                            className="mt-4 w-100"
+                            style={{ ...brutalistButtonStyles, width: "100%" }}
+                            className="mt-4"
                             type="submit"
-                            disabled={!isFormValid}
+                            disabled={!isFormValid || !isButtonEnabled}
                         >
                             {editMode ? "UPDATE POST" : "ADD POST"}
                         </MDBBtn>

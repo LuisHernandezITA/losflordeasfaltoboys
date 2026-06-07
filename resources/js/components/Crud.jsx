@@ -537,7 +537,7 @@ function Crud() {
                 </MDBTableBody>
             </MDBTable>
 
-            {/* MODAL | ADD & UPDATE */}
+            {/* MODAL | ADD & UPDATE | DARK MODE */}
             <Modal
                 show={showAddForm}
                 onHide={() => {
@@ -545,18 +545,22 @@ function Crud() {
                     setIsButtonAddEnabled(true);
                     setIsButtonEnabled(true);
                 }}
+                contentClassName="bg-dark text-white"
             >
                 <Modal.Header
                     className={
-                        editMode ? "bg-primary text-white" : "bg-warning"
+                        editMode
+                            ? "bg-primary text-white"
+                            : "bg-dark text-warning border-secondary"
                     }
                     closeButton
+                    closeVariant="white"
                 >
                     <Modal.Title>
                         {editMode ? "Update Product" : "Add Product"}
                     </Modal.Title>
                 </Modal.Header>
-                <Modal.Body>
+                <Modal.Body className="bg-dark text-white">
                     <img
                         src="/img/logosmc.svg"
                         alt="Logo"
@@ -572,6 +576,7 @@ function Crud() {
                             editMode ? handleUpdateProduct : handleAddProduct
                         }
                     >
+                        {/* Los inputs mantienen tu lógica, puedes aplicar 'bg-dark text-white' a los inputs si es necesario */}
                         {errors.name && (
                             <p className="text-danger small">{errors.name}</p>
                         )}
@@ -583,6 +588,7 @@ function Crud() {
                             name="name"
                             value={formData.name}
                             onChange={handleChange}
+                            contrast // MDB prop para modo oscuro
                         />
 
                         {errors.description && (
@@ -598,6 +604,7 @@ function Crud() {
                             name="description"
                             value={formData.description}
                             onChange={handleChange}
+                            contrast
                         />
 
                         {errors.price && (
@@ -611,6 +618,7 @@ function Crud() {
                             name="price"
                             value={formData.price}
                             onChange={handleChange}
+                            contrast
                         />
 
                         {errors.available_stock && (
@@ -626,53 +634,32 @@ function Crud() {
                             name="available_stock"
                             value={formData.available_stock}
                             onChange={handleChange}
+                            contrast
                         />
 
-                        {/* Imagen Principal */}
-                        <div className="mb-3">
-                            <label className="form-label">
-                                Imagen Principal (URL)
-                            </label>
-                            <input
-                                type="text"
-                                className="form-control"
-                                name="image_primary"
-                                value={formData.image_primary}
-                                onChange={handleChange}
-                            />
-                        </div>
-
-                        {/* Imagen Detalle 1 */}
-                        <div className="mb-3">
-                            <label className="form-label">
-                                Imagen Detalle 1 (URL)
-                            </label>
-                            <input
-                                type="text"
-                                className="form-control"
-                                name="image_detail_1"
-                                value={formData.image_detail_1}
-                                onChange={handleChange}
-                            />
-                        </div>
-
-                        {/* Imagen Detalle 2 */}
-                        <div className="mb-3">
-                            <label className="form-label">
-                                Imagen Detalle 2 (URL)
-                            </label>
-                            <input
-                                type="text"
-                                className="form-control"
-                                name="image_detail_2"
-                                value={formData.image_detail_2}
-                                onChange={handleChange}
-                            />
-                        </div>
+                        {/* Imagenes (Inputs estándar) */}
+                        {[
+                            "image_primary",
+                            "image_detail_1",
+                            "image_detail_2",
+                        ].map((field) => (
+                            <div className="mb-3" key={field}>
+                                <label className="form-label">
+                                    {field.replace("_", " ").toUpperCase()}
+                                </label>
+                                <input
+                                    type="text"
+                                    className="form-control bg-dark text-white border-secondary"
+                                    name={field}
+                                    value={formData[field]}
+                                    onChange={handleChange}
+                                />
+                            </div>
+                        ))}
 
                         <label htmlFor="category">Category:</label>
                         <select
-                            className="form-control mb-3"
+                            className="form-control mb-3 bg-dark text-white border-secondary"
                             id="category"
                             name="category"
                             value={formData.category_id}
@@ -691,7 +678,7 @@ function Crud() {
                         <div className="mb-3">
                             <label className="form-label">Tipo de Envío</label>
                             <select
-                                className="form-control"
+                                className="form-control bg-dark text-white border-secondary"
                                 name="shipping_type"
                                 value={formData.shipping_type}
                                 onChange={handleChange}
@@ -704,29 +691,26 @@ function Crud() {
                             </select>
                         </div>
 
-                        {/* --- NUEVO FIELD: SELLER URL --- */}
                         <MDBInput
                             wrapperClass="mb-4"
-                            label="Seller URL (Link del Proveedor)"
+                            label="Seller URL"
                             id="seller_url"
-                            type="text"
                             name="seller_url"
                             value={formData.seller_url}
                             onChange={handleChange}
+                            contrast
                         />
-
-                        {/* --- NUEVO FIELD: DESIGNER --- */}
                         <MDBInput
                             wrapperClass="mb-4"
-                            label="Designer (Diseñador)"
+                            label="Designer"
                             id="designer"
-                            type="text"
                             name="designer"
                             value={formData.designer}
                             onChange={handleChange}
+                            contrast
                         />
 
-                        {/* Color List */}
+                        {/* Checkboxes */}
                         <label className="fw-bold d-block mt-2">
                             Color (Optional):
                         </label>
@@ -734,21 +718,16 @@ function Crud() {
                             <div key={color.id} className="form-check">
                                 <input
                                     type="checkbox"
-                                    id={`color-${color.id}`}
+                                    className="form-check-input bg-dark border-secondary"
                                     checked={selectedColors.includes(color.id)}
                                     onChange={() => handleColorChange(color.id)}
-                                    className="form-check-input"
                                 />
-                                <label
-                                    htmlFor={`color-${color.id}`}
-                                    className="form-check-label"
-                                >
+                                <label className="form-check-label">
                                     {color.name}
                                 </label>
                             </div>
                         ))}
 
-                        {/* Size List */}
                         <label className="fw-bold d-block mt-3">
                             Size (Optional):
                         </label>
@@ -756,38 +735,40 @@ function Crud() {
                             <div key={size.id} className="form-check">
                                 <input
                                     type="checkbox"
-                                    id={`size-${size.id}`}
+                                    className="form-check-input bg-dark border-secondary"
                                     checked={sizeFormData.sizes.includes(
                                         size.id,
                                     )}
                                     onChange={() => handleSizeChange(size.id)}
-                                    className="form-check-input"
                                 />
-                                <label
-                                    htmlFor={`size-${size.id}`}
-                                    className="form-check-label"
-                                >
+                                <label className="form-check-label">
                                     {size.name}
                                 </label>
                             </div>
                         ))}
 
-                        <br />
-                        <Form.Check
-                            type="switch"
-                            id="custom-switch"
-                            label="Available"
-                            name="available"
-                            checked={formData.available}
-                            onChange={handleSwitchChange}
-                        />
-                        <br />
+                        <div className="my-3">
+                            <Form.Check
+                                type="switch"
+                                id="custom-switch"
+                                label="Available"
+                                name="available"
+                                checked={formData.available}
+                                onChange={handleSwitchChange}
+                            />
+                        </div>
 
                         <MDBBtn
                             className="w-100"
                             size="lg"
                             type="submit"
                             disabled={!isFormValid}
+                            style={{
+                                backgroundColor: editMode
+                                    ? "#0d6efd"
+                                    : "#ffc107",
+                                color: "#000",
+                            }}
                         >
                             {editMode ? "UPDATE PRODUCT" : "ADD PRODUCT"}
                         </MDBBtn>

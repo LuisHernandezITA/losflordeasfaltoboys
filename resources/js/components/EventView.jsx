@@ -126,17 +126,65 @@ function EventView() {
                     )}
 
                     {event.description && (
-                        <p
+                        <div
                             style={{
                                 maxWidth: "600px",
                                 margin: "20px auto 0 auto",
-                                color: "#cccccc",
-                                fontSize: "1rem",
-                                lineHeight: "1.6",
                             }}
                         >
-                            {event.description}
-                        </p>
+                            {event.description
+                                .split("||")
+                                .map((part, index) => {
+                                    const isCredits = index > 0;
+
+                                    return (
+                                        <p
+                                            key={index}
+                                            style={{
+                                                // Texto principal: Gris suave. Créditos: Gris un poco más oscuro o blanco off-white
+                                                color: isCredits
+                                                    ? "#aaaaaa"
+                                                    : "#cccccc",
+                                                fontSize: isCredits
+                                                    ? "0.8rem"
+                                                    : "1rem",
+                                                fontWeight: isCredits
+                                                    ? "500"
+                                                    : "300",
+                                                // El secreto de la sutileza es el espaciado
+                                                letterSpacing: isCredits
+                                                    ? "0.15em"
+                                                    : "normal",
+                                                textTransform: isCredits
+                                                    ? "uppercase"
+                                                    : "none",
+                                                lineHeight: isCredits
+                                                    ? "1.8"
+                                                    : "1.6",
+                                                textAlign: "center",
+                                                marginTop: isCredits
+                                                    ? "15px"
+                                                    : "0",
+                                                // Usamos la fuente del sistema (más limpia que monospace)
+                                                fontFamily: "inherit",
+                                                // Agregamos un pequeño borde superior sutil para separar
+                                                borderTop: isCredits
+                                                    ? "1px solid #333"
+                                                    : "none",
+                                                paddingTop: isCredits
+                                                    ? "10px"
+                                                    : "0",
+                                                width: isCredits
+                                                    ? "80%"
+                                                    : "100%",
+                                                marginInline: "auto",
+                                            }}
+                                        >
+                                            {part.trim()}
+                                        </p>
+                                    );
+                                })}
+                        </div>
                     )}
                 </div>
 
@@ -156,6 +204,8 @@ function EventView() {
                             key={index}
                             src={renderImagePath(imgUrl)}
                             alt={`Lookbook view ${index + 1}`}
+                            // AÑADIDO: Atributo para carga perezosa
+                            loading="lazy"
                             style={{
                                 width: "100%",
                                 height: "auto",
@@ -163,6 +213,9 @@ function EventView() {
                                 display: "block",
                                 objectFit: "cover",
                                 border: "1px solid #222",
+                                // AÑADIDO: Mejora visual mientras carga
+                                backgroundColor: "#111",
+                                minHeight: "200px",
                             }}
                         />
                     ))}

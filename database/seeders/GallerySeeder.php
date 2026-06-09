@@ -17,9 +17,9 @@ class GallerySeeder extends Seeder
 
         // 3. Crear el registro maestro de la publicidad paródica inicial
         Gallery::factory()->parodyAd()->create([
-            'title' => 'SISTEMA COMPROMETIDO: CLICK AQUÍ',
-            'ad_image_desktop' => 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200',
-            'ad_image_mobile' => 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=500'
+            'title' => 'SABER MÁS: CLICK AQUI',
+            'ad_image_desktop' => 'https://i.postimg.cc/50vj0vNR/PDESK1.png',
+            'ad_image_mobile' => 'https://i.postimg.cc/503dnNPN/PWEB1.png'
         ]);
     }
 }

@@ -306,13 +306,15 @@ function ListCardNewest() {
                                     fontSize: "1.1rem",
                                     fontWeight: "300",
                                     lineHeight: "1.6",
+                                    textAlign: "justify",
                                 }}
                             >
-                                Outsider es un laboratorio colectivo e
-                                independiente enfocado en la documentación de
-                                entornos urbanos, el desarrollo técnico y la
-                                experimentación visual alternativa. No seguimos
-                                corrientes ni jerarquías tradicionales.
+                                Outsider es un colectivo de independientes
+                                enfocado en la documentación y realizacion de
+                                eventos alternativos, el desarrollo técnico y la
+                                experimentación visual de lo que nos gusta
+                                hacer. No seguimos corrientes ni jerarquías
+                                tradicionales, el arte es de todos.
                             </p>
 
                             <p
@@ -321,13 +323,13 @@ function ListCardNewest() {
                                     fontSize: "1.1rem",
                                     fontWeight: "300",
                                     lineHeight: "1.6",
+                                    textAlign: "justify",
                                 }}
                             >
-                                Funcionamos como un entorno horizontal donde el
-                                diseño web brutalista, el arte digital y el
-                                hacking de infraestructura convergen para crear
-                                artefactos autónomos fuera de las normas de la
-                                industria de consumo masivo.
+                                Funcionamos como un entorno coral donde el
+                                diseño, el arte y la creacion de experiencias
+                                convergen para crear momentos autónomos fuera de
+                                las normas de este puto pais.
                             </p>
 
                             <div>

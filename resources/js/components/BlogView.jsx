@@ -306,6 +306,7 @@ function BlogView() {
                                                         )}
                                                         alt="Extra content visual"
                                                         className="img-fluid w-100"
+                                                        loading="lazy"
                                                         style={{
                                                             filter: "grayscale(20%)",
                                                             display: "block",

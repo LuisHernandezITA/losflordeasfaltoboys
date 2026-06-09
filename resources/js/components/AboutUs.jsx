@@ -4,50 +4,41 @@ import { MDBIcon } from "mdb-react-ui-kit";
 import "/resources/css/app.css";
 
 function AboutUs() {
-    // Estructura limpia y ordenada por niveles de investigación
     const expedienteEquipo = {
         nivel1: {
             handle: "@losflordeasfalto",
             puesto: "DIRECTOR CREATIVO",
             status: "PRIMARY TARGET",
             alias: "NÚCLEO",
-            bio: "Mente maestra detrás del concepto de la marca, dirección de arte y curaduría urbana. Monitorea toda la infraestructura y operaciones del proyecto.",
-            foto: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=400&auto=format&fit=crop", // Reemplaza con tu URL
+            bio: "El Asfalto.",
+            foto: "https://i.postimg.cc/XNC7nVBD/losflordeasfalto.jpg",
         },
         nivel2: [
             {
-                handle: "@call_02",
+                handle: "@_call2002",
                 puesto: "FOTÓGRAFO",
-                status: "KEY OPERATIVE",
+                status: "EXTERNAL NEXUS",
                 alias: "LENTE",
-                bio: "Encargado del registro visual de campaña, captura de drop en calle y revelado de alto contraste. Documentación de campo.",
-                foto: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=400&auto=format&fit=crop", // Reemplaza con tu URL
+                bio: "Camarografo Oficial del Proyecto",
+                foto: "https://i.postimg.cc/Wpkbs2qY/call2002.jpg",
             },
             {
-                handle: "@0d1100",
-                puesto: "DISEÑADOR GRÁFICO E ILUSTRADOR",
-                status: "KEY OPERATIVE",
-                alias: "TRAZO / VECTOR",
-                bio: "Desarrollo de tipografías pesadas, gráficos crudos y sticker art para las colecciones y empaques oficiales.",
-                foto: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=400&auto=format&fit=crop", // Reemplaza con tu URL
+                handle: "@fntsm_13_",
+                puesto: "CREATIVO",
+                status: "EXTERNAL NEXUS",
+                alias: "ESPECTRO",
+                bio: "Creativo Colaborador.",
+                foto: "https://i.postimg.cc/HWysTp82/fntsm-13.jpg",
             },
         ],
         nivel3: [
             {
-                handle: "@fntsm13",
+                handle: "@ooddiio",
                 puesto: "CREATIVO",
                 status: "UNDER MONITORING",
-                alias: "ESPECTRO",
-                bio: "Aporte conceptual, intervenciones estéticas y experimentación de texturas alternativas en el asfalto.",
-                foto: "https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=400&auto=format&fit=crop", // Reemplaza con tu URL
-            },
-            {
-                handle: "@streetartmagazine",
-                puesto: "DIFUSOR CULTURAL",
-                status: "EXTERNAL NEXUS",
-                alias: "PRENSA",
-                bio: "Enlace editorial y distribución del movimiento. Expansión del archivo y cobertura del circuito underground.",
-                foto: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?q=80&w=400&auto=format&fit=crop", // Reemplaza con tu URL
+                alias: "TRAZO / VECTOR",
+                bio: "Creativo Colaborador.",
+                foto: "https://i.postimg.cc/gcZkGYLN/ooddiio.jpg",
             },
         ],
     };

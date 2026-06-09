@@ -13,7 +13,7 @@ class EventSeeder extends Seeder
         $eventos = [
             [
                 'title' => 'OUTSIDER x INSOMNIO I',
-                'description' => "OUTSIDER X @club1nsomnio # FASHION SHOW ₊ ⊹𖦏♱༺༒︎⊰‿̩͙\n\nBanner por @kirakira.films | Fotos por:\n@erreph__\n@kontra_productivo\n@roblab.photo\n@foto.fractal01\n@sweetcottonn_\n@ooldestdreamm\n@rosa.mexic4no\n@luis_stuner\n@stra.voss\n@juuniink\n@muela_del_juici0\n@arath_cg1",
+                'description' => "OUTSIDER X @club1nsomnio # FASHION SHOW ₊ ⊹𖦏♱༺༒︎⊰‿̩͙||BANNER POR @kirakira.films | FOTOS POR @erreph_ @kontra_productivo @roblab.photo @foto.fractal01 @sweetcottonn_ @ooldestdreamm @rosa.mexic4no @luis_stuner @stra.voss @juuniink @muela_del_juici0 @arath_cg1",
                 'date' => '2026-05-07',
                 'location' => 'Club 1nsomnio, FNSM',
                 'banner_path' => 'https://i.postimg.cc/tgNR1SCc/kirakirafilms1.gif',
@@ -31,7 +31,7 @@ class EventSeeder extends Seeder
             ],
             [
                 'title' => 'OUTSIDER x INSOMNIO II',
-                'description' => "OUTSIDER X @club1nsomnio # FASHION SHOW ₊ ⊹𖦏♱༺༒︎⊰‿̩͙\n\nBanner por @kirakira.films | Fotos por:\n@erreph__\n@kontra_productivo\n@roblab.photo\n@foto.fractal01\n@sweetcottonn_\n@ooldestdreamm\n@rosa.mexic4no\n@luis_stuner\n@stra.voss\n@juuniink\n@muela_del_juici0\n@arath_cg1",
+                'description' => "OUTSIDER X @club1nsomnio # FASHION SHOW ₊ ⊹𖦏♱༺༒︎⊰‿̩͙||BANNER POR @kirakira.films | FOTOS POR @erreph_ @kontra_productivo @roblab.photo @foto.fractal01 @sweetcottonn_ @ooldestdreamm @rosa.mexic4no @luis_stuner @stra.voss @juuniink @muela_del_juici0 @arath_cg1",
                 'date' => '2026-05-07',
                 'location' => 'Club 1nsomnio, FNSM',
                 'banner_path' => 'https://i.postimg.cc/MpwCFyS1/Kirakirafilms-2.gif',

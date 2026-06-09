@@ -21,6 +21,8 @@ function ListCard() {
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [selectedBrand, setSelectedBrand] = useState(null);
     const [searchTerm, setSearchTerm] = useState("");
+    const [brandSearchTerm, setBrandSearchTerm] = useState("");
+    const [showSuggestions, setShowSuggestions] = useState(false);
 
     // --- NUEVOS ESTADOS PARA PAGINACIÓN ---
     const [currentPage, setCurrentPage] = useState(1);
@@ -84,6 +86,15 @@ function ListCard() {
             return matchesCategory && matchesBrand && matchesSearch;
         });
     };
+
+    const getBrandSuggestions = () => {
+        if (searchTerm.length === 0) return [];
+        return brands.filter((brand) =>
+            brand.toLowerCase().includes(searchTerm.toLowerCase()),
+        );
+    };
+
+    const brandSuggestions = getBrandSuggestions();
 
     const filteredProducts = getFilteredProducts();
     const indexOfLastItem = currentPage * itemsPerPage;
@@ -240,43 +251,29 @@ function ListCard() {
                                     }
                                     id="brands-dropdown"
                                     className="custom-nav-dropdown"
-                                    style={{ fontSize: "0.875rem" }}
                                 >
-                                    <NavDropdown.Item
-                                        onClick={() => setSelectedBrand(null)}
-                                        className={
-                                            selectedBrand === null
-                                                ? "active-dropdown-item"
-                                                : ""
-                                        }
-                                    >
-                                        ALL BRANDS
-                                    </NavDropdown.Item>
-
-                                    <NavDropdown.Divider
-                                        style={{
-                                            backgroundColor:
-                                                "rgba(255,255,255,0.1)",
-                                        }}
-                                    />
-
+                                    {/* Contenedor con altura fija y scroll, sin buscador interno si no lo deseas */}
                                     <div
                                         style={{
-                                            maxHeight: "250px",
+                                            maxHeight: "200px",
                                             overflowY: "auto",
                                         }}
                                     >
+                                        <NavDropdown.Item
+                                            onClick={() =>
+                                                setSelectedBrand(null)
+                                            }
+                                        >
+                                            ALL BRANDS
+                                        </NavDropdown.Item>
+
                                         {brands.map((brand, idx) => (
                                             <NavDropdown.Item
                                                 key={idx}
                                                 onClick={() =>
                                                     setSelectedBrand(brand)
                                                 }
-                                                className={
-                                                    selectedBrand === brand
-                                                        ? "active-dropdown-item"
-                                                        : ""
-                                                }
+                                                active={selectedBrand === brand}
                                             >
                                                 {brand.toUpperCase()}
                                             </NavDropdown.Item>
@@ -287,7 +284,10 @@ function ListCard() {
                         </Nav>
 
                         {/* BARRA DE BÚSQUEDA REACTIVA */}
-                        <div className="ms-lg-auto pt-3 pt-lg-0 w-100 w-lg-25">
+                        <div
+                            className="ms-lg-auto pt-3 pt-lg-0 w-100 w-lg-25"
+                            style={{ position: "relative" }}
+                        >
                             <InputGroup
                                 size="sm"
                                 style={{ maxWidth: "300px" }}
@@ -306,18 +306,59 @@ function ListCard() {
                                     type="text"
                                     placeholder="Search item or brand..."
                                     value={searchTerm}
-                                    onChange={(e) =>
-                                        setSearchTerm(e.target.value)
-                                    }
+                                    onChange={(e) => {
+                                        setSearchTerm(e.target.value);
+                                        setShowSuggestions(true); // Mostrar lista al escribir
+                                    }}
+                                    onBlur={() =>
+                                        setTimeout(
+                                            () => setShowSuggestions(false),
+                                            200,
+                                        )
+                                    } // Ocultar al perder foco
                                     style={{
                                         backgroundColor: "#1a1a1a",
                                         border: "1px solid #333",
                                         color: "#fff",
-                                        boxShadow: "none",
                                     }}
-                                    className="search-input-placeholder"
                                 />
                             </InputGroup>
+
+                            {/* LISTA DE AUTOCOMPLETADO DE MARCAS */}
+                            {showSuggestions && brandSuggestions.length > 0 && (
+                                <div
+                                    style={{
+                                        position: "absolute",
+                                        top: "100%",
+                                        right: 0,
+                                        width: "100%",
+                                        maxWidth: "300px",
+                                        backgroundColor: "#1a1a1a",
+                                        border: "1px solid #333",
+                                        zIndex: 1000,
+                                        marginTop: "5px",
+                                    }}
+                                >
+                                    {brandSuggestions.map((brand, idx) => (
+                                        <div
+                                            key={idx}
+                                            className="p-2 cursor-pointer suggestion-item"
+                                            style={{
+                                                color: "#fff",
+                                                fontSize: "0.8rem",
+                                                cursor: "pointer",
+                                            }}
+                                            onClick={() => {
+                                                setSearchTerm(brand); // Rellena el input con la marca
+                                                setSelectedBrand(brand); // Aplica el filtro real
+                                                setShowSuggestions(false);
+                                            }}
+                                        >
+                                            {brand.toUpperCase()}
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
                         </div>
                     </Navbar.Collapse>
                 </Container>

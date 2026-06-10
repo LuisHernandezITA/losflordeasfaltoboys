@@ -162,43 +162,81 @@ function MusicBlog() {
                             >
                                 {/* El div que actúa como contenedor de la obra tiene la clase para el hover */}
                                 <div className="art-frame-wrapper">
-                                    <div className="art-frame bg-white">
+                                    <div
+                                        className="art-frame"
+                                        style={{
+                                            height: "400px",
+                                            width: "100%",
+                                            overflow: "hidden", // Esto corta lo que se salga del marco
+                                            display: "flex",
+                                            justifyContent: "center",
+                                            alignItems: "center",
+                                        }}
+                                    >
                                         <img
                                             src={art.image_url}
                                             alt={art.title}
+                                            style={{
+                                                width: "100%",
+                                                height: "100%",
+                                                objectFit: "cover", // <--- ESTO ELIMINA LOS BORDES BLANCOS
+                                                objectPosition: "center", // Centra la imagen si es muy alta
+                                                display: "block",
+                                            }}
                                         />
                                     </div>
 
-                                    {/* Ficha técnica */}
-                                    <div className="small-mono text-start mt-3">
-                                        <div className="text-dark fw-bold text-uppercase border-bottom border-secondary pb-1 mb-2 text-truncate">
-                                            {art.title}
+                                    {/* --- CADA TARJETA --- */}
+                                    <div className="card-art-exhibit">
+                                        {/* 2. El wrapper solo contiene el texto */}
+                                        <div className="art-frame-wrapper">
+                                            <div className="text-white fw-bold text-uppercase border-bottom border-secondary pb-1 mb-2">
+                                                {art.title}
+                                            </div>
+                                            {/* Contenedor de CRED con truncado */}
+                                            <div
+                                                className="text-secondary"
+                                                style={{
+                                                    whiteSpace: "nowrap",
+                                                    overflow: "hidden",
+                                                    textOverflow: "ellipsis",
+                                                }}
+                                            >
+                                                <span
+                                                    style={{ color: "#ff0055" }}
+                                                >
+                                                    CRED:
+                                                </span>{" "}
+                                                {art.autor}
+                                            </div>
+
+                                            {/* Contenedor de TECH con truncado y puntos suspensivos */}
+                                            <div
+                                                className="text-muted"
+                                                style={{
+                                                    whiteSpace: "nowrap", // 1. Evita que el texto salte de línea
+                                                    overflow: "hidden", // 2. Oculta lo que sobresale
+                                                    textOverflow: "ellipsis", // 3. Pone los "..." cuando se corta
+                                                    width: "90%", // 4. Importante: limita el ancho al contenedor
+                                                }}
+                                            >
+                                                <span style={{ color: "#555" }}>
+                                                    TECH:
+                                                </span>{" "}
+                                                {art.technique}
+                                            </div>
+
+                                            <div className="mt-2">
+                                                <span
+                                                    className="px-2 py-1 bg-secondary text-black fw-bold"
+                                                    style={{
+                                                        fontSize: "0.7rem",
+                                                    }}
+                                                >
+                                                    {art.year}
+                                                </span>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div className="text-truncate text-secondary">
-                                        <span
-                                            style={{
-                                                color: "#ff0055",
-                                                fontWeight: "bold",
-                                            }}
-                                        >
-                                            CRED:
-                                        </span>{" "}
-                                        {art.autor}
-                                    </div>
-                                    <div className="text-truncate text-muted">
-                                        <span style={{ color: "#555" }}>
-                                            TECH:
-                                        </span>{" "}
-                                        {art.technique}
-                                    </div>
-                                    <div className="mt-2">
-                                        <span
-                                            className="px-2 py-1 bg-secondary text-black fw-bold"
-                                            style={{ fontSize: "0.7rem" }}
-                                        >
-                                            {art.year}
-                                        </span>
                                     </div>
                                 </div>
                             </div>

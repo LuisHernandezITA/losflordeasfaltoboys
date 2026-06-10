@@ -1009,9 +1009,9 @@ input[type="submit"],
 
 /* --- CUADRO DE EXPOSICIÓN --- */
 .card-art-exhibit {
-    width: 550px; /* Ancho fijo para el contenedor */
+    width: auto; 
     flex-shrink: 0;
-    background: transparent;
+    background: transparent; /* El contenedor principal ya no es blanco */
     transition: all 0.4s ease;
 }
 
@@ -1021,10 +1021,23 @@ input[type="submit"],
     z-index: 10;
 }
 
+/* El marco de la imagen (la "obra") */
+.art-frame {
+    height: 400px;
+    width: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #ffffff; /* Solo la imagen tiene fondo blanco */
+    border: 1px solid #ccc;    /* Aquí pones el borde que quieras */
+}
+
+/* La imagen dentro del marco */
 .art-frame img {
-    width: 100%; /* Ocupa el ancho del marco */
-    height: auto; /* IMPORTANTE: Calcula la altura automáticamente según el ancho */
+    height: 100%;
+    width: auto;
     display: block;
+    object-fit: contain;
 }
 
 /* --- BLOQUE DE TEXTO NEGRO --- */

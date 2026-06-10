@@ -188,6 +188,7 @@ function Card_C(props) {
                     <Card.Img
                         src={imagePrimary}
                         alt={firstName}
+                        loading="lazy"
                         className={`my-card-img ${!available ? "sold-out" : ""}`}
                     />
                 </div>

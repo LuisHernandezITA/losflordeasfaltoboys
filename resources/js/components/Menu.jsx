@@ -12,6 +12,7 @@ import { useLocation } from "react-router-dom";
 import { useUser } from "./UserContext";
 import ListCardNewest from "./ListCardNewest";
 import axios from "axios";
+import { useNotification } from "./NotificationContext";
 
 function Menu() {
     const location = useLocation();
@@ -67,25 +68,8 @@ function Menu() {
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 
-    const [notification, setNotification] = useState(null);
-    const [notificationVisible, setNotificationVisible] = useState(false);
-
-    useEffect(() => {
-        if (notificationVisible) {
-            const progressBar = document.querySelector(".notification-bar");
-            if (progressBar)
-                progressBar.classList.add("notification-bar-progress");
-
-            setTimeout(() => {
-                setNotificationVisible(false);
-            }, 3000);
-        }
-    }, [notificationVisible]);
-
-    const showNotification = (message) => {
-        setNotification(message);
-        setNotificationVisible(true);
-    };
+    // NOTIFICATIONS
+    const { showNotification } = useNotification();
 
     const handleLogout = () => {
         document.cookie =
@@ -299,15 +283,6 @@ function Menu() {
                 </Container>
             </Navbar>
 
-            {/* NOTIFICACIONES Y CONTENEDORES */}
-            {notification && (
-                <div
-                    className={`notification ${notificationVisible ? "show" : ""}`}
-                >
-                    {notification}
-                    <div className="notification-bar"></div>
-                </div>
-            )}
             {showCarousel && <Carrousel />}
             {!hideListCardNewest && showCarousel && <ListCardNewest />}
             <section>

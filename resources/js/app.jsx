@@ -20,11 +20,14 @@ import "mdb-react-ui-kit/dist/css/mdb.min.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import { UserProvider } from "./components/UserContext";
 import "@fortawesome/fontawesome-svg-core/styles.css";
+import { NotificationProvider } from "./components/NotificationContext";
 
 ReactDOM.createRoot(document.getElementById("app")).render(
     <UserProvider>
-        <BrowserRouter>
-            <Main />
-        </BrowserRouter>
-    </UserProvider>
+        <NotificationProvider>
+            <BrowserRouter>
+                <Main />
+            </BrowserRouter>
+        </NotificationProvider>
+    </UserProvider>,
 );

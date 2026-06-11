@@ -18,6 +18,7 @@ import {
 import axios from "axios";
 import { Navigate } from "react-router-dom";
 import { useUser } from "./UserContext";
+import { useNotification } from "./NotificationContext";
 
 function CrudBlogs() {
     const { userInfo } = useUser();
@@ -37,9 +38,6 @@ function CrudBlogs() {
     const [editMode, setEditMode] = useState(false);
     const [blogIdUpdate, setBlogIdUpdate] = useState(null);
     const [isButtonAddEnabled, setIsButtonAddEnabled] = useState(true);
-
-    const [notification, setNotification] = useState(null);
-    const [notificationVisible, setNotificationVisible] = useState(false);
 
     const initialFormState = {
         banner: "",
@@ -81,25 +79,8 @@ function CrudBlogs() {
             });
     };
 
-    useEffect(() => {
-        if (notificationVisible) {
-            const progressBar = document.querySelector(".notification-bar");
-            if (progressBar)
-                progressBar.classList.add("notification-bar-progress");
-
-            const timer = setTimeout(() => {
-                setNotificationVisible(false);
-                getBlogs();
-            }, 1500);
-
-            return () => clearTimeout(timer);
-        }
-    }, [notificationVisible]);
-
-    const showNotification = (message) => {
-        setNotification(message);
-        setNotificationVisible(true);
-    };
+    // NOTIFICATIONS
+    const { showNotification } = useNotification();
 
     const handleSearchChange = (e) => {
         const searchText = e.target.value;
@@ -709,16 +690,6 @@ function CrudBlogs() {
                     </form>
                 </Modal.Body>
             </Modal>
-
-            {/* NOTIFICATION UI */}
-            {notification && (
-                <div
-                    className={`notification ${notificationVisible ? "show" : ""}`}
-                >
-                    {notification}
-                    <div className="notification-bar"></div>
-                </div>
-            )}
         </>
     );
 }

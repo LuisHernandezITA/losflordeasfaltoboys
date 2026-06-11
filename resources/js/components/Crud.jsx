@@ -19,6 +19,7 @@ import "/resources/css/app.css";
 import axios from "axios";
 import { Navigate } from "react-router-dom";
 import { useUser } from "./UserContext";
+import { useNotification } from "./NotificationContext";
 
 function Crud() {
     const { userInfo } = useUser();
@@ -71,27 +72,8 @@ function Crud() {
         setFilteredProducts(filtered);
     };
 
-    // --- NOTIFICACIONES ---
-    const [notification, setNotification] = useState(null);
-    const [notificationVisible, setNotificationVisible] = useState(false);
-
-    useEffect(() => {
-        if (notificationVisible) {
-            const progressBar = document.querySelector(".notification-bar");
-            if (progressBar)
-                progressBar.classList.add("notification-bar-progress");
-
-            setTimeout(() => {
-                setNotificationVisible(false);
-                getProducts();
-            }, 1500);
-        }
-    }, [notificationVisible]);
-
-    const showNotification = (message) => {
-        setNotification(message);
-        setNotificationVisible(true);
-    };
+    // NOTIFICATIONS
+    const { showNotification } = useNotification();
 
     // --- FORMULARIO (CAMPOS ACTUALIZADOS) ---
     const [formData, setFormData] = useState({
@@ -775,15 +757,6 @@ function Crud() {
                     </form>
                 </Modal.Body>
             </Modal>
-
-            {notification && (
-                <div
-                    className={`notification ${notificationVisible ? "show" : ""}`}
-                >
-                    {notification}
-                    <div className="notification-bar"></div>
-                </div>
-            )}
         </>
     );
 }

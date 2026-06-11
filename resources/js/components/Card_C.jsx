@@ -5,6 +5,7 @@ import { MDBBtn, MDBIcon } from "mdb-react-ui-kit";
 import { Link } from "react-router-dom";
 import { useUser } from "./UserContext";
 import axios from "axios";
+import { useNotification } from "./NotificationContext";
 
 function Card_C(props) {
     const id = props.id;
@@ -44,25 +45,7 @@ function Card_C(props) {
     }, [userId, id, accessToken]);
 
     // NOTIFICATIONS
-    const [notification, setNotification] = useState(null);
-    const [notificationVisible, setNotificationVisible] = useState(false);
-
-    useEffect(() => {
-        if (notificationVisible) {
-            const progressBar = document.querySelector(".notification-bar");
-            if (progressBar)
-                progressBar.classList.add("notification-bar-progress");
-
-            setTimeout(() => {
-                setNotificationVisible(false);
-            }, 1500);
-        }
-    }, [notificationVisible]);
-
-    const showNotification = (message) => {
-        setNotification(message);
-        setNotificationVisible(true);
-    };
+    const { showNotification } = useNotification();
 
     // ADD TO WISHLIST
     const [isButtonDisabled, setIsButtonDisabled] = useState(false);
@@ -75,19 +58,14 @@ function Card_C(props) {
 
         if (!userId) {
             showNotification(
-                "Necesitar iniciar sesión para añadir a tu Wishlist.",
+                "Necesitas iniciar sesión para añadir a tu Wishlist.",
             );
-            // Ciclo rápido de actualización de estado para forzar la re-renderización visual
-            setIsButtonDisabled(true);
-            setTimeout(() => {
-                setIsButtonDisabled(false);
-            }, 50);
             return;
         }
 
         // CONTROL EXTRA: Si ya está en la wishlist, frena el flujo y avisa
         if (isInWishlist) {
-            showNotification("Este producto ya esta en tu Wishlist!");
+            showNotification("Este producto ya está en tu Wishlist!");
             return;
         }
 
@@ -107,13 +85,11 @@ function Card_C(props) {
                 },
             })
             .then((response) => {
-                console.log("Respuesta del servidor:", response.data);
-                showNotification("Producto agregado al Wishlist!");
+                showNotification("Producto agregado al Wishlist!"); // GLOBAL
                 setIsInWishlist(true); // Cambia el corazón a relleno y bloquea el botón
                 setIsButtonDisabled(false);
             })
             .catch((error) => {
-                console.error("Error adding product to wishlist:", error);
                 showNotification("Error agregando el producto a tu Wishlist!");
                 setIsButtonDisabled(false);
             });
@@ -209,7 +185,7 @@ function Card_C(props) {
 
                     <MDBBtn
                         // CORRECCIÓN CLAVE: Cambiado de 'class' a 'className' para que React aplique tus estilos brutalistas correctamente
-                        class={`custom-button ${isButtonDisabled || !available || isInWishlist ? "clicked" : ""} d-flex align-items-center justify-content-center`}
+                        className={`custom-button ${isButtonDisabled || !available || isInWishlist ? "clicked" : ""} d-flex align-items-center justify-content-center`}
                         onClick={handleButtonClick}
                         disabled={
                             isButtonDisabled || !available || isInWishlist
@@ -243,15 +219,6 @@ function Card_C(props) {
                     </MDBBtn>
                 </div>
             </Card.Body>
-
-            {notification && (
-                <div
-                    className={`notification ${notificationVisible ? "show" : ""}`}
-                >
-                    {notification}
-                    <div className="notification-bar"></div>
-                </div>
-            )}
         </Card>
     );
 }

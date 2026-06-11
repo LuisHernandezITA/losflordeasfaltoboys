@@ -18,6 +18,7 @@ import {
 import axios from "axios";
 import { Navigate } from "react-router-dom";
 import { useUser } from "./UserContext";
+import { useNotification } from "./NotificationContext";
 
 function CrudBanner() {
     const { userInfo } = useUser();
@@ -29,8 +30,6 @@ function CrudBanner() {
     const [search, setSearch] = useState("");
     const [banners, setBanners] = useState([]);
     const [filteredBanners, setFilteredBanners] = useState([]);
-    const [notification, setNotification] = useState(null);
-    const [notificationVisible, setNotificationVisible] = useState(false);
 
     // Estados del formulario
     const [formData, setFormData] = useState({
@@ -74,11 +73,8 @@ function CrudBanner() {
         );
     };
 
-    const showNotification = (message) => {
-        setNotification(message);
-        setNotificationVisible(true);
-        setTimeout(() => setNotificationVisible(false), 1500);
-    };
+    // NOTIFICATIONS
+    const { showNotification } = useNotification();
 
     const handleChange = (e) => {
         const { name, value } = e.target;

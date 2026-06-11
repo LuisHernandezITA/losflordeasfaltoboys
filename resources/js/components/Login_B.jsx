@@ -12,29 +12,11 @@ import {
 } from "mdb-react-ui-kit";
 import axios from "axios";
 import "/resources/css/app.css";
+import { useNotification } from "./NotificationContext";
 
 function Login_B() {
     // NOTIFICATIONS
-    const [notification, setNotification] = useState(null);
-    const [notificationVisible, setNotificationVisible] = useState(false);
-
-    useEffect(() => {
-        if (notificationVisible) {
-            const progressBar = document.querySelector(".notification-bar");
-            if (progressBar)
-                progressBar.classList.add("notification-bar-progress");
-
-            const timer = setTimeout(() => {
-                setNotificationVisible(false);
-            }, 1500);
-            return () => clearTimeout(timer);
-        }
-    }, [notificationVisible]);
-
-    const showNotification = (message) => {
-        setNotification(message);
-        setNotificationVisible(true);
-    };
+    const { showNotification } = useNotification();
 
     // TABS
     const [justifyActive, setJustifyActive] = useState("tab1");
@@ -531,15 +513,6 @@ function Login_B() {
                     </form>
                 </MDBTabsPane>
             </MDBTabsContent>
-
-            {notification && (
-                <div
-                    className={`notification ${notificationVisible ? "show" : ""}`}
-                >
-                    {notification}
-                    <div className="notification-bar"></div>
-                </div>
-            )}
         </MDBContainer>
     );
 }

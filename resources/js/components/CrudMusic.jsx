@@ -18,6 +18,7 @@ import {
 import axios from "axios";
 import { Navigate } from "react-router-dom";
 import { useUser } from "./UserContext";
+import { useNotification } from "./NotificationContext";
 
 function CrudMusic() {
     const { userInfo } = useUser();
@@ -29,8 +30,6 @@ function CrudMusic() {
     const [search, setSearch] = useState("");
     const [music, setMusic] = useState([]);
     const [filteredMusic, setFilteredMusic] = useState([]);
-    const [notification, setNotification] = useState(null);
-    const [notificationVisible, setNotificationVisible] = useState(false);
     const [formData, setFormData] = useState({
         nombre: "",
         artista: "",
@@ -64,11 +63,8 @@ function CrudMusic() {
             .catch((err) => console.error(err));
     };
 
-    const showNotification = (message) => {
-        setNotification(message);
-        setNotificationVisible(true);
-        setTimeout(() => setNotificationVisible(false), 1500);
-    };
+    // NOTIFICATIONS
+    const { showNotification } = useNotification();
 
     const handleChange = (e) => {
         const { name, value } = e.target;

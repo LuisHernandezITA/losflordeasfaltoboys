@@ -18,6 +18,7 @@ import {
 import axios from "axios";
 import { Navigate } from "react-router-dom";
 import { useUser } from "./UserContext";
+import { useNotification } from "./NotificationContext";
 
 function CrudGallery() {
     const { userInfo } = useUser();
@@ -102,28 +103,8 @@ function CrudGallery() {
         setFilteredArtworks(filtered);
     };
 
-    // --- SISTEMA DE NOTIFICACIONES ---
-    const [notification, setNotification] = useState(null);
-    const [notificationVisible, setNotificationVisible] = useState(false);
-
-    useEffect(() => {
-        if (notificationVisible) {
-            const progressBar = document.querySelector(".notification-bar");
-            if (progressBar)
-                progressBar.classList.add("notification-bar-progress");
-
-            setTimeout(() => {
-                setNotificationVisible(false);
-                getArtworks();
-                getActiveAd();
-            }, 1500);
-        }
-    }, [notificationVisible]);
-
-    const showNotification = (message) => {
-        setNotification(message);
-        setNotificationVisible(true);
-    };
+    // NOTIFICATIONS
+    const { showNotification } = useNotification();
 
     // --- FORMULARIO Y VALIDACIONES (OBRAS DE ARTE) ---
     const [formData, setFormData] = useState({
@@ -648,16 +629,6 @@ function CrudGallery() {
                     </form>
                 </Modal.Body>
             </Modal>
-
-            {/* INTERFAZ DE NOTIFICACIONES */}
-            {notification && (
-                <div
-                    className={`notification ${notificationVisible ? "show" : ""}`}
-                >
-                    {notification}
-                    <div className="notification-bar"></div>
-                </div>
-            )}
         </>
     );
 }

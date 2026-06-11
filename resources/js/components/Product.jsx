@@ -8,6 +8,7 @@ import { useUser } from "./UserContext";
 import "/resources/css/app.css";
 import { Link } from "react-router-dom";
 import AdminToggle from "./AdminToggle";
+import { useNotification } from "./NotificationContext";
 
 function Product() {
     const { id } = useParams();
@@ -32,25 +33,7 @@ function Product() {
     });
 
     // NOTIFICATIONS
-    const [notification, setNotification] = useState(null);
-    const [notificationVisible, setNotificationVisible] = useState(false);
-
-    useEffect(() => {
-        if (notificationVisible) {
-            const progressBar = document.querySelector(".notification-bar");
-            if (progressBar)
-                progressBar.classList.add("notification-bar-progress");
-
-            setTimeout(() => {
-                setNotificationVisible(false);
-            }, 1500);
-        }
-    }, [notificationVisible]);
-
-    const showNotification = (message) => {
-        setNotification(message);
-        setNotificationVisible(true);
-    };
+    const { showNotification } = useNotification();
 
     // PETICIÓN DE DATOS EN EL CARGUE
     useEffect(() => {
@@ -527,15 +510,6 @@ function Product() {
                     </Link>
                 </MDBTypography>
             </div>
-
-            {notification && (
-                <div
-                    className={`notification ${notificationVisible ? "show" : ""}`}
-                >
-                    {notification}
-                    <div className="notification-bar"></div>
-                </div>
-            )}
         </div>
     );
 }

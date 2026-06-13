@@ -188,6 +188,66 @@ section, .container, .container-fluid {
     color: rgb(126, 124, 124) !important;
 }
 
+/*BOTTON CARMESI*/
+
+.btn-outsider {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent !important;
+    border: 1px solid crimson !important;
+    color: #ffffff !important;
+    height: 38px;
+    padding: 0 20px;
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    border-radius: 0px !important;
+    transition: all 0.2s ease;
+    box-shadow: none !important;
+    text-decoration: none;
+}
+
+.btn-outsider:hover {
+    background-color: rgba(220, 20, 60, 0.1) !important;
+    color: #ffffff !important;
+}
+
+/*PAGINATION BTN*/
+
+/* Estilos base */
+.pagination-btn {
+    width: 40px;
+    padding: 8px;
+    font-size: 0.8rem;
+    color: #ffffff;
+    transition: all 0.3s ease; /* Transición suave */
+    background: transparent;
+    border: 1px solid #333;
+    cursor: pointer;
+    margin: 0 4px;
+    text-transform: uppercase;
+}
+
+/* Efecto Hover: Cambia el borde y el fondo suavemente */
+.pagination-btn:hover:not(:disabled) {
+    border: 1px solid crimson;
+    background: rgba(220, 20, 60, 0.05);
+}
+
+/* Estado Activo (Botón seleccionado) */
+.pagination-btn.active {
+    border: 1px solid crimson !important;
+    background: rgba(220, 20, 60, 0.15) !important;
+}
+
+/* Deshabilitado (Para los botones « » cuando no hay más páginas) */
+.pagination-btn:disabled {
+    opacity: 0.2;
+    cursor: not-allowed;
+    border: 1px solid #222;
+}
+
 /*ICONS*/
 
 .icon {

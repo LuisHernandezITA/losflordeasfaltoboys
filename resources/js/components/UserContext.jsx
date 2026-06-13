@@ -21,35 +21,34 @@ export const UserProvider = ({ children }) => {
                         user_id: user_id,
                     });
 
-                    //console.log(response.data.user.token);
-
-                    axios.defaults.headers.common[
-                        "Authorization"
-                    ] = `Bearer ${response.data.user.token}`;
+                    axios.defaults.headers.common["Authorization"] =
+                        `Bearer ${response.data.user.token}`;
 
                     if (response.data.success) {
                         // OBTAINING USER INFO
                         const userInfoResponse = await axios.post(
-                            `/api/user_show?id=${user_id}`
+                            `/api/user_show?id=${user_id}`,
                         );
-                        const userInfo = {
-                            ...userInfoResponse.data[0], // USER DATA
-                            token: response.data.user.token, // ADDS GENERATED TOKEN IN LOGIN
+                        const userData = {
+                            ...userInfoResponse.data[0],
+                            token: response.data.user.token,
                         };
-                        if (userInfo) {
-                            setUserInfo(userInfo);
-                            //console.log("Auth User:", userInfo);
+
+                        if (userData) {
+                            setUserInfo(userData);
                         } else {
-                            console.error("User data not found");
+                            console.warn("User data not found");
                         }
                     } else {
-                        console.error("Failed Authentication");
+                        console.warn("Failed Authentication");
                     }
                 } else {
-                    console.error("user_id not found (not logged)");
+                    // Ya no es un error, es el estado normal de un invitado
+                    console.log("Usuario no autenticado (Invitado)");
+                    setUserInfo(null);
                 }
             } catch (error) {
-                console.error(error);
+                console.error("Error en la autenticación:", error);
             }
         };
 

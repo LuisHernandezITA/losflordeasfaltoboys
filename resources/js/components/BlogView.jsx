@@ -384,30 +384,7 @@ function BlogView() {
                                                 href={post.external_url}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                className="d-inline-flex align-items-center justify-content-center"
-                                                style={{
-                                                    boxShadow: "none",
-                                                    outline: "none",
-                                                    backgroundColor:
-                                                        "transparent",
-                                                    border: "1px solid crimson",
-                                                    color: "#ffffff",
-                                                    height: "38px",
-                                                    padding: "0 20px",
-                                                    fontSize: "0.75rem",
-                                                    letterSpacing: "2px",
-                                                    textTransform: "uppercase",
-                                                    borderRadius: "0px",
-                                                    transition: "all 0.2s ease",
-                                                }}
-                                                onMouseOver={(e) => {
-                                                    e.currentTarget.style.backgroundColor =
-                                                        "rgba(220, 20, 60, 0.1)";
-                                                }}
-                                                onMouseOut={(e) => {
-                                                    e.currentTarget.style.backgroundColor =
-                                                        "transparent";
-                                                }}
+                                                className="btn-outsider" // Clase simplificada
                                             >
                                                 VER PROYECTO
                                                 <MDBIcon
@@ -429,33 +406,51 @@ function BlogView() {
                 })}
             </div>
 
-            {/* CONTROLES DE PAGINACIÓN */}
+            {/* CONTROLES DE PAGINACIÓN PARA BLOGS */}
             {totalPages > 1 && (
-                <div className="d-flex justify-content-center gap-3 mt-4 pb-4">
-                    {[...Array(totalPages)].map((_, index) => (
-                        <button
-                            key={index + 1}
-                            onClick={() => paginate(index + 1)}
-                            className={`custom-button ${currentPage === index + 1 ? "clicked" : ""}`}
-                            style={{
-                                width: "50px",
-                                padding: "10px",
-                                fontSize: "0.8rem",
-                                border:
-                                    currentPage === index + 1
-                                        ? "1px solid crimson"
-                                        : "1px solid #333",
-                                background:
-                                    currentPage === index + 1
-                                        ? "rgba(220, 20, 60, 0.1)"
-                                        : "transparent",
-                                color: "#ffffff",
-                                transition: "all 0.2s ease",
-                            }}
-                        >
-                            {index + 1}
-                        </button>
-                    ))}
+                <div className="d-flex justify-content-center align-items-center gap-2 mt-4 pb-4">
+                    {/* Botón Anterior */}
+                    <button
+                        disabled={currentPage === 1}
+                        onClick={() => paginate(currentPage - 1)}
+                        className="pagination-btn"
+                    >
+                        «
+                    </button>
+
+                    {/* Lógica de Ventana Deslizante */}
+                    {(() => {
+                        const pageNumbers = [];
+                        let startPage = Math.max(1, currentPage - 2);
+                        let endPage = Math.min(totalPages, startPage + 4);
+
+                        if (endPage - startPage < 4) {
+                            startPage = Math.max(1, endPage - 4);
+                        }
+
+                        for (let i = startPage; i <= endPage; i++) {
+                            pageNumbers.push(i);
+                        }
+
+                        return pageNumbers.map((number) => (
+                            <button
+                                key={number}
+                                onClick={() => paginate(number)}
+                                className={`pagination-btn ${currentPage === number ? "active" : ""}`}
+                            >
+                                {number}
+                            </button>
+                        ));
+                    })()}
+
+                    {/* Botón Siguiente */}
+                    <button
+                        disabled={currentPage === totalPages}
+                        onClick={() => paginate(currentPage + 1)}
+                        className="pagination-btn"
+                    >
+                        »
+                    </button>
                 </div>
             )}
 

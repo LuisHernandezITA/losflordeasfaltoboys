@@ -444,8 +444,8 @@ function Product() {
                             : "CONTACTAR DISEÑADOR"}
                     </MDBBtn>
                     <br></br>
-                    {/* CORRECCIÓN: Usamos userInfo.admin como en el componente Menu */}
-                    {userInfo && userInfo.admin && (
+                    {/* FORZAMOS LA EVALUACIÓN A BOOLEANO CON !! */}
+                    {!!(userInfo && userInfo.admin) && (
                         <AdminToggle
                             product={product}
                             onUpdate={(newStatus) =>

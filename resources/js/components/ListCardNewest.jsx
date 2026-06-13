@@ -13,6 +13,7 @@ function ListCardNewest() {
     });
     const [activeAd, setActiveAd] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [isHovered, setIsHovered] = useState(false);
 
     useEffect(() => {
         const getHomeData = async () => {
@@ -61,6 +62,48 @@ function ListCardNewest() {
             className="px-3 px-md-5 py-4"
             style={{ backgroundColor: "#121212", minHeight: "100vh" }}
         >
+            {/* ==================================================================== */}
+            {/* SECCIÓN 2: NUEVOS PRODUCTOS                                          */}
+            {/* ==================================================================== */}
+            <div className="pt-2 border-bottom border-secondary pb-5 mb-5">
+                <div className="d-flex align-items-center mb-4 px-2">
+                    <h2
+                        className="text-white m-0 text-uppercase fw-bold"
+                        style={{ letterSpacing: "1px", fontSize: "1.6rem" }}
+                    >
+                        ⋆｡‧₊°♱ Nuevos Productos!
+                    </h2>
+                    <div className="flex-grow-1 ms-3 border-top border-secondary opacity-25"></div>
+                </div>
+
+                <div className="custom-horizontal-carousel-container position-relative">
+                    <div className="custom-horizontal-carousel d-flex flex-nowrap px-2 pb-3">
+                        {Array.isArray(productos) &&
+                            productos.map((product) => (
+                                <div
+                                    key={product.id}
+                                    className="carousel-card-item"
+                                >
+                                    <Card_C
+                                        id={product.id}
+                                        name={product.name}
+                                        description={product.description}
+                                        price={product.price}
+                                        image_primary={product.image_primary}
+                                        available={product.available}
+                                    />
+                                </div>
+                            ))}
+                    </div>
+                </div>
+
+                <div className="text-center mt-4">
+                    <Link to="/store" className="ver-todo-link">
+                        IR A LA TIENDA <i className="fas fa-eye ms-1"></i>
+                    </Link>
+                </div>
+            </div>
+
             {/* ==================================================================== */}
             {/* SECCIÓN 1: ÚLTIMO BLOG + PUBLICIDAD PARÓDICA DINÁMICA                */}
             {/* ==================================================================== */}
@@ -137,10 +180,15 @@ function ListCardNewest() {
                                     <MDBBtn
                                         size="lg"
                                         className="d-inline-flex align-items-center justify-content-center"
+                                        // 2. Agrega los manejadores de eventos
+                                        onMouseEnter={() => setIsHovered(true)}
+                                        onMouseLeave={() => setIsHovered(false)}
                                         style={{
-                                            backgroundColor: "#8b0000",
-                                            border: "2px solid #8b0000",
+                                            backgroundColor: isHovered
+                                                ? "transparent"
+                                                : "#8b0000",
                                             color: "#ffffff",
+                                            border: "2px solid #8b0000",
                                             boxShadow: "none",
                                             outline: "none",
                                             height: "45px",
@@ -149,13 +197,16 @@ function ListCardNewest() {
                                             fontWeight: "700",
                                             borderRadius: "0px",
                                             letterSpacing: "1px",
+                                            // 3. Aplica la opacidad dinámica aquí:
+                                            opacity: isHovered ? 0.8 : 1,
+                                            cursor: "pointer",
                                         }}
                                     >
                                         <MDBIcon
                                             fas
                                             icon="book-open"
                                             className="me-2"
-                                        />{" "}
+                                        />
                                         LEER BLOGS
                                     </MDBBtn>
                                 </Link>
@@ -218,48 +269,6 @@ function ListCardNewest() {
                     )}
                 </div>
             )}
-
-            {/* ==================================================================== */}
-            {/* SECCIÓN 2: NUEVOS PRODUCTOS                                          */}
-            {/* ==================================================================== */}
-            <div className="pt-2 border-bottom border-secondary pb-5 mb-5">
-                <div className="d-flex align-items-center mb-4 px-2">
-                    <h2
-                        className="text-white m-0 text-uppercase fw-bold"
-                        style={{ letterSpacing: "1px", fontSize: "1.6rem" }}
-                    >
-                        ⋆｡‧₊°♱ Nuevos Productos!
-                    </h2>
-                    <div className="flex-grow-1 ms-3 border-top border-secondary opacity-25"></div>
-                </div>
-
-                <div className="custom-horizontal-carousel-container position-relative">
-                    <div className="custom-horizontal-carousel d-flex flex-nowrap px-2 pb-3">
-                        {Array.isArray(productos) &&
-                            productos.map((product) => (
-                                <div
-                                    key={product.id}
-                                    className="carousel-card-item"
-                                >
-                                    <Card_C
-                                        id={product.id}
-                                        name={product.name}
-                                        description={product.description}
-                                        price={product.price}
-                                        image_primary={product.image_primary}
-                                        available={product.available}
-                                    />
-                                </div>
-                            ))}
-                    </div>
-                </div>
-
-                <div className="text-center mt-4">
-                    <Link to="/store" className="ver-todo-link">
-                        IR A LA TIENDA <i className="fas fa-eye ms-1"></i>
-                    </Link>
-                </div>
-            </div>
 
             {/* ==================================================================== */}
             {/* SECCIÓN 3: MANIFIESTO INFORMATIVO (¿QUÉ ES OUTSIDER?)               */}
@@ -338,12 +347,30 @@ function ListCardNewest() {
                                         size="lg"
                                         outline
                                         color="white"
+                                        onMouseEnter={() => setIsHovered(true)}
+                                        onMouseLeave={() => setIsHovered(false)}
                                         style={{
                                             borderRadius: "0px",
                                             fontWeight: "700",
                                             letterSpacing: "1px",
                                             padding: "12px 35px",
                                             border: "2px solid #fff",
+                                            // La magia ocurre aquí:
+                                            backgroundColor: isHovered
+                                                ? "#ffffff"
+                                                : "transparent",
+                                            color: isHovered
+                                                ? "#000000"
+                                                : "#ffffff", // Texto negro al hacer hover
+                                            transform: isHovered
+                                                ? "translate(-4px, -4px)"
+                                                : "translate(0px, 0px)",
+                                            boxShadow: isHovered
+                                                ? "4px 4px 0px #8b0000"
+                                                : "0px 0px 0px transparent",
+                                            transition:
+                                                "all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)",
+                                            cursor: "pointer",
                                         }}
                                     >
                                         SABER MÁS

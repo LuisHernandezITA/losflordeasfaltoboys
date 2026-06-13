@@ -406,31 +406,48 @@ function ListCard() {
                 )}
             </div>
 
-            {/* --- CONTROLES DE PAGINACIÓN --- */}
+            {/* --- CONTROLES DE PAGINACIÓN CON CLASSNAME --- */}
             {totalPages > 1 && (
-                <div className="d-flex justify-content-center gap-3 mt-4 pb-5">
-                    {[...Array(totalPages)].map((_, index) => (
-                        <button
-                            key={index + 1}
-                            onClick={() => paginate(index + 1)}
-                            className={`custom-button ${currentPage === index + 1 ? "clicked" : ""}`}
-                            style={{
-                                width: "50px",
-                                padding: "10px",
-                                fontSize: "0.8rem",
-                                border:
-                                    currentPage === index + 1
-                                        ? "1px solid crimson"
-                                        : "1px solid #333",
-                                background:
-                                    currentPage === index + 1
-                                        ? "rgba(220, 20, 60, 0.1)"
-                                        : "transparent",
-                            }}
-                        >
-                            {index + 1}
-                        </button>
-                    ))}
+                <div className="d-flex justify-content-center align-items-center mt-4 pb-5">
+                    {/* Botón Anterior */}
+                    <button
+                        disabled={currentPage === 1}
+                        onClick={() => paginate(currentPage - 1)}
+                        className="pagination-btn"
+                    >
+                        «
+                    </button>
+
+                    {/* Números de página */}
+                    {(() => {
+                        // ... (la misma lógica de cálculo de startPage/endPage que vimos antes)
+                        const pageNumbers = [];
+                        let startPage = Math.max(1, currentPage - 2);
+                        let endPage = Math.min(totalPages, startPage + 4);
+                        if (endPage - startPage < 4)
+                            startPage = Math.max(1, endPage - 4);
+                        for (let i = startPage; i <= endPage; i++)
+                            pageNumbers.push(i);
+
+                        return pageNumbers.map((number) => (
+                            <button
+                                key={number}
+                                onClick={() => paginate(number)}
+                                className={`pagination-btn ${currentPage === number ? "active" : ""}`}
+                            >
+                                {number}
+                            </button>
+                        ));
+                    })()}
+
+                    {/* Botón Siguiente */}
+                    <button
+                        disabled={currentPage === totalPages}
+                        onClick={() => paginate(currentPage + 1)}
+                        className="pagination-btn"
+                    >
+                        »
+                    </button>
                 </div>
             )}
             <br />

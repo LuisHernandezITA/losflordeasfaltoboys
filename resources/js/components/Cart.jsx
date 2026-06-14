@@ -26,7 +26,7 @@ function Cart() {
     useEffect(() => {
         // EXECUTES IF USER IS AUTH
         if (isLoggedIn) {
-            fetch("http://127.0.0.1:8000/api/getProductsInCart", {
+            fetch("/api/getProductsInCart", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -51,7 +51,7 @@ function Cart() {
 
         // Borrado en BD (reutiliza tu endpoint actual)
         axios
-            .post("http://127.0.0.1:8000/api/removeProductFromCart", {
+            .post("/api/removeProductFromCart", {
                 user_id: userId,
                 product_id: productId,
             })

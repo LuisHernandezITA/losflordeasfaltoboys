@@ -12,13 +12,10 @@ const AdminToggle = ({ product, onUpdate }) => {
             // El nuevo valor inverso al actual
             const nextStatus = !isAvailable;
 
-            await axios.put(
-                `http://127.0.0.1:8000/api/products_update/${product.id}`,
-                {
-                    ...product,
-                    available: nextStatus ? 1 : 0, // Enviamos 1 o 0 para base de datos
-                },
-            );
+            await axios.put(`/api/products_update/${product.id}`, {
+                ...product,
+                available: nextStatus ? 1 : 0, // Enviamos 1 o 0 para base de datos
+            });
 
             setIsAvailable(nextStatus);
             if (onUpdate) onUpdate(nextStatus);

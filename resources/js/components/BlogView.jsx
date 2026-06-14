@@ -16,9 +16,7 @@ function BlogView() {
     useEffect(() => {
         const fetchAllBlogs = async () => {
             try {
-                const response = await axios.get(
-                    "http://127.0.0.1:8000/api/blogs_index",
-                );
+                const response = await axios.get("/api/blogs_index");
                 if (response.data) {
                     setBlogs(response.data);
                 }
@@ -48,7 +46,7 @@ function BlogView() {
         if (path.startsWith("http://") || path.startsWith("https://")) {
             return path;
         }
-        return `http://127.0.0.1:8000${path}`;
+        return `/${path}`;
     };
 
     // --- UTILERÍA PARA EXTRAER EL ID DE YOUTUBE ---

@@ -31,9 +31,7 @@ function ListCard() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get(
-                    "http://127.0.0.1:8000/api/products_index",
-                );
+                const response = await axios.get("/api/products_index");
                 setProductData(response.data);
             } catch (error) {
                 console.error("Error cargando productos:", error);
@@ -42,9 +40,7 @@ function ListCard() {
 
         const fetchCategories = async () => {
             try {
-                const response = await axios.get(
-                    "http://127.0.0.1:8000/api/category_index",
-                );
+                const response = await axios.get("/api/category_index");
                 setCategories(response.data);
             } catch (error) {
                 console.error("Error cargando categorías:", error);

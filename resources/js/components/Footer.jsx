@@ -89,7 +89,7 @@ function Footer() {
                                 </a>
                             </p>
                             <p>
-                                <a href="/blogs" className="text-white-50">
+                                <a href="/blog" className="text-white-50">
                                     Blogs
                                 </a>
                             </p>

@@ -9,11 +9,19 @@ function AboutUs() {
             handle: "@losflordeasfalto",
             puesto: "DIRECTOR CREATIVO",
             status: "PRIMARY TARGET",
-            alias: "NÚCLEO",
+            alias: "<333",
             bio: "El Asfalto.",
             foto: "https://i.postimg.cc/XNC7nVBD/losflordeasfalto.jpg",
         },
         nivel2: [
+            {
+                handle: "@Alexrys2002",
+                puesto: "MODELO",
+                status: "EXTERNAL NEXUS",
+                alias: "GRIFFITH",
+                bio: "Base de Datos y Servidores.",
+                foto: "https://i.postimg.cc/zfzJ8vhk/Alexrys2002.jpg",
+            },
             {
                 handle: "@_call2002",
                 puesto: "FOTÓGRAFO",
@@ -39,6 +47,22 @@ function AboutUs() {
                 alias: "TRAZO / VECTOR",
                 bio: "Creativo Colaborador.",
                 foto: "https://i.postimg.cc/gcZkGYLN/ooddiio.jpg",
+            },
+            {
+                handle: "@mondo_killah",
+                puesto: "SICARIO",
+                status: "UNDER MONITORING",
+                alias: "SEGURIDAD",
+                bio: "El Mondokilla.",
+                foto: "https://i.postimg.cc/mrLbBk9w/mondo-killah.jpg",
+            },
+            {
+                handle: "@street_art_ags",
+                puesto: "PRENSA ARTISTICA",
+                status: "UNDER MONITORING",
+                alias: "STREET",
+                bio: "Callejero Fino.",
+                foto: "https://i.postimg.cc/NMTYxXvq/street-art-ags.jpg",
             },
         ],
     };
@@ -102,9 +126,6 @@ function AboutUs() {
                                     src={expedienteEquipo.nivel1.foto}
                                     alt={expedienteEquipo.nivel1.handle}
                                     className="w-100 h-100 object-fit-cover"
-                                    style={{
-                                        filter: "grayscale(100%) contrast(125%) brightness(90%)",
-                                    }}
                                 />
                                 <Badge
                                     bg="danger"
@@ -205,9 +226,6 @@ function AboutUs() {
                                         src={member.foto}
                                         alt={member.member}
                                         className="w-100 h-100 object-fit-cover"
-                                        style={{
-                                            filter: "grayscale(100%) contrast(115%)",
-                                        }}
                                     />
                                     <Badge
                                         bg="warning"
@@ -303,9 +321,6 @@ function AboutUs() {
                                         src={member.foto}
                                         alt={member.handle}
                                         className="w-100 h-100 object-fit-cover"
-                                        style={{
-                                            filter: "grayscale(100%) brightness(80%) contrast(110%)",
-                                        }}
                                     />
                                     <Badge
                                         bg="secondary"

@@ -13,10 +13,9 @@ function EventView() {
     useEffect(() => {
         const fetchEventData = async () => {
             try {
-                const response = await axios.post(
-                    "http://127.0.0.1:8000/api/events_show",
-                    { id: id },
-                );
+                const response = await axios.post("/api/events_show", {
+                    id: id,
+                });
 
                 if (response.data) {
                     setEvent(response.data);
@@ -70,7 +69,7 @@ function EventView() {
         if (path.startsWith("http://") || path.startsWith("https://")) {
             return path;
         }
-        return `http://127.0.0.1:8000${path}`;
+        return `/${path}`;
     };
 
     return (

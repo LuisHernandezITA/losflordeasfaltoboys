@@ -19,8 +19,8 @@ function ListCardNewest() {
         const getHomeData = async () => {
             try {
                 const [homeRes, adRes] = await Promise.all([
-                    axios.get("http://localhost:8000/api/home_data"),
-                    axios.get("http://localhost:8000/api/gallery_active_ad"),
+                    axios.get("/api/home_data"),
+                    axios.get("/api/gallery_active_ad"),
                 ]);
 
                 setHomeData({

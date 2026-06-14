@@ -42,9 +42,7 @@ function Menu() {
     useEffect(() => {
         const fetchEvents = async () => {
             try {
-                const response = await axios.get(
-                    "http://127.0.0.1:8000/api/events_index",
-                );
+                const response = await axios.get("/api/events_index");
                 setEvents(Array.isArray(response.data) ? response.data : []);
             } catch (error) {
                 console.error(

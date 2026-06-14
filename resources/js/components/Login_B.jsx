@@ -97,7 +97,7 @@ function Login_B() {
         };
 
         try {
-            const response = await fetch("http://127.0.0.1:8000/api/login", {
+            const response = await fetch("/api/login", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -148,7 +148,7 @@ function Login_B() {
         setIsButtonEnabled(false);
 
         try {
-            const response = await fetch("http://127.0.0.1:8000/api/register", {
+            const response = await fetch("/api/register", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -209,7 +209,7 @@ function Login_B() {
 
     return (
         <MDBContainer
-            className="p-3 my-5 d-flex flex-column w-50"
+            className="p-3 my-5 d-flex flex-column w-100 w-md-50"
             style={{ maxWidth: "500px" }}
         >
             {/* TABS CON COHESIÓN VISUAL OSCURA */}
@@ -393,14 +393,16 @@ function Login_B() {
                             </p>
                         )}
                         <div className="mb-4">
-                            <div className="input-group">
+                            <div className="input-group flex-nowrap">
+                                {" "}
+                                {/* Agregamos flex-nowrap */}
                                 <span
                                     className="input-group-text rounded-0 border-end-0 text-white"
                                     style={{
                                         backgroundColor: "#111",
                                         border: "1px solid #ffffff",
-                                        fontSize: "0.8rem",
-                                        letterSpacing: "1px",
+                                        fontSize: "0.7rem", // Un poco más pequeño para que quepa mejor
+                                        whiteSpace: "nowrap", // Evita que el texto se salte de línea
                                     }}
                                 >
                                     instagram.com/

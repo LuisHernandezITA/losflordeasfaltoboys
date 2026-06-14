@@ -39,10 +39,9 @@ function Product() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const productResponse = await axios.post(
-                    `http://127.0.0.1:8000/api/products_show`,
-                    { id },
-                );
+                const productResponse = await axios.post(`/api/products_show`, {
+                    id,
+                });
 
                 // VALIDACIÓN CORREGIDA
                 if (productResponse.data && productResponse.data.id) {
@@ -58,7 +57,7 @@ function Product() {
 
             try {
                 const colorsResponse = await axios.post(
-                    "http://127.0.0.1:8000/api/getProductColors",
+                    "/api/getProductColors",
                     { id },
                 );
                 if (
@@ -75,10 +74,9 @@ function Product() {
             }
 
             try {
-                const sizesResponse = await axios.post(
-                    "http://127.0.0.1:8000/api/getProductSizes",
-                    { id },
-                );
+                const sizesResponse = await axios.post("/api/getProductSizes", {
+                    id,
+                });
                 if (sizesResponse.data.length > 0) {
                     setSizes(sizesResponse.data);
                 } else {

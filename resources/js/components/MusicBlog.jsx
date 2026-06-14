@@ -17,8 +17,8 @@ function MusicBlog() {
         const fetchDashboardData = async () => {
             try {
                 const [musicRes, galleryRes] = await Promise.all([
-                    axios.get("http://127.0.0.1:8000/api/music_index"),
-                    axios.get("http://localhost:8000/api/gallery_artworks"),
+                    axios.get("/api/music_index"),
+                    axios.get("/api/gallery_artworks"),
                 ]);
 
                 // Invertimos la data original para que los últimos registros de música salgan primero

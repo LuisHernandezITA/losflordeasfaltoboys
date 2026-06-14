@@ -25,7 +25,7 @@ function Card_C(props) {
     // COMPROBAR SI ESTÁ EN LA WISHLIST AL CARGAR EL COMPONENTE
     useEffect(() => {
         if (userId && id) {
-            fetch("http://127.0.0.1:8000/api/getProductsInCart", {
+            fetch("/api/getProductsInCart", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

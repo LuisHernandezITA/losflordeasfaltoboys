@@ -12,7 +12,8 @@ class EventImage extends Model
 
     protected $fillable = [
         'event_id',
-        'image_path'
+        'image_path',
+        'target_url' // <--- Nuevo campo
     ];
 
     /**

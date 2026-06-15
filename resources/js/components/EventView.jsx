@@ -5,6 +5,61 @@ import { useParams, Link } from "react-router-dom";
 import { MDBTypography, MDBIcon } from "mdb-react-ui-kit";
 import "/resources/css/app.css";
 
+// Componente para procesar texto y convertir @usuarios en links de Instagram
+const DescriptionPart = ({ text, isCredits }) => {
+    const renderTextWithLinks = (text) => {
+        // Regex para detectar @usuario
+        const mentionRegex = /@([a-zA-Z0-9_.]+)/g;
+        const parts = text.split(mentionRegex);
+
+        return parts.map((part, i) => {
+            // Si el índice es impar, es una mención encontrada por el regex
+            if (i % 2 !== 0) {
+                return (
+                    <a
+                        key={i}
+                        href={`https://instagram.com/${part}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                            color: "#ff0000",
+                            textDecoration: "underline",
+                            transition: "color 0.2s ease",
+                        }}
+                        onMouseEnter={(e) => (e.target.style.color = "#ff4444")}
+                        onMouseLeave={(e) => (e.target.style.color = "#ff0000")}
+                    >
+                        @{part}
+                    </a>
+                );
+            }
+            return part;
+        });
+    };
+
+    return (
+        <p
+            style={{
+                color: isCredits ? "#aaaaaa" : "#cccccc",
+                fontSize: isCredits ? "0.8rem" : "1rem",
+                fontWeight: isCredits ? "500" : "300",
+                letterSpacing: isCredits ? "0.15em" : "normal",
+                textTransform: isCredits ? "uppercase" : "none",
+                lineHeight: isCredits ? "1.8" : "1.6",
+                textAlign: "center",
+                marginTop: isCredits ? "15px" : "0",
+                fontFamily: "inherit",
+                borderTop: isCredits ? "1px solid #333" : "none",
+                paddingTop: isCredits ? "10px" : "0",
+                width: isCredits ? "80%" : "100%",
+                marginInline: "auto",
+            }}
+        >
+            {renderTextWithLinks(text)}
+        </p>
+    );
+};
+
 function EventView() {
     const { id } = useParams();
     const [event, setEvent] = useState(null);
@@ -16,7 +71,6 @@ function EventView() {
                 const response = await axios.post("/api/events_show", {
                     id: id,
                 });
-
                 if (response.data) {
                     setEvent(response.data);
                 } else {
@@ -29,9 +83,7 @@ function EventView() {
             }
         };
 
-        if (id) {
-            fetchEventData();
-        }
+        if (id) fetchEventData();
     }, [id]);
 
     if (loading) {
@@ -59,17 +111,11 @@ function EventView() {
     }
 
     const lookbookImages =
-        event.images && Array.isArray(event.images)
-            ? event.images.map((img) => img.image_path)
-            : [];
+        event.images && Array.isArray(event.images) ? event.images : [];
 
-    // Función auxiliar para comprobar si el path es URL absoluta o relativa local
     const renderImagePath = (path) => {
         if (!path) return "";
-        if (path.startsWith("http://") || path.startsWith("https://")) {
-            return path;
-        }
-        return `/${path}`;
+        return path.startsWith("http") ? path : `/${path}`;
     };
 
     return (
@@ -81,7 +127,6 @@ function EventView() {
                 color: "#ffffff",
             }}
         >
-            {/* 1. SECCIÓN BANNER */}
             <div
                 className="event-banner"
                 style={{
@@ -94,13 +139,11 @@ function EventView() {
                 }}
             />
 
-            {/* 2. CUADRO NEGRO SUPERPUESTO */}
             <div className="event-content-wrapper">
                 <div className="text-center mb-5">
                     <h1
                         style={{
-                            fontFamily:
-                                "Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif",
+                            fontFamily: "Impact, sans-serif",
                             fontSize: "3.5rem",
                             textTransform: "uppercase",
                             letterSpacing: "2px",
@@ -133,61 +176,17 @@ function EventView() {
                         >
                             {event.description
                                 .split("||")
-                                .map((part, index) => {
-                                    const isCredits = index > 0;
-
-                                    return (
-                                        <p
-                                            key={index}
-                                            style={{
-                                                // Texto principal: Gris suave. Créditos: Gris un poco más oscuro o blanco off-white
-                                                color: isCredits
-                                                    ? "#aaaaaa"
-                                                    : "#cccccc",
-                                                fontSize: isCredits
-                                                    ? "0.8rem"
-                                                    : "1rem",
-                                                fontWeight: isCredits
-                                                    ? "500"
-                                                    : "300",
-                                                // El secreto de la sutileza es el espaciado
-                                                letterSpacing: isCredits
-                                                    ? "0.15em"
-                                                    : "normal",
-                                                textTransform: isCredits
-                                                    ? "uppercase"
-                                                    : "none",
-                                                lineHeight: isCredits
-                                                    ? "1.8"
-                                                    : "1.6",
-                                                textAlign: "center",
-                                                marginTop: isCredits
-                                                    ? "15px"
-                                                    : "0",
-                                                // Usamos la fuente del sistema (más limpia que monospace)
-                                                fontFamily: "inherit",
-                                                // Agregamos un pequeño borde superior sutil para separar
-                                                borderTop: isCredits
-                                                    ? "1px solid #333"
-                                                    : "none",
-                                                paddingTop: isCredits
-                                                    ? "10px"
-                                                    : "0",
-                                                width: isCredits
-                                                    ? "80%"
-                                                    : "100%",
-                                                marginInline: "auto",
-                                            }}
-                                        >
-                                            {part.trim()}
-                                        </p>
-                                    );
-                                })}
+                                .map((part, index) => (
+                                    <DescriptionPart
+                                        key={index}
+                                        text={part}
+                                        isCredits={index > 0}
+                                    />
+                                ))}
                         </div>
                     )}
                 </div>
 
-                {/* 3. GALERÍA VERTICAL */}
                 <div
                     className="event-vertical-gallery"
                     style={{
@@ -198,29 +197,45 @@ function EventView() {
                         width: "100%",
                     }}
                 >
-                    {lookbookImages.map((imgUrl, index) => (
-                        <img
+                    {lookbookImages.map((img, index) => (
+                        <a
                             key={index}
-                            src={renderImagePath(imgUrl)}
-                            alt={`Lookbook view ${index + 1}`}
-                            // AÑADIDO: Atributo para carga perezosa
-                            loading="lazy"
+                            // Si la URL es "/", no hace nada, si tiene contenido, redirige
+                            href={
+                                img.target_url && img.target_url !== "/"
+                                    ? img.target_url
+                                    : "#"
+                            }
+                            target="_blank"
+                            rel="noopener noreferrer"
                             style={{
                                 width: "100%",
-                                height: "auto",
                                 maxWidth: "800px",
                                 display: "block",
-                                objectFit: "cover",
-                                border: "1px solid #222",
-                                // AÑADIDO: Mejora visual mientras carga
-                                backgroundColor: "#111",
-                                minHeight: "200px",
+                                cursor:
+                                    img.target_url && img.target_url !== "/"
+                                        ? "pointer"
+                                        : "default",
                             }}
-                        />
+                        >
+                            <img
+                                src={renderImagePath(img.image_path)}
+                                alt={`Lookbook view ${index + 1}`}
+                                loading="lazy"
+                                style={{
+                                    width: "100%",
+                                    height: "auto",
+                                    display: "block",
+                                    objectFit: "cover",
+                                    border: "1px solid #222",
+                                    backgroundColor: "#111",
+                                    minHeight: "200px",
+                                }}
+                            />
+                        </a>
                     ))}
                 </div>
 
-                {/* BOTÓN REGRESAR */}
                 <div className="d-flex align-items-center justify-content-center pt-5">
                     <MDBTypography tag="h6" className="mb-0">
                         <Link

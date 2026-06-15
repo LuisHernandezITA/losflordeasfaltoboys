@@ -248,18 +248,41 @@ function CrudEvents() {
     };
 
     // --- MANEJADORES DE LA SUBTABLA GALERÍA ---
-    const handleAddImageToGallery = () => {
-        if (newImageUrl.trim() === "") return;
-        const newImgObj = {
-            id: Date.now(),
-            image_path: newImageUrl,
-        };
-        setEventImages([...eventImages, newImgObj]);
-        setNewImageUrl("");
-    };
 
     const handleRemoveImageFromGallery = (imgId) => {
         setEventImages(eventImages.filter((img) => img.id !== imgId));
+    };
+
+    // En tu componente:
+    const [newImageLink, setNewImageLink] = useState("");
+    const [editingId, setEditingId] = useState(null); // ID de la imagen que se está editando
+    const [editUrl, setEditUrl] = useState(""); // Valor temporal de edición
+
+    // Modifica tu función para agregar fotos
+    const handleAddImageToGallery = () => {
+        if (!newImageUrl.trim()) return;
+        const newImgObj = {
+            id: Date.now(),
+            image_path: newImageUrl,
+            target_url: newImageLink || "/", // Si está vacío, por defecto "/"
+        };
+        setEventImages([...eventImages, newImgObj]);
+        setNewImageUrl("");
+        setNewImageLink("");
+    };
+
+    const startEdit = (img) => {
+        setEditingId(img.id);
+        setEditUrl(img.target_url); // Cargamos el link actual en el input
+    };
+
+    const saveEdit = (id) => {
+        setEventImages(
+            eventImages.map((img) =>
+                img.id === id ? { ...img, target_url: editUrl } : img,
+            ),
+        );
+        setEditingId(null);
     };
 
     // --- ESTILOS DE ADAPTACIÓN BASE VISUAL ---
@@ -655,21 +678,27 @@ function CrudEvents() {
                                 style={{ borderRadius: "0px" }}
                             >
                                 <FormControl
-                                    className="bg-dark text-white border-secondary"
-                                    placeholder="Paste photo source URL (Unsplash, Postimages...)"
+                                    className="bg-dark text-white border-secondary mb-2"
+                                    placeholder="Paste photo source URL..."
                                     value={newImageUrl}
                                     onChange={(e) =>
                                         setNewImageUrl(e.target.value)
                                     }
                                     style={{ borderRadius: "0px" }}
                                 />
+                                <FormControl
+                                    className="bg-dark text-white border-secondary mb-2"
+                                    placeholder="Add redirection URL (optional)..."
+                                    value={newImageLink}
+                                    onChange={(e) =>
+                                        setNewImageLink(e.target.value)
+                                    }
+                                    style={{ borderRadius: "0px" }}
+                                />
                                 <MDBBtn
                                     type="button"
-                                    style={{
-                                        ...brutalistButtonStyles,
-                                        padding: "0 20px",
-                                    }}
                                     onClick={handleAddImageToGallery}
+                                    style={{ ...brutalistButtonStyles }}
                                 >
                                     ADD PHOTO
                                 </MDBBtn>
@@ -726,88 +755,102 @@ function CrudEvents() {
                                             </th>
                                         </tr>
                                     </MDBTableHead>
+
                                     <MDBTableBody
                                         style={{ backgroundColor: "#1c1c1c" }}
                                     >
-                                        {eventImages.length > 0 ? (
-                                            eventImages.map((img) => (
-                                                <tr
-                                                    key={img.id}
-                                                    style={{
-                                                        borderBottom:
-                                                            "1px solid #252525",
-                                                    }}
-                                                >
-                                                    <td>
-                                                        <img
-                                                            src={img.image_path}
-                                                            alt="Look preview"
-                                                            style={{
-                                                                width: "45px",
-                                                                height: "45px",
-                                                                objectFit:
-                                                                    "cover",
-                                                                borderRadius:
-                                                                    "0px",
-                                                            }}
-                                                            className="border border-secondary"
-                                                        />
-                                                    </td>
-                                                    <td
-                                                        className="small text-truncate"
+                                        {eventImages.map((img) => (
+                                            <tr key={img.id}>
+                                                <td>
+                                                    <img
+                                                        src={img.image_path}
+                                                        alt="preview"
                                                         style={{
-                                                            maxWidth: "300px",
-                                                            color: "#ccc",
-                                                            fontWeight:
-                                                                "normal",
+                                                            width: "45px",
+                                                            height: "45px",
+                                                            objectFit: "cover",
                                                         }}
-                                                    >
-                                                        {img.image_path}
-                                                    </td>
-                                                    <td
-                                                        className="text-end"
-                                                        style={{
-                                                            paddingRight:
-                                                                "15px",
-                                                        }}
-                                                    >
-                                                        <MDBBtn
-                                                            type="button"
-                                                            style={{
-                                                                ...tableActionBtnStyles,
-                                                                minWidth:
-                                                                    "40px",
-                                                                padding:
-                                                                    "6px 12px",
-                                                            }}
-                                                            onClick={() =>
-                                                                handleRemoveImageFromGallery(
-                                                                    img.id,
+                                                        className="border border-secondary"
+                                                    />
+                                                </td>
+                                                <td>
+                                                    {editingId === img.id ? (
+                                                        // MODO EDICIÓN
+                                                        <input
+                                                            className="bg-dark text-white border-secondary w-100"
+                                                            value={editUrl}
+                                                            onChange={(e) =>
+                                                                setEditUrl(
+                                                                    e.target
+                                                                        .value,
                                                                 )
+                                                            }
+                                                        />
+                                                    ) : (
+                                                        // MODO VISTA
+                                                        <div className="small">
+                                                            <div>
+                                                                {img.image_path}
+                                                            </div>
+                                                            <div
+                                                                className="text-muted"
+                                                                style={{
+                                                                    fontSize:
+                                                                        "0.75rem",
+                                                                }}
+                                                            >
+                                                                URL:{" "}
+                                                                {img.target_url}
+                                                            </div>
+                                                        </div>
+                                                    )}
+                                                </td>
+                                                <td className="text-end">
+                                                    {editingId === img.id ? (
+                                                        <MDBBtn
+                                                            size="sm"
+                                                            color="success"
+                                                            onClick={() =>
+                                                                saveEdit(img.id)
                                                             }
                                                         >
                                                             <MDBIcon
                                                                 fas
-                                                                icon="trash"
+                                                                icon="check"
                                                             />
                                                         </MDBBtn>
-                                                    </td>
-                                                </tr>
-                                            ))
-                                        ) : (
-                                            <tr>
-                                                <td
-                                                    colSpan="3"
-                                                    className="text-center text-muted small py-3"
-                                                    style={{
-                                                        fontWeight: "normal",
-                                                    }}
-                                                >
-                                                    No looks added to this event
-                                                    yet.
+                                                    ) : (
+                                                        <MDBBtn
+                                                            size="sm"
+                                                            color="warning"
+                                                            className="me-2"
+                                                            onClick={() =>
+                                                                startEdit(img)
+                                                            }
+                                                        >
+                                                            <MDBIcon
+                                                                fas
+                                                                icon="edit"
+                                                            />
+                                                        </MDBBtn>
+                                                    )}
+                                                    <MDBBtn
+                                                        size="sm"
+                                                        color="danger"
+                                                        onClick={() =>
+                                                            handleRemoveImageFromGallery(
+                                                                img.id,
+                                                            )
+                                                        }
+                                                    >
+                                                        <MDBIcon
+                                                            fas
+                                                            icon="trash"
+                                                        />
+                                                    </MDBBtn>
                                                 </td>
                                             </tr>
-                                        )}
+                                        ))}
                                     </MDBTableBody>
                                 </MDBTable>
                             </div>

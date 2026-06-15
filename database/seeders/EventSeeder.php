@@ -56,7 +56,8 @@ class EventSeeder extends Seeder
             foreach ($imagenes as $path) {
                 EventImage::create([
                     'event_id' => $event->id,
-                    'image_path' => $path
+                    'image_path' => $path,
+                    'target_url' => '/' // Dirección por defecto
                 ]);
             }
         }

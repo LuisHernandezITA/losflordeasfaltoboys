@@ -83,11 +83,14 @@ class EventController extends Controller
 
             if ($request->has('gallery_images')) {
                 foreach ($request->input('gallery_images') as $img) {
+                    // Si el dato viene como array, extraemos los campos, si no, usamos default
                     $path = is_array($img) ? ($img['image_path'] ?? '') : $img;
+                    $url  = is_array($img) ? ($img['target_url'] ?? '/') : '/';
 
                     if (!empty($path)) {
                         $event->images()->create([
-                            'image_path' => $path
+                            'image_path' => $path,
+                            'target_url' => $url
                         ]);
                     }
                 }
@@ -96,16 +99,13 @@ class EventController extends Controller
             return response()->json([
                 'message' => '¡Evento y galería creados con éxito!',
                 'event' => $event->load('images')
-            ], 201); // Corregido de 21 a 201 HTTP Created
+            ], 201);
 
         } catch (\Exception $e) {
             return response()->json(['error' => 'Error al guardar el evento: ' . $e->getMessage()], 500);
         }
     }
 
-    /**
-     * Actualizar un evento existente (Admin CRUD).
-     */
     public function update(Request $request, $id)
     {
         $request->validate([
@@ -132,15 +132,16 @@ class EventController extends Controller
             $event->save();
 
             if ($request->has('gallery_images')) {
-                // Eliminamos las relaciones anteriores para evitar duplicados
                 $event->images()->delete();
 
                 foreach ($request->input('gallery_images') as $img) {
                     $path = is_array($img) ? ($img['image_path'] ?? '') : $img;
+                    $url  = is_array($img) ? ($img['target_url'] ?? '/') : '/';
 
                     if (!empty($path)) {
                         $event->images()->create([
-                            'image_path' => $path
+                            'image_path' => $path,
+                            'target_url' => $url
                         ]);
                     }
                 }
@@ -156,14 +157,10 @@ class EventController extends Controller
         }
     }
 
-    /**
-     * Eliminar un evento y sus imágenes asociadas en cascada.
-     */
     public function destroy($id)
     {
         try {
             $event = Event::findOrFail($id);
-            // Al eliminar el evento, las imágenes vinculadas se limpian
             $event->images()->delete();
             $event->delete();
 

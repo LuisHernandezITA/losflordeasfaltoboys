@@ -32,6 +32,22 @@ function Product() {
         backgroundSize: "cover",
     });
 
+    // ESTADOS PARA ZOOM MOVIL
+    const [isZoomed, setIsZoomed] = useState(false);
+
+    const handleToggleZoom = () => {
+        if (window.matchMedia("(pointer: coarse)").matches) {
+            // Solo si es pantalla táctil
+            setIsZoomed(!isZoomed);
+            /*
+            setZoomStyle({
+                backgroundImage: `url(${activeImage})`,
+                backgroundPosition: "center",
+                backgroundSize: !isZoomed ? "220%" : "100%", // Alterna entre 2.2x y 100%
+            });*/
+        }
+    };
+
     // NOTIFICATIONS
     const { showNotification } = useNotification();
 
@@ -233,11 +249,17 @@ function Product() {
                         onMouseLeave={
                             product.available ? handleMouseLeave : undefined
                         }
+                        // Evento para móvil
+                        onClick={handleToggleZoom}
                         style={{
                             backgroundImage: zoomStyle.backgroundImage,
                             backgroundPosition: zoomStyle.backgroundPosition,
                             backgroundSize: zoomStyle.backgroundSize,
-                            cursor: product.available ? "zoom-in" : "default",
+                            cursor: product.available
+                                ? isZoomed
+                                    ? "zoom-out"
+                                    : "zoom-in"
+                                : "default",
                             transition: "all 0.3s ease",
                             // Aplicamos opacidad de 0.7 solo si NO está disponible
                             opacity: product.available ? 1 : 1,

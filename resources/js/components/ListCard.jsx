@@ -227,13 +227,14 @@ function ListCard() {
                             {/* DIVISOR INTERNO EN MÓVILES */}
                             <hr className="d-lg-none my-2 border-secondary" />
 
-                            {/* BLOQUE: MARCAS */}
+                            {/* BLOQUE: MARCAS (ESTILIZADO) */}
                             <div className="nav-filter-group">
                                 <span
                                     className="text-muted small d-block mb-1 tracking-wider"
                                     style={{
                                         fontSize: "0.75rem",
                                         letterSpacing: "1px",
+                                        fontFamily: "Space Mono, monospace",
                                     }}
                                 >
                                     BRANDS
@@ -247,29 +248,43 @@ function ListCard() {
                                     }
                                     id="brands-dropdown"
                                     className="custom-nav-dropdown"
+                                    style={{ fontSize: "0.875rem" }}
                                 >
-                                    {/* Contenedor con altura fija y scroll, sin buscador interno si no lo deseas */}
+                                    <NavDropdown.Item
+                                        onClick={() => setSelectedBrand(null)}
+                                        className={
+                                            selectedBrand === null
+                                                ? "active-dropdown-item"
+                                                : ""
+                                        }
+                                    >
+                                        ALL BRANDS
+                                    </NavDropdown.Item>
+
+                                    <NavDropdown.Divider
+                                        style={{
+                                            backgroundColor:
+                                                "rgba(255,255,255,0.1)",
+                                        }}
+                                    />
+
                                     <div
                                         style={{
-                                            maxHeight: "200px",
+                                            maxHeight: "250px",
                                             overflowY: "auto",
                                         }}
                                     >
-                                        <NavDropdown.Item
-                                            onClick={() =>
-                                                setSelectedBrand(null)
-                                            }
-                                        >
-                                            ALL BRANDS
-                                        </NavDropdown.Item>
-
                                         {brands.map((brand, idx) => (
                                             <NavDropdown.Item
                                                 key={idx}
                                                 onClick={() =>
                                                     setSelectedBrand(brand)
                                                 }
-                                                active={selectedBrand === brand}
+                                                className={
+                                                    selectedBrand === brand
+                                                        ? "active-dropdown-item"
+                                                        : ""
+                                                }
                                             >
                                                 {brand.toUpperCase()}
                                             </NavDropdown.Item>

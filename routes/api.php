@@ -78,6 +78,7 @@ Route::middleware(['auth:api', 'isAdmin'])->group(function () {
 
     // Gestión de Usuarios
     Route::get('/user_index', [UserController::class, 'index']);
+    Route::delete('/user_destroy/{id}', [UserController::class, 'destroy']);
 
     // CRUD Categorías
     Route::get('categories/{id}/edit', [CategoryController::class, 'edit']);

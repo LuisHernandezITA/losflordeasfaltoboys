@@ -92,6 +92,7 @@ function Menu() {
             "/blog",
             "/about-us",
             "/legal-notice",
+            "/crudusers",
             "/crudgallery",
             "/crudblogs",
             "/crudevents",
@@ -150,21 +151,52 @@ function Menu() {
                     <Navbar.Collapse id="responsive-navbar-nav">
                         <Nav className="ms-auto align-items-center">
                             {/* TEXTO DE IDENTIDAD TEXTUAL BRUTALISTA CORREGIDO */}
+                            {/* Usuario Online */}
                             {userInfo && (
-                                <span className="nav-user-status text-uppercase">
-                                    <span className="blink-dot">●</span> ONLINE
-                                    // {formatUserName(userInfo)}
+                                <span
+                                    className="nav-user-status text-uppercase"
+                                    style={{
+                                        fontSize: "0.75rem",
+                                        letterSpacing: "1px",
+                                        opacity: 0.7,
+                                        marginRight: "15px",
+                                    }}
+                                >
+                                    <span
+                                        className="blink-dot"
+                                        style={{
+                                            color: "#ff0000",
+                                            marginRight: "5px",
+                                        }}
+                                    >
+                                        ●
+                                    </span>
+                                    ONLINE // {userInfo.name}
                                 </span>
                             )}
 
-                            <Nav.Link as={Link} to="">
+                            {/* Estilo para los enlaces */}
+                            <Nav.Link
+                                as={Link}
+                                to=""
+                                style={{
+                                    textTransform: "uppercase",
+                                    fontSize: "0.85rem",
+                                    letterSpacing: "1px",
+                                }}
+                            >
                                 Home
                             </Nav.Link>
 
                             <NavDropdown
                                 title="Events"
                                 id="events-nav-dropdown"
-                                className="custom-dropdown"
+                                className="events-nav-dropdown"
+                                style={{
+                                    textTransform: "uppercase",
+                                    fontSize: "0.85rem",
+                                    letterSpacing: "1px",
+                                }}
                             >
                                 {events.map((event) => {
                                     const { id, title, date } = event;
@@ -183,13 +215,37 @@ function Menu() {
                                 })}
                             </NavDropdown>
 
-                            <Nav.Link as={Link} to="blog">
+                            <Nav.Link
+                                as={Link}
+                                to="blog"
+                                style={{
+                                    textTransform: "uppercase",
+                                    fontSize: "0.85rem",
+                                    letterSpacing: "1px",
+                                }}
+                            >
                                 Blog
                             </Nav.Link>
-                            <Nav.Link as={Link} to="gallery">
+                            <Nav.Link
+                                as={Link}
+                                to="gallery"
+                                style={{
+                                    textTransform: "uppercase",
+                                    fontSize: "0.85rem",
+                                    letterSpacing: "1px",
+                                }}
+                            >
                                 Gallery
                             </Nav.Link>
-                            <Nav.Link as={Link} to="store">
+                            <Nav.Link
+                                as={Link}
+                                to="store"
+                                style={{
+                                    textTransform: "uppercase",
+                                    fontSize: "0.85rem",
+                                    letterSpacing: "1px",
+                                }}
+                            >
                                 Store
                             </Nav.Link>
 
@@ -199,6 +255,11 @@ function Menu() {
                                     title="Admin"
                                     id="admin-crud-dropdown"
                                     className="custom-dropdown"
+                                    style={{
+                                        textTransform: "uppercase",
+                                        fontSize: "0.85rem",
+                                        letterSpacing: "1px",
+                                    }}
                                 >
                                     <NavDropdown.Item
                                         as={Link}
@@ -232,6 +293,9 @@ function Menu() {
                                         to="crudproducts"
                                     >
                                         Products Crud
+                                    </NavDropdown.Item>
+                                    <NavDropdown.Item as={Link} to="crudusers">
+                                        Users Crud
                                     </NavDropdown.Item>
                                 </NavDropdown>
                             )}

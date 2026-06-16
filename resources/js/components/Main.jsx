@@ -17,6 +17,7 @@ import CrudBlogs from "./CrudBlogs";
 import AvisoLegal from "./AvisoLegal";
 import AboutUs from "./AboutUs";
 import CrudGallery from "./CrudGallery";
+import CrudUsers from "./CrudUsers";
 
 function Main() {
     return (
@@ -28,6 +29,7 @@ function Main() {
                     <Route path="about-us" element={<AboutUs />} />
                     <Route path="legal-notice" element={<AvisoLegal />} />
                     <Route path="blog" element={<BlogView />} />
+                    <Route path="crudusers" element={<CrudUsers />} />
                     <Route path="crudgallery" element={<CrudGallery />} />
                     <Route path="crudblogs" element={<CrudBlogs />} />
                     <Route path="crudproducts" element={<Crud />} />

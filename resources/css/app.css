@@ -660,26 +660,51 @@ section, .container, .container-fluid {
 
 /*NAVBAR PRINCIPAL*/
 
-/* Estilo base del Navbar */
+/* NAVBAR PRINCIPAL - ESTILO BRUTALISTA TÉCNICO */
+
 .navbar-custom {
-    background-color: #000000 !important; /* Negro puro inicial */
-    transition:
-        background-color 0.4s ease,
-        backdrop-filter 0.4s ease;
-    padding: 10px 0;
+    /* Fondo con un toque de gris muy oscuro para mayor profundidad que el #000000 */
+    background-color: rgba(14, 14, 14, 0.85) !important; 
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08); /* Más sutil */
+    transition: all 0.4s ease;
+    padding: 5px 0; /* Un poco más compacto */
 }
 
-/* Efecto Vidrio Negro Transparente */
-/* Se activa cuando hay contenido detrás o puedes usar JS para cambiar la clase al bajar */
-.navbar-custom {
-    background-color: rgb(
-        18,
-        18,
-        18
-    ) !important; /* Negro con 70% de opacidad */
-    backdrop-filter: blur(10px); /* El efecto de desenfoque/vidrio */
-    -webkit-backdrop-filter: blur(10px); /* Compatibilidad con Safari */
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Línea sutil elegante */
+/* Tipografía global para elementos del menú */
+.navbar-custom .nav-link, 
+.navbar-custom .navbar-brand,
+.navbar-custom .nav-user-status {
+    font-family: 'Space Mono', monospace; /* O la fuente que elijas */
+    text-transform: uppercase;
+    font-size: 0.75rem !important; /* Más pequeño se ve más pro */
+    letter-spacing: 1.2px;
+}
+
+/* Ajuste del estado Online */
+.nav-user-status {
+    color: #fff;
+    padding: 4px 10px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    margin-right: 20px;
+}
+
+.blink-dot {
+    color: #ff0000;
+    margin-right: 6px;
+    animation: blink 1.5s infinite;
+}
+
+@keyframes blink {
+    50% { opacity: 0; }
+}
+
+/* La clase scrolled se mantiene igual */
+.navbar-custom.scrolled {
+    background-color: rgba(14, 14, 14, 0.894) !important; 
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 /* Ajuste para que el contenido de la página no se oculte tras el navbar fixed */
@@ -687,9 +712,39 @@ body {
     padding-top: 70px; /* Ajusta según la altura de tu logo */
 }
 
-.navbar-custom.scrolled {
-    background-color: rgba(0, 0, 0, 0.7) !important;
-    backdrop-filter: blur(15px);
+/* --- ESTILO ESPECÍFICO PARA DROPDOWN DE EVENTOS --- */
+
+/* La caja flotante */
+.events-nav-dropdown .dropdown-menu { 
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08); /* Más sutil */
+    transition: all 0.4s ease;
+    padding: 5px 0;
+}
+
+/* Los enlaces internos (reemplazamos el estilo de .dropdown-item genérico) */
+.events-nav-dropdown .dropdown-item {
+    color: #aaaaaa !important;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.70rem !important;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 10px 15px;
+    transition: all 0.2s ease;
+    display: flex;
+    justify-content: space-between;
+}
+
+.events-nav-dropdown .dropdown-item:hover {
+    color: #ffffff !important;
+}
+
+/* El acento de la fecha que tenías en tu código */
+.events-nav-dropdown .menu-date-accent {
+    opacity: 0.6;
+    margin-left: 10px;
+    font-size: 0.65rem;
 }
 
 /* Animación específica para el Texto */

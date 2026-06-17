@@ -418,7 +418,7 @@ function ListCard() {
                         <div
                             key={product.id}
                             className="card-wrapper"
-                            style={{ margin: "10px" }}
+                            style={{ margin: "1px" }}
                         >
                             <Card_C
                                 id={product.id}
@@ -492,7 +492,6 @@ function ListCard() {
                     </button>
                 </div>
             )}
-            <br />
         </div>
     );
 }

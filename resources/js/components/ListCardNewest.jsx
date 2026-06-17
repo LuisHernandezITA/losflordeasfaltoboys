@@ -73,7 +73,7 @@ function ListCardNewest() {
     return (
         <Container
             fluid
-            className="px-3 px-md-5 py-4"
+            className="px-3 px-md-5 py-2"
             style={{ backgroundColor: "#121212", minHeight: "100vh" }}
         >
             {/* ==================================================================== */}
@@ -86,7 +86,7 @@ function ListCardNewest() {
                         <div
                             className="col-12 col-md-auto px-4 py-2"
                             style={{
-                                backgroundColor: "#0b0b0bdf", // Rojo Carmesí
+                                backgroundColor: "#410202df", // Rojo Carmesí
                                 display: "inline-block",
                                 width: "fit-content",
                             }}

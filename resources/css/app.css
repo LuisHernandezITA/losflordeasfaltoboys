@@ -61,7 +61,7 @@ section, .container, .container-fluid {
     border-color: #666 !important; /* Un poco más claro para que se note */
     transform: translateY(-10px) !important; /* Aumentado para visibilidad */
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
-    z-index: 50; /* Suficiente para estar sobre otras cards, pero menor que el nav */
+    z-index: 100; /* Suficiente para estar sobre otras cards, pero menor que el nav */
 }
 
 .my-card:hover .my-card-img {
@@ -71,7 +71,7 @@ section, .container, .container-fluid {
 /* 3. Media Query para MÓVIL (Ancho Total) */
 @media (max-width: 991px) {
     .card-wrapper {
-        width: 100vw;
+        width: 90vw;
         margin-left: calc(-50vw + 50%);
     }
 
@@ -90,7 +90,6 @@ section, .container, .container-fluid {
 @media (min-width: 992px) {
     .card-wrapper {
         width: 400px;
-        margin: 20px; /* Espaciado entre tarjetas */
     }
 
     .my-card,
@@ -124,7 +123,7 @@ section, .container, .container-fluid {
     flex-direction: column;
     justify-content: space-between;
     height: 180px; /* Altura fija para el área de texto y botón */
-    padding: 15px !important;
+   
 }
 
 /* Títulos: Máximo 1 línea */

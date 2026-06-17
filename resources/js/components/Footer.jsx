@@ -75,7 +75,7 @@ function Footer() {
                                 {" "}
                                 {/* Texto un poco más suave que el blanco puro */}
                                 Hu0la, esta web es para difusión artistica, te
-                                amamos, esperamos verte pronto!
+                                amamos, esperamos verte pronto! ╭∩╮(•̀_·́)╭∩╮
                             </p>
                         </MDBCol>
 

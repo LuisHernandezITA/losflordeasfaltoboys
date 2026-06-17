@@ -41,7 +41,7 @@ const DescriptionPart = ({ text, isCredits }) => {
         <p
             style={{
                 color: isCredits ? "#aaaaaa" : "#cccccc",
-                fontSize: isCredits ? "0.8rem" : "1rem",
+                fontSize: isCredits ? "0.7rem" : "1rem",
                 fontWeight: isCredits ? "500" : "300",
                 letterSpacing: isCredits ? "0.15em" : "normal",
                 textTransform: isCredits ? "uppercase" : "none",

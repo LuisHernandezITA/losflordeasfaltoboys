@@ -14,6 +14,22 @@ function ListCardNewest() {
     const [activeAd, setActiveAd] = useState(null);
     const [loading, setLoading] = useState(true);
     const [isHovered, setIsHovered] = useState(false);
+    const { ultimoBlog, productos } = homeData;
+
+    const [asciiIndex, setAsciiIndex] = useState(0);
+    const asciiList = [
+        "≽(⚙˕ ⚙ ≼マ▄︻デ╦═━ ⋅⋆⭒˚｡⋆",
+        "≽(⚙˕ ⚙ ≼マ▄︻デ┳═── ✶☆─⋆⭒˚｡⋆",
+        "≽(⚙˕ ⚙ ≼マ▄︻デ╤═─ ˚｡✶☆⋅⋆ ──⋆⭒˚｡⋆",
+        "≽(⚙˕ ⚙ ≼マ▄︻デ╦═×━ ⋅ ─˚｡✶☆⋅ ──⋆⋆⭒˚｡⋆",
+    ];
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setAsciiIndex((prevIndex) => (prevIndex + 1) % asciiList.length);
+        }, 100); // Cambia cada 3 segundos
+        return () => clearInterval(interval);
+    }, []);
 
     useEffect(() => {
         const getHomeData = async () => {
@@ -54,8 +70,6 @@ function ListCardNewest() {
         );
     }
 
-    const { ultimoBlog, productos } = homeData;
-
     return (
         <Container
             fluid
@@ -65,15 +79,35 @@ function ListCardNewest() {
             {/* ==================================================================== */}
             {/* SECCIÓN 2: NUEVOS PRODUCTOS                                          */}
             {/* ==================================================================== */}
-            <div className="pt-2 border-bottom border-secondary pb-5 mb-5">
-                <div className="d-flex align-items-center mb-4 px-2">
-                    <h2
-                        className="text-white m-0 text-uppercase fw-bold"
-                        style={{ letterSpacing: "1px", fontSize: "1.6rem" }}
-                    >
-                        ⋆｡‧₊°♱ Nuevos Productos!
-                    </h2>
-                    <div className="flex-grow-1 ms-3 border-top border-secondary opacity-25"></div>
+            <div className="pt-2 border-bottom border-secondary pb-4 mb-4">
+                <div className="container-fluid mb-3 px-2">
+                    <div className="row align-items-center">
+                        {/* Contenedor del título con fondo rojo carmesí */}
+                        <div
+                            className="col-12 col-md-auto px-4 py-2"
+                            style={{
+                                backgroundColor: "#0b0b0bdf", // Rojo Carmesí
+                                display: "inline-block",
+                                width: "fit-content",
+                            }}
+                        >
+                            <h2
+                                className="text-white m-0 text-uppercase fw-bold"
+                                style={{
+                                    letterSpacing: "1px",
+                                    fontSize: "1.4rem",
+                                }}
+                            >
+                                Nuevos Productos! ♱°₊｡⋆
+                            </h2>
+                        </div>
+
+                        {/* Columna de relleno */}
+                        <div className="col-12 col-md mt-2 mt-md-0">
+                            {/* Línea en escritorio */}
+                            <div className="d-none d-md-block border-top border-secondary opacity-25 w-100"></div>
+                        </div>
+                    </div>
                 </div>
 
                 <div className="custom-horizontal-carousel-container position-relative">
@@ -108,7 +142,7 @@ function ListCardNewest() {
             {/* SECCIÓN 1: ÚLTIMO BLOG + PUBLICIDAD PARÓDICA DINÁMICA                */}
             {/* ==================================================================== */}
             {ultimoBlog && (
-                <div className="d-flex flex-column flex-md-row gap-4 mb-5 border-bottom border-secondary pb-5">
+                <div className="d-flex flex-column flex-md-row gap-4 mb-3 border-bottom border-secondary pb-4">
                     {/* CONTENEDOR DEL BLOG */}
                     <div
                         className="position-relative rounded-0 shadow flex-grow-1"
@@ -221,7 +255,7 @@ function ListCardNewest() {
                             style={{
                                 flex: "0 0 240px",
                                 height: "480px",
-                                border: "2px solid #ff0055",
+                                //border: "2px solid #ff0055",
                                 backgroundColor: "#000",
                                 overflow: "hidden",
                             }}
@@ -399,6 +433,18 @@ function ListCardNewest() {
                         </Col>
                     </Row>
                 </div>
+            </div>
+            {/* ASCII en móvil */}
+            {/* Columna de relleno */}
+            <div
+                className="col-12 col-md mt-2 mt-md-0"
+                style={{
+                    fontSize: "0.8rem",
+                    color: "#e0e0e0",
+                    transition: "opacity 0.5s ease-in-out", // Efecto suave al cambiar
+                }}
+            >
+                {asciiList[asciiIndex]}
             </div>
         </Container>
     );

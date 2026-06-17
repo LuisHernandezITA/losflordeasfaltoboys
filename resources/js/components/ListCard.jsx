@@ -32,7 +32,9 @@ function ListCard() {
         const fetchData = async () => {
             try {
                 const response = await axios.get("/api/products_index");
-                setProductData(response.data);
+                // Invertimos el array antes de setearlo
+                const productosInvertidos = [...response.data].reverse();
+                setProductData(productosInvertidos);
             } catch (error) {
                 console.error("Error cargando productos:", error);
             }
@@ -130,13 +132,42 @@ function ListCard() {
             <Navbar
                 expand="lg"
                 variant="dark"
+                className="shadow-sm py-3 w-100 position-relative" // Mantenemos relative
                 style={{
-                    backgroundColor: "rgb(18, 18, 18)",
                     borderBottom: "1px solid rgba(255,255,255,0.05)",
+                    //overflow: "hidden",
+                    backgroundColor: "transparent", // Forzamos transparente
                 }}
-                className="shadow-sm py-3 w-100"
             >
-                <Container className="px-4 flex-wrap">
+                {/* Capa de fondo con la imagen - Z-INDEX 0 (Base) */}
+                <div
+                    style={{
+                        position: "absolute",
+                        inset: 0,
+                        backgroundImage: `url("https://i.postimg.cc/k5RgR8vk/Towena-Route.jpg")`,
+                        backgroundSize: "cover",
+                        backgroundPosition: "center",
+                        zIndex: 0,
+                        filter: "invert(1)",
+                    }}
+                />
+
+                {/* Capa de desenfoque - Z-INDEX 1 (Encima de la imagen) */}
+                <div
+                    style={{
+                        position: "absolute",
+                        inset: 0,
+                        backdropFilter: "blur(15px)",
+                        backgroundColor: "rgba(0, 0, 0, 0.9)",
+                        zIndex: 1,
+                    }}
+                />
+
+                {/* Contenido - Z-INDEX 2 (Encima de todo) */}
+                <Container
+                    className="px-4 flex-wrap"
+                    style={{ position: "relative", zIndex: 2 }}
+                >
                     <Navbar.Toggle
                         aria-controls="basic-navbar-nav"
                         className="border-0 custom-toggler d-flex align-items-center ps-0"

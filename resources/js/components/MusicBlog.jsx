@@ -146,13 +146,12 @@ function MusicBlog() {
                         </div>
                     </Container>
 
-                    {/* CONTENEDOR DE LA GALERÍA (MARQUEE) */}
-                    {/* Cambiamos el fondo a un gris muy claro (blanco grisáceo #f4f4f4) */}
+                    {/* CONTENEDOR DE LA GALERÍA */}
                     <div
                         className="art-marquee-container"
                         style={{
                             backgroundColor: "#f4f4f4",
-                            padding: "40px 0",
+                            padding: "50px 0", // Reducido de 40px a 20px
                         }}
                     >
                         {infiniteArtworks.map((art, idx) => (
@@ -160,143 +159,79 @@ function MusicBlog() {
                                 key={`${art.id}-${idx}`}
                                 className="card-art-exhibit"
                             >
-                                {/* El div que actúa como contenedor de la obra tiene la clase para el hover */}
-                                <div className="art-frame-wrapper">
-                                    <div
-                                        className="art-frame"
-                                        style={{
-                                            height: "400px",
-                                            width: "100%",
-                                            overflow: "hidden", // Esto corta lo que se salga del marco
-                                            display: "flex",
-                                            justifyContent: "center",
-                                            alignItems: "center",
-                                        }}
-                                    >
-                                        <img
-                                            src={art.image_url}
-                                            alt={art.title}
+                                {/* El enlace envuelve TODO el contenido */}
+                                <a
+                                    href={`https://www.instagram.com/${(art.autor || "").replace("@", "")}/`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-decoration-none"
+                                    style={{
+                                        display: "block",
+                                        color: "inherit",
+                                    }}
+                                >
+                                    <div className="art-frame-wrapper">
+                                        {/* 1. IMAGEN */}
+                                        <div
+                                            className="art-frame"
                                             style={{
+                                                height: "250px",
                                                 width: "100%",
-                                                height: "100%",
-                                                objectFit: "cover", // <--- ESTO ELIMINA LOS BORDES BLANCOS
-                                                objectPosition: "center", // Centra la imagen si es muy alta
-                                                display: "block",
+                                                overflow: "hidden",
+                                                display: "flex",
+                                                justifyContent: "center",
+                                                alignItems: "center",
+                                                border: "1px solid #000000",
                                             }}
-                                        />
-                                    </div>
+                                        >
+                                            <img
+                                                src={art.image_url}
+                                                alt={art.title}
+                                                style={{
+                                                    width: "100%",
+                                                    height: "100%",
+                                                    objectFit: "cover",
+                                                    display: "block",
+                                                }}
+                                            />
+                                        </div>
 
-                                    {/* --- CADA TARJETA --- */}
-                                    <div className="card-art-exhibit">
-                                        {/* 2. El wrapper solo contiene el texto */}
-                                        <div className="art-frame-wrapper">
-                                            <div className="text-white fw-bold text-uppercase border-bottom border-secondary pb-1 mb-2">
+                                        {/* 2. TEXTO / FICHA TÉCNICA */}
+                                        <div className="mt-3">
+                                            <div
+                                                className="fw-bold text-uppercase border-bottom border-secondary pb-1 mb-2"
+                                                style={{
+                                                    fontSize: "0.9rem",
+                                                    color: "#d6d5d5",
+                                                }}
+                                            >
                                                 {art.title}
                                             </div>
-                                            {/* Contenedor de CRED con truncado */}
+
                                             <div
-                                                className="text-secondary"
                                                 style={{
-                                                    whiteSpace: "nowrap",
-                                                    overflow: "hidden",
-                                                    textOverflow: "ellipsis",
+                                                    fontSize: "0.75rem",
+                                                    lineHeight: "1.4",
                                                 }}
                                             >
-                                                <span
-                                                    style={{ color: "#ff0055" }}
-                                                >
-                                                    CRED:
-                                                </span>{" "}
-                                                {art.autor}
-                                            </div>
-
-                                            {/* Contenedor de TECH con truncado y puntos suspensivos */}
-                                            <div
-                                                className="text-muted"
-                                                style={{
-                                                    whiteSpace: "nowrap", // 1. Evita que el texto salte de línea
-                                                    overflow: "hidden", // 2. Oculta lo que sobresale
-                                                    textOverflow: "ellipsis", // 3. Pone los "..." cuando se corta
-                                                    width: "90%", // 4. Importante: limita el ancho al contenedor
-                                                }}
-                                            >
-                                                <span style={{ color: "#555" }}>
-                                                    TECH:
-                                                </span>{" "}
-                                                {art.technique}
-                                            </div>
-
-                                            <div className="mt-2">
-                                                <span
-                                                    className="px-2 py-1 bg-secondary text-black fw-bold"
-                                                    style={{
-                                                        fontSize: "0.7rem",
-                                                    }}
-                                                >
+                                                <div className="text-dark">
+                                                    <strong>{art.autor}</strong>
+                                                </div>
+                                                <div className="text-secondary">
+                                                    {art.technique}
+                                                </div>
+                                                <div className="text-muted mt-1">
                                                     {art.year}
-                                                </span>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                </a>
                             </div>
                         ))}
                     </div>
                 </div>
             )}
-
-            {/* ==================================================================== */}
-            {/* 2. TRANSICIÓN CON DEGRADADO Y NAVBAR COMPACTO SIN FONDO             */}
-            {/* ==================================================================== */}
-            <div
-                style={{
-                    background:
-                        "linear-gradient(to bottom, #000000 0%, #0a0a0a 50%, #121212 100%)",
-                    paddingTop: "20px",
-                    paddingBottom: "20px",
-                }}
-            >
-                <Navbar
-                    expand="lg"
-                    variant="dark"
-                    style={{
-                        backgroundColor: "transparent",
-                        borderBottom: "none",
-                    }}
-                    className="py-2 w-100"
-                >
-                    {/* CORREGIDO: Se cambió a fluid y se asignó px-5 para empujar los textos a las orillas */}
-                    <Container fluid className="px-5">
-                        <div className="d-flex align-items-center">
-                            <span
-                                className="glitch-text"
-                                style={{
-                                    fontSize: "1.2rem",
-                                    letterSpacing: "4px",
-                                    opacity: "0.8",
-                                    fontWeight: "300",
-                                }}
-                            >
-                                DIGITAL ART & MUSIC VAULT ♱༺༒︎⊰
-                            </span>
-                        </div>
-                        <Nav className="ms-auto d-none d-md-flex align-items-center">
-                            <span
-                                className="small text-uppercase"
-                                style={{
-                                    color: "rgba(255,255,255,0.3)",
-                                    letterSpacing: "2px",
-                                    fontSize: "0.7rem",
-                                }}
-                            >
-                                Release Vol.{" "}
-                                {currentPage.toString().padStart(2, "0")} —{" "}
-                                {new Date().getFullYear()}
-                            </span>
-                        </Nav>
-                    </Container>
-                </Navbar>
-            </div>
 
             {/* ==================================================================== */}
             {/* 3. SECCIÓN INFERIOR: AUDIO ARCHIVE TRACKS CORRECTOS                 */}

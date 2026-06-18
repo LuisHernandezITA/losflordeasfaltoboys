@@ -669,23 +669,45 @@ section, .container, .container-fluid {
     ) !important; /* Un borde sutil blanco */
 }
 
-/*CARROUSEL*/
+/* --- CARROUSEL --- */
+
+/* Contenedor principal del carrusel */
+.carousel {
+    /* Permite el scroll vertical de la página, pero habilita el swipe horizontal nativo */
+    touch-action: pan-y; 
+    width: 100%;
+    overflow: hidden; /* Asegura que nada se desborde */
+}
 
 /* Estilo para las imágenes del carrusel */
-
 .custom-carousel-img {
     width: 100%;
-    /* Altura en móviles: esto lo hará ver más "cuadrado" */
-    height: 550px;
-    object-fit: cover; /* Recorta los lados sin estirar la imagen */
-    object-position: center; /* Asegura que el centro de la imagen sea lo visible */
+    height: 550px; /* Altura en móviles */
+    object-fit: cover; 
+    object-position: center;
+    /* IMPORTANTE: Evita que el navegador intente arrastrar la imagen como un elemento HTML */
+    pointer-events: none; 
+    user-select: none;
+    -webkit-user-drag: none;
 }
 
 /* Altura en pantallas grandes (Desktop) */
 @media (min-width: 992px) {
     .custom-carousel-img {
-        height: 600px; /* O la altura que prefieras para PC */
+        height: 600px;
     }
+}
+
+/* Mejora la interacción con el botón en móviles */
+.carousel-caption {
+    /* Esto permite que el toque en la zona del caption pase al carrusel */
+    pointer-events: none; 
+}
+
+.custom-button {
+    /* Esto permite que el botón sea clickeable aunque el contenedor tenga pointer-events: none */
+    pointer-events: auto; 
+    cursor: pointer;
 }
 
 /*NAVBAR PRINCIPAL*/
@@ -1131,25 +1153,53 @@ input[type="submit"],
 
 /*GALLERY*/
 
-/* --- PASILLO EXTERIOR (FONDO OSCURO) --- */
-.art-gallery-hero-container {
-    width: 100%;
-    background-color: #050505;
-    padding: 80px 0;
-    overflow: hidden;
-    border-top: 1px solid #1a1a1a;
-    border-bottom: 1px solid #1a1a1a;
-}
 
 /* --- LA PARED DE EXPOSICIÓN (MARQUEE) --- */
 .art-marquee-container {
-    display: flex;
-    align-items: flex-start; /* Alinea los cuadros arriba para que no se estiren */
-    gap: 50px;
-    width: max-content;
-    background-color: #ddd8d8;
-    padding: 40px 0;
-    animation: marquee-slow 55s linear infinite;
+  display: flex;
+  overflow-x: auto; 
+  /* Esto asegura que el usuario pueda arrastrar suavemente */
+  scroll-behavior: auto; /* Cambiado a auto para que la animación JS sea fluida */
+  gap: 50px;
+  width: 100%; /* Ahora ocupará el 100% de su contenedor padre */
+  background-color: #ddd8d8;
+  padding: 40px 20px; /* Un poco de margen a los lados ayuda al scroll */
+  cursor: grab;
+  scrollbar-width: none; 
+  /* Mejora para dispositivos móviles */
+  touch-action: pan-x; 
+  -webkit-overflow-scrolling: touch; /* Scroll inercial en iPhone/iPad */
+}
+
+.art-marquee-container::-webkit-scrollbar {
+  display: none;
+}
+
+.art-marquee-container:active {
+  cursor: grabbing;
+}
+
+/*TITULO D LA EXHIBICION*/
+
+/* Estilo base (Desktop) */
+.art-archive-title {
+    font-size: 2.2rem !important; 
+}
+
+/* En tablets y móviles, lo compactamos */
+@media (max-width: 768px) {
+    .art-archive-title {
+        font-size: 1.5rem !important; /* Reducido para que quepa bien */
+        letter-spacing: 1px !important;
+    }
+}
+
+/* En móviles muy pequeños (como iPhone SE o modo vertical ajustado) */
+@media (max-width: 400px) {
+    .art-archive-title {
+        font-size: 1.2rem !important;
+        letter-spacing: 0.5px !important;
+    }
 }
 
 /* --- CUADRO DE EXPOSICIÓN --- */
@@ -1161,28 +1211,8 @@ input[type="submit"],
 }
 
 .card-art-exhibit:hover {
-    animation-play-state: paused;
     transform: translateY(-15px) scale(1.02);
     z-index: 10;
-}
-
-/* El marco de la imagen (la "obra") */
-.art-frame {
-    height: 400px;
-    width: auto;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #ffffff; /* Solo la imagen tiene fondo blanco */
-    border: 1px solid #ccc;    /* Aquí pones el borde que quieras */
-}
-
-/* La imagen dentro del marco */
-.art-frame img {
-    height: 100%;
-    width: auto;
-    display: block;
-    object-fit: contain;
 }
 
 /* --- BLOQUE DE TEXTO NEGRO --- */

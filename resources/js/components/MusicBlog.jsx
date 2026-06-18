@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { Spinner, Navbar, Nav, Container } from "react-bootstrap";
 import axios from "axios";
 import CardMusic from "./CardMusic";
@@ -11,7 +11,8 @@ function MusicBlog() {
 
     // --- ESTADOS PARA PAGINACIÓN ORIGINALES ---
     const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 10;
+
+    const scrollRef = useRef(null);
 
     useEffect(() => {
         const fetchDashboardData = async () => {
@@ -35,6 +36,50 @@ function MusicBlog() {
         };
         fetchDashboardData();
     }, []);
+
+    useEffect(() => {
+        const container = scrollRef.current;
+        if (!container) return;
+
+        let animationId;
+        let isPaused = false; // Control de pausa
+
+        const scroll = () => {
+            if (!isPaused && container) {
+                container.scrollLeft += 1;
+                if (container.scrollLeft >= container.scrollWidth / 2) {
+                    container.scrollLeft = 0;
+                }
+            }
+            animationId = requestAnimationFrame(scroll);
+        };
+
+        animationId = requestAnimationFrame(scroll);
+
+        // PAUSA AL INTERACTUAR
+        const pause = () => {
+            isPaused = true;
+        };
+        const resume = () => {
+            isPaused = false;
+        };
+
+        // Usamos eventos de mouse y touch para mayor compatibilidad
+        container.addEventListener("mouseenter", pause);
+        container.addEventListener("mouseleave", resume);
+        container.addEventListener("mousedown", pause);
+        window.addEventListener("mouseup", resume); // Si suelta el mouse fuera, se reanuda
+
+        return () => {
+            cancelAnimationFrame(animationId);
+            container.removeEventListener("mouseenter", pause);
+            container.removeEventListener("mouseleave", resume);
+            container.removeEventListener("mousedown", pause);
+            window.removeEventListener("mouseup", resume);
+        };
+    }, [loading]);
+
+    const itemsPerPage = 10;
 
     // --- LÓGICA DE PAGINACIÓN ORIGINAL ---
     const indexOfLastItem = currentPage * itemsPerPage;
@@ -101,10 +146,9 @@ function MusicBlog() {
                                     // SYSTEM_DATA_STREAM
                                 </span>
                                 <h1
-                                    className="text-white m-0 text-uppercase fw-black"
+                                    className="text-white m-0 text-uppercase fw-black art-archive-title" // <-- Agregamos esta clase
                                     style={{
                                         letterSpacing: "3px",
-                                        fontSize: "2.2rem",
                                         fontFamily:
                                             "'Courier New', Courier, monospace",
                                         lineHeight: "1",
@@ -147,13 +191,7 @@ function MusicBlog() {
                     </Container>
 
                     {/* CONTENEDOR DE LA GALERÍA */}
-                    <div
-                        className="art-marquee-container"
-                        style={{
-                            backgroundColor: "#f4f4f4",
-                            padding: "50px 0", // Reducido de 40px a 20px
-                        }}
-                    >
+                    <div className="art-marquee-container" ref={scrollRef}>
                         {infiniteArtworks.map((art, idx) => (
                             <div
                                 key={`${art.id}-${idx}`}

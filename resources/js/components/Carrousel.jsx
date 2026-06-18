@@ -37,7 +37,12 @@ function Carrousel() {
     };
 
     return (
-        <Carousel fade>
+        <Carousel
+            fade
+            touch={true} // Fuerza el soporte táctil
+            interval={3000} // Opcional: mantén tus intervalos
+            wrap={true}
+        >
             {banners.map((banner) => (
                 <Carousel.Item key={banner.id} interval={banner.interval}>
                     <img

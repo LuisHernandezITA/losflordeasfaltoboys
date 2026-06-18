@@ -197,17 +197,19 @@ function Card_C(props) {
                 </Link>
 
                 <Card.Body className="p-3" style={{ color: "#eee" }}>
-                    <Card.Title>{firstName}</Card.Title>
+                    {/* Usamos las clases de arriba */}
+                    <Card.Title className="card-title">{firstName}</Card.Title>
 
                     <Card.Subtitle
-                        className="mb-2 text-white-50 small"
+                        className="card-subtitle mb-2 text-white-50 small"
                         style={{ fontWeight: "300" }}
                     >
                         {description}
                     </Card.Subtitle>
 
-                    <div className="d-flex justify-content-between align-items-center mt-3">
-                        <span>${price}</span>
+                    <div className="price-button-container mt-3">
+                        {/* El precio tiene permitido encogerse */}
+                        <span className="card-price">${price}</span>
 
                         <MDBBtn
                             // CORRECCIÓN CLAVE: Cambiado de 'class' a 'className' para que React aplique tus estilos brutalistas correctamente

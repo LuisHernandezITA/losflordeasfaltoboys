@@ -74,16 +74,35 @@ section, .container, .container-fluid {
     transition: transform 0.5s ease;
 }
 
-/* 2. Efectos Hover (Funcionan en ambos dispositivos, aunque se notan en PC) */
-.my-card:hover {
-    border-color: #666 !important; /* Un poco más claro para que se note */
-    transform: translateY(-10px) !important; /* Aumentado para visibilidad */
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
-    z-index: 100; /* Suficiente para estar sobre otras cards, pero menor que el nav */
+/* 2. Efectos Hover */
+
+/* Regla base: Estilo para dispositivos con mouse (Escritorio) */
+@media (min-width: 992px) {
+    .my-card:hover {
+        border-color: #666 !important;
+        transform: translateY(-10px) !important;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+        z-index: 100;
+    }
+
+    .my-card:hover .my-card-img {
+        transform: scale(1.05);
+    }
 }
 
-.my-card:hover .my-card-img {
-    transform: scale(1.05);
+/* Regla para Móvil: Solo cambio de borde, sin movimiento ni sombras agresivas */
+@media (max-width: 991px) {
+    .my-card:hover {
+        border-color: #666 !important;
+        /* Quitamos el transform y el box-shadow para que no se mueva */
+        transform: none !important;
+        box-shadow: none !important; 
+    }
+    
+    /* La imagen tampoco crece en móvil */
+    .my-card:hover .my-card-img {
+        transform: none !important;
+    }
 }
 
 /* --- Ajuste para el Wrapper (El padre que envuelve la card) --- */
@@ -109,18 +128,41 @@ section, .container, .container-fluid {
     --bs-gutter-x: 0.25rem; /* Espacio mínimo de 4px */
 }
 
-/* Ajuste para que el texto de la card se vea bien en fondo oscuro */
+/* Asegura que el texto no rompa el diseño */
 .card-title {
-    color: #fff !important;
-    font-size: 1rem !important;
-    margin-bottom: 5px;
+    display: -webkit-box;
+    -webkit-line-clamp: 1; /* Máximo 1 línea para el título */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    height: 1.5rem; /* Altura fija para el título */
 }
 
 .card-subtitle {
-    font-size: 0.9rem !important;
-    opacity: 0.7;
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* Máximo 2 líneas para descripción */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    height: 3rem; /* Altura fija para que todas las cards midan igual */
 }
 
+/* Contenedor que mantiene todo en una sola línea */
+.price-button-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    gap: 8px; /* Espacio mínimo entre precio y botón */
+    overflow: hidden; /* Evita que se salga del contenedor */
+}
+
+/* El precio puede encogerse si el botón lo necesita */
+.card-price {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 0.95rem !important; /* Ligeramente más pequeño para ganar espacio */
+    flex-shrink: 1; /* Permite que el precio se reduzca si no hay espacio */
+}
 
 /*BUTTON CARD*/
 
@@ -129,6 +171,8 @@ section, .container, .container-fluid {
     /*border: 2px solid #000 !important;*/
     color: #000 !important;
     padding: 10px 20px !important;
+    flex-shrink: 0; /* Evita que el botón se aplaste */
+    white-space: nowrap;
     transition:
         background 0.9s ease-in-out,
         color 0.6s ease-in-out;

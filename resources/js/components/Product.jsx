@@ -432,7 +432,7 @@ function Product() {
                                 ? "noopener noreferrer"
                                 : undefined
                         }
-                        class={`custom-button ${!product.available ? "disabled" : ""}`}
+                        class={`custom-button-insta ${!product.available ? "disabled" : ""}`}
                         style={{
                             boxShadow: "none",
                             outline: "none",
@@ -463,7 +463,9 @@ function Product() {
                             ? "Agotado U.uUUuu"
                             : "CONTACTAR DISEÑADOR"}
                     </MDBBtn>
+
                     <br></br>
+
                     {/* FORZAMOS LA EVALUACIÓN A BOOLEANO CON !! */}
                     {!!(userInfo && userInfo.admin) && (
                         <AdminToggle

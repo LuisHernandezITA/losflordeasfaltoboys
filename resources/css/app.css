@@ -188,6 +188,36 @@ section, .container, .container-fluid {
     color: rgb(126, 124, 124) !important;
 }
 
+/*BUTTON CARD INSTA*/
+
+.custom-button-insta {
+    background: rgb(0, 0, 0) !important;
+    border: 2px solid #000 !important;
+    color: #ffffff !important;
+    padding: 10px 20px !important;
+    transition:
+        background 0.9s ease-in-out,
+        color 0.6s ease-in-out;
+}
+
+.custom-button-insta:hover {
+    background: linear-gradient(to bottom, #000, #333) !important;
+    color: #fff !important;
+}
+
+.custom-button-insta.clicked {
+    background: transparent !important;
+    border: 2px solid #000 !important;
+}
+
+
+.custom-button-insta:disabled {
+    background: transparent !important;
+    border: 2px solid rgb(126, 124, 124) !important;
+    pointer-events: none !important;
+    color: rgb(126, 124, 124) !important;
+}
+
 /*BOTTON CARMESI*/
 
 .btn-outsider {
@@ -527,6 +557,7 @@ section, .container, .container-fluid {
     border: none;
     text-decoration: underline;
     transition: all 0.2s ease;
+    color: rgb(0, 0, 0) !important;
 }
 
 .color-button-detail:hover,

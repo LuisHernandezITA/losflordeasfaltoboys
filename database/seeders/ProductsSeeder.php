@@ -41,7 +41,7 @@ class ProductsSeeder extends Seeder
                 'image_primary' => $images[array_rand($images)],
                 'image_detail_1' => $images[array_rand($images)],
                 'image_detail_2' => $images[array_rand($images)],
-                'seller_url' => "https://www.instagram.com/snuff.mexa.conc",
+                'seller_url' => "https://www.instagram.com/losflordeasfalto",
                 'designer' => $brands[$i - 1], 
                 'shipping_type' => rand(0, 2),
                 'addition_date' => now()->subDays(rand(0, 30)),

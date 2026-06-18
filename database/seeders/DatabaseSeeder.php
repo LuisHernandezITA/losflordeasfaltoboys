@@ -33,6 +33,7 @@ class DatabaseSeeder extends Seeder
         // ]);
         Artisan::call('passport:install', ['--force' => true]);
 
+        User::factory(8)->create();
         $this->call(UserSeeder::Class);
         $this->call(CategorySeeder::Class);
         $this->call(SizeSeeder::Class);
@@ -46,6 +47,6 @@ class DatabaseSeeder extends Seeder
         $this->call(EventSeeder::class);
         $this->call(BlogSeeder::class);
         $this->call(GallerySeeder::class);
-        User::factory(8)->create();
+        
     }
 }

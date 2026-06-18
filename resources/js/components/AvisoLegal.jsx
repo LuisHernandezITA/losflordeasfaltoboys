@@ -59,7 +59,7 @@ function AvisoLegal() {
                                 <strong className="text-white">
                                     PROYECTO:
                                 </strong>{" "}
-                                Merch & Clothing Shop - Los Flor de Asfalto
+                                Difusión Cultural - Los Flor de Asfalto
                             </li>
                             <li>
                                 <strong className="text-white">
@@ -71,7 +71,7 @@ function AvisoLegal() {
                                 <strong className="text-white">
                                     CONTACTO DIRECTO:
                                 </strong>{" "}
-                                soporte@losflordeasfalto.com
+                                losoutsider420@gmail.com
                             </li>
                         </ul>
                     </section>
@@ -169,7 +169,7 @@ function AvisoLegal() {
                             contenidos multimedia con finalidades públicas o
                             comerciales queda expresamente prohibida sin el
                             consentimiento previo por escrito de los
-                            administradores de la marca.
+                            administradores de la marca y colaboradores.
                         </p>
                     </section>
 
@@ -192,10 +192,10 @@ function AvisoLegal() {
                             disposición de usuarios y clientes. El Usuario podrá
                             realizar reclamos solicitando su hoja o remitiendo
                             un correo electrónico directamente a{" "}
-                            <strong>soporte@losflordeasfalto.com</strong>{" "}
-                            indicando su nombre, apellidos, el producto
-                            adquirido y exponiendo de manera directa los motivos
-                            de su inconformidad.
+                            <strong>losoutsiders420@gmail.com</strong> indicando
+                            su nombre, apellidos, el producto adquirido y
+                            exponiendo de manera directa los motivos de su
+                            inconformidad.
                         </p>
                     </section>
 

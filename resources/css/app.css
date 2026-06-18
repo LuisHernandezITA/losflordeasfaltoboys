@@ -610,10 +610,12 @@ section, .container, .container-fluid {
     align-items: center;
     justify-content: center;
 
-    /* Cristal industrial */
-    background: rgba(255, 255, 255, 0.45);
-    backdrop-filter: blur(1px); /* Desenfoque más profundo */
-    -webkit-backdrop-filter: blur(2px);
+    background-color: rgba(231, 231, 231, 0.65) !important; 
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08); /* Más sutil */
+    transition: all 0.4s ease;
+    padding: 5px 0; /* Un poco más compacto */
 
     /* Tipografía */
     color: #000000;
@@ -626,33 +628,30 @@ section, .container, .container-fluid {
 }
 
 .sold-out-label {
-    position: absolute; /* Esto la hace flotar dentro del overlay */
-    top: 150px;          /* Ajusta esto para subir o bajar la etiqueta */
-    right: 90px;        /* Ajusta esto para moverla más a la derecha o izquierda */
+    position: absolute;      /* Flota sobre la imagen */
+    top: 15px;               /* Separación del borde superior */
+    right: 15px;              /* Separación del borde izquierdo */
     
-    background: #4a0101ee;
-    color: #ffffff;
-    padding: 8px 16px;
-    font-family: 'Courier', monospace; /* 'Courier' suele ser mejor como 'monospace' */
-    font-weight: 900;
-    letter-spacing: 2px;
-    font-size: 1rem;
+    background: #ffffffee;   /* Rojo oscuro */
+    color: #000000;
+    font-family: 'Space Mono', monospace; /* O la fuente que elijas */
+    text-transform: uppercase;
+    font-size: 0.75rem !important; /* Más pequeño se ve más pro */
+    letter-spacing: 1.2px;       /* Padding más sobrio */
     
-    /* Efecto "sticker" */
-    transform: rotate(-3deg);
-    pointer-events: none;
-    z-index: 11; /* Asegura que esté por encima del cristal */
+
+    z-index: 11;             /* Asegura que esté por encima */
 }
 
 .my-card-img-container {
     position: relative;
 }
-
+/*
 .my-card-img.sold-out {
     opacity: 0.5;
     /*filter: grayscale(100%) brightness(0.8) contrast(1.2);
   border: 2px solid #161515;*/
-}
+ 
 
 /*MENU MOBILE*/
 

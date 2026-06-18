@@ -116,7 +116,7 @@ function Card_C(props) {
                     position: "absolute",
                     inset: 0,
                     backdropFilter: "blur(30px)",
-                    backgroundColor: "rgba(0, 0, 0, 0.9)", // Ajusta la opacidad aquí
+                    backgroundColor: "rgba(0, 0, 0, 0.8)", // Ajusta la opacidad aquí
                     zIndex: 0,
                 }}
             />

@@ -26,18 +26,36 @@ section, .container, .container-fluid {
     fill: #f3e5e5; /* Changes color */
 }
 
-/* 1. Estilos Base (Comunes para PC y Móvil) */
+
+/*CARDS PRODUCTS*/
+
+/* 1. Modifica la base de la tarjeta */
 .my-card {
-    /*background-color: #111 !important;*/
-    /*border: 1px solid #222 !important;*/
     border-radius: 0 !important;
-    transition: all 0.3s ease-in-out !important; /* Base para el hover */
-    margin: 0 auto;
+    transition: all 0.3s ease-in-out !important;
+    /* ELIMINA: margin: 0 auto; <-- Esto es lo que suele causar el centrado forzado */
     display: flex;
     flex-direction: column;
     position: relative;
-    overflow: visible; /* Permite que la card suba en el hover */
-    z-index: 1; /* Contexto base */
+    overflow: visible;
+    z-index: 1;
+    
+    /* AGREGA ESTO: Asegura que la tarjeta llene el espacio del wrapper */
+    width: 100% !important; 
+    height: 100%;
+}
+
+.my-card .card-body {
+    height: auto; /* Cambiamos de fija a auto */
+    min-height: 140px; /* Le damos una altura mínima para que los botones se alineen */
+    padding: 10px;
+}
+
+/* Si el título es muy largo en móvil, evitamos que se vea mal */
+@media (max-width: 576px) {
+    .my-card .card-title {
+        font-size: 1rem !important; /* Un poco más pequeño en móviles */
+    }
 }
 
 .my-card-img-container {
@@ -68,34 +86,19 @@ section, .container, .container-fluid {
     transform: scale(1.05);
 }
 
-/* 3. Media Query para MÓVIL (Ancho Total) */
-@media (max-width: 991px) {
-    .card-wrapper {
-        width: 90vw;
-        margin-left: calc(-50vw + 50%);
-    }
-
-    .my-card {
-        border-left: none !important;
-        border-right: none !important;
-    }
-
-    /* En móvil solemos desactivar el movimiento vertical para evitar saltos raros */
-    .my-card:hover {
-        transform: none !important;
-    }
+/* --- Ajuste para el Wrapper (El padre que envuelve la card) --- */
+/* 2. Verifica el wrapper */
+.card-wrapper {
+    /* Tu configuración actual está bien, pero asegurémonos de que no tenga márgenes extras */
+    flex: 0 0 calc(50% - 10px); 
+    max-width: calc(50% - 10px);
+    display: flex; /* Añadir esto ayuda a que la tarjeta de adentro obedezca */
 }
 
-/* 4. Media Query para ESCRITORIO (400px Fijos) */
 @media (min-width: 992px) {
     .card-wrapper {
-        width: 400px;
-    }
-
-    .my-card,
-    .my-card-img-container {
-        width: 400px !important;
-        max-width: 400px;
+        flex: 0 0 23%; /* 4 productos por fila en escritorio (aprox 25%) */
+        max-width: 23%;
     }
 }
 
@@ -118,34 +121,6 @@ section, .container, .container-fluid {
     opacity: 0.7;
 }
 
-.my-card .card-body {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    height: 180px; /* Altura fija para el área de texto y botón */
-   
-}
-
-/* Títulos: Máximo 1 línea */
-.my-card .card-title {
-    font-size: 1.2rem !important;
-    height: 1.4em;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    margin-bottom: 5px;
-}
-
-/* Descripción: Máximo 2 líneas */
-.my-card .card-subtitle {
-    height: 3em; /* Espacio para exactamente dos líneas */
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-line-clamp: 2; /* Corta el texto a la segunda línea */
-    -webkit-box-orient: vertical;
-    line-height: 1.4;
-    color: rgba(255, 255, 255, 0.5) !important;
-}
 
 /*BUTTON CARD*/
 
@@ -550,6 +525,8 @@ section, .container, .container-fluid {
     padding: 10px 25px;
     margin-top: 15px;
 }
+
+/* COLORS SIZE SELECTORS*/
 
 .color-button-detail,
 .size-button-detail {
@@ -1008,8 +985,6 @@ input[type="submit"],
     cursor: pointer;
 }
 
-
-
 /*EVENTOS*/
 
 .event-content-wrapper {
@@ -1210,11 +1185,6 @@ input[type="submit"],
     transition: all 0.4s ease;
 }
 
-.card-art-exhibit:hover {
-    transform: translateY(-15px) scale(1.02);
-    z-index: 10;
-}
-
 /* --- BLOQUE DE TEXTO NEGRO --- */
 .art-frame-wrapper {
     background: #0d0d0d;
@@ -1224,9 +1194,6 @@ input[type="submit"],
     transition: border-color 0.3s ease;
 }
 
-.card-art-exhibit:hover .art-frame-wrapper {
-    border-color: #dc3545;
-}
 
 /* --- TIPOGRAFÍA --- */
 .small-mono {

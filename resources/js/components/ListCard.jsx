@@ -411,14 +411,14 @@ function ListCard() {
             {/* CONTENEDOR DE PRODUCTOS PAGINADOS */}
             <div
                 className="d-flex flex-wrap justify-content-center"
-                style={{ gap: "20px" }}
+                style={{ gap: "10px" }} // Reducimos un poco el gap para móvil
             >
                 {currentItems.length > 0 ? (
                     currentItems.map((product) => (
                         <div
                             key={product.id}
                             className="card-wrapper"
-                            style={{ margin: "1px" }}
+                            // ELIMINAMOS EL style={{ margin: "1px" }}
                         >
                             <Card_C
                                 id={product.id}

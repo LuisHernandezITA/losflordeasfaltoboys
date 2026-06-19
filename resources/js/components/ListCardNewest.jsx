@@ -150,13 +150,39 @@ function ListCardNewest() {
                         className="position-relative rounded-0 shadow flex-grow-1"
                         style={{
                             height: "480px",
-                            overflow: "hidden",
+                            overflow: "hidden", // Esto es vital
                             border: "2px solid #222",
-                            backgroundImage: `linear-gradient(to right, rgba(18, 18, 18, 1) 40%, rgba(18, 18, 18, 0.4) 75%, rgba(18, 18, 18, 0) 100%), url(${ultimoBlog.banner})`,
-                            backgroundSize: "cover",
-                            backgroundPosition: "center right",
                         }}
                     >
+                        {/* Capa de la imagen real */}
+                        <img
+                            src={ultimoBlog.banner}
+                            alt={ultimoBlog.title}
+                            style={{
+                                position: "absolute",
+                                top: 0,
+                                left: 0,
+                                width: "100%",
+                                height: "100%",
+                                objectFit: "cover", // Mantiene la relación de aspecto
+                                objectPosition: "center", // Mantiene el centro de la imagen siempre en foco
+                                zIndex: 0,
+                            }}
+                        />
+
+                        {/* Degradado (overlay) para que el texto sea legible */}
+                        <div
+                            style={{
+                                position: "absolute",
+                                top: 0,
+                                left: 0,
+                                width: "100%",
+                                height: "100%",
+                                background:
+                                    "linear-gradient(to right, rgba(18, 18, 18, 1) 40%, rgba(18, 18, 18, 0.4) 75%, rgba(18, 18, 18, 0) 100%)",
+                                zIndex: 1,
+                            }}
+                        />
                         <div
                             className="d-flex flex-column justify-content-center h-100 p-4 p-md-5 position-relative"
                             style={{ maxWidth: "650px", zIndex: 2 }}

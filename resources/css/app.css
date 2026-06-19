@@ -137,12 +137,28 @@ section, .container, .container-fluid {
     height: 1.5rem; /* Altura fija para el título */
 }
 
+
+@media (max-width: 575px) {
+    .justify-content-center-mobile {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px !important;
+    }
+
+    /* Centramos el título solo en móvil */
+    .card-title-mobile-center {
+        text-align: center;
+        justify-content: center;
+    }
+}
+
+/* Ajuste específico para que el contenedor de precio no necesite altura fija */
 .card-subtitle {
     display: -webkit-box;
-    -webkit-line-clamp: 2; /* Máximo 2 líneas para descripción */
+    -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
-    height: 3rem; /* Altura fija para que todas las cards midan igual */
+    min-height: 3rem; /* Cambiado a min-height para que no ocupe espacio si está vacío */
 }
 
 /* Contenedor que mantiene todo en una sola línea */
@@ -167,9 +183,9 @@ section, .container, .container-fluid {
 /*BUTTON CARD*/
 
 .custom-button {
-    background: white !important;
-    /*border: 2px solid #000 !important;*/
-    color: #000 !important;
+    background:transparent !important;
+    border:  2px solid rgb(238, 238, 238) !important;
+    color: #f0f0f0 !important;
     padding: 10px 20px !important;
     flex-shrink: 0; /* Evita que el botón se aplaste */
     white-space: nowrap;
@@ -712,6 +728,16 @@ section, .container, .container-fluid {
     -webkit-user-drag: none;
 }
 
+/* En app.css */
+.custom-carousel-caption {
+    position: absolute;
+    bottom: -20px !important; /* Ajusta este valor para subir o bajar el botón */
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+}
+
 /* Altura en pantallas grandes (Desktop) */
 @media (min-width: 992px) {
     .custom-carousel-img {
@@ -822,52 +848,37 @@ body {
 
 /* Animación específica para el Texto */
 @keyframes text-glitch {
-    0% {
-        transform: translate(0);
-        text-shadow: none;
+    /* Mantenemos el bulbo estable la mayor parte del tiempo */
+    0%, 80% {
+        opacity: 1;
+        filter: brightness(1) contrast(1);
+        transform: scale(1);
     }
-    20% {
-        transform: translate(-1px, 1px);
-        text-shadow:
-            -1px 0 rgba(255, 255, 255, 0.2),
-            1px 0 rgba(255, 0, 0, 0.1);
+
+    /* La falla ocurre solo en el último 20% del ciclo */
+    82%, 86%, 90%, 94% {
+        opacity: 0.1;
+        filter: brightness(3) contrast(0.5); /* Destello de falla */
+        transform: scale(0.99);
     }
-    40% {
-        transform: translate(-1px, -1px);
-        text-shadow:
-            1px 0 rgba(255, 255, 255, 0.2),
-            -1px 0 rgba(0, 255, 255, 0.1);
+    84%, 88%, 92% {
+        opacity: 0.9;
+        filter: brightness(0.2) contrast(1.5); /* Oscurecimiento repentino */
     }
-    60% {
-        transform: translate(1px, 1px);
-        text-shadow:
-            -1px 0 rgba(255, 255, 255, 0.2),
-            1px 0 rgba(255, 0, 0, 0.1);
-    }
-    80% {
-        transform: translate(1px, -1px);
-        text-shadow:
-            1px 0 rgba(255, 255, 255, 0.2),
-            -1px 0 rgba(0, 255, 255, 0.1);
-    }
+    
+    /* Regresamos a la calma total */
     100% {
-        transform: translate(0);
-        text-shadow: none;
+        opacity: 1;
+        filter: brightness(1) contrast(1);
+        transform: scale(1);
     }
 }
 
 .glitch-text {
     display: inline-block; /* Necesario para que el transform funcione */
-    animation: text-glitch 5s infinite; /* Un poco más lento que el ojo para que no sea molesto */
-    color: grey;
+    animation: text-glitch 6s infinite; 
+    color: rgb(233, 233, 233);
     transition: all 0.3s ease;
-}
-
-/* Efecto al pasar el mouse (opcional) */
-.glitch-text:hover {
-    color: white;
-    text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
-    cursor: crosshair; /* Cambia el cursor por una cruz para estilo técnico */
 }
 
 /* CURSOR TÉCNICO GLOBAL */
@@ -1309,3 +1320,46 @@ input[type="submit"],
         opacity: 0.2;
     }
 }
+
+/*STROBE MARQUEE*/
+
+.strobe-gallery-container {
+    width: 100%;
+    height: 18vh;
+    position: relative;
+    background: #000;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+}
+
+.strobe-img {
+    position: absolute;
+    width: 100%;      /* Aseguramos que ocupe todo el ancho */
+    height: 100%;     /* Aseguramos que ocupe toda la altura */
+    object-fit: cover; /* ESTO ES LO QUE HACE QUE CUBRA TODO EL ESPACIO */
+    object-position: top; /* Centra la imagen para que el recorte sea parejo */
+    filter: grayscale(1) contrast(3) brightness(1.2); /* Look punk saturado */
+    opacity: 0; /* Invisibles por defecto */
+    animation: strobe-fade 1.2s infinite;
+}
+
+/* Animación que hace que aparezcan aleatoriamente */
+@keyframes strobe-fade {
+    /* Mantenemos el negro casi todo el tiempo */
+    0%, 3%, 6%, 9%, 12%, 15%, 18%, 21%, 24%, 27%, 100% { 
+        opacity: 0; 
+    }
+    
+    /* Disparos de luz aleatorios y rápidos */
+    1.5%, 4.5%, 7.5%, 10.5%, 13.5%, 16.5%, 19.5%, 22.5%, 25.5% { 
+        opacity: 1; 
+        filter: brightness(2) contrast(1.5) grayscale(1); /* Flash blanco intenso */
+    }
+}
+
+/* Desfasamos cada imagen para que no parpadeen todas al mismo tiempo */
+.strobe-img:nth-child(1) { animation-delay: 0s; }
+.strobe-img:nth-child(2) { animation-delay: 0.3s; }
+.strobe-img:nth-child(3) { animation-delay: 0.7s; }
+.strobe-img:nth-child(4) { animation-delay: 1.2s; }

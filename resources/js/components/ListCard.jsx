@@ -128,7 +128,7 @@ function ListCard() {
 
     return (
         <div>
-            <br />
+            <br></br>
             <Navbar
                 expand="lg"
                 variant="dark"
@@ -158,7 +158,7 @@ function ListCard() {
                         position: "absolute",
                         inset: 0,
                         backdropFilter: "blur(15px)",
-                        backgroundColor: "rgba(0, 0, 0, 0.9)",
+                        backgroundColor: "rgba(0, 0, 0, 0.8)",
                         zIndex: 1,
                     }}
                 />

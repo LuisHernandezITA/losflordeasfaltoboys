@@ -30,18 +30,22 @@ function Carrousel() {
 
     // Estilos personalizados para este botón específico
     const circularWhiteButtonStyle = {
-        borderRadius: "50px", // Bordes circulares
-        backgroundColor: "white", // Fondo blanco
-        border: "2px solid white",
-        transition: "all 0.98s ease", // Para que el hover sea suave
+        borderRadius: "100px", // Bordes circulares
+        transition: "all 2s ease", // Para que el hover sea suave
+        inset: 0,
+        backdropFilter: "blur(30px)",
+        backgroundColor: "rgba(0, 0, 0, 1)", // Ajusta la opacidad aquí
+        zIndex: 0,
     };
 
     return (
         <Carousel
             fade
+            indicators={false}
             touch={true} // Fuerza el soporte táctil
             interval={3000} // Opcional: mantén tus intervalos
             wrap={true}
+            controls={false}
         >
             {banners.map((banner) => (
                 <Carousel.Item key={banner.id} interval={banner.interval}>
@@ -50,7 +54,7 @@ function Carrousel() {
                         src={banner.image_url}
                         alt={banner.alt_text}
                     />
-                    <Carousel.Caption className="pb-3">
+                    <Carousel.Caption className="custom-carousel-caption">
                         {banner.link_url && (
                             <MDBBtn
                                 // Mantenemos tus clases originales para la animación de 'clicked'

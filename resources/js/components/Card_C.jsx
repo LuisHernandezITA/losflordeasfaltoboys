@@ -95,6 +95,8 @@ function Card_C(props) {
             });
     };
 
+    const showDescription = props.showDescription || false;
+
     return (
         <Card
             className="my-card"
@@ -197,23 +199,36 @@ function Card_C(props) {
                 </Link>
 
                 <Card.Body className="p-3" style={{ color: "#eee" }}>
-                    {/* Usamos las clases de arriba */}
-                    <Card.Title className="card-title">{firstName}</Card.Title>
+                    {/* Si showDescription es false (es la tienda), aplicamos 'text-center' 
+                   para que el título se centre.
+                */}
+                    <Card.Title
+                        className={`card-title ${!showDescription ? "card-title-mobile-center" : ""}`}
+                    >
+                        {firstName}
+                    </Card.Title>
 
+                    {/* Aquí la magia: Si showDescription es false, ocultamos en móvil 
+                   con 'd-none d-md-block'. Si es true (newest), siempre se muestra.
+                */}
                     <Card.Subtitle
-                        className="card-subtitle mb-2 text-white-50 small"
+                        className={`card-subtitle mb-2 text-white-50 small ${showDescription ? "d-block" : "d-none d-md-block"}`}
                         style={{ fontWeight: "300" }}
                     >
                         {description}
                     </Card.Subtitle>
 
-                    <div className="price-button-container mt-3">
-                        {/* El precio tiene permitido encogerse */}
+                    {/* Si showDescription es false, añadimos 'justify-content-center' al contenedor
+                   para que el precio y el botón se centren en móvil.
+                */}
+                    <div
+                        className={`price-button-container mt-3 ${!showDescription ? "justify-content-center-mobile" : ""}`}
+                    >
                         <span className="card-price">${price}</span>
 
+                        {/* El botón quedará abajo centrado */}
                         <MDBBtn
-                            // CORRECCIÓN CLAVE: Cambiado de 'class' a 'className' para que React aplique tus estilos brutalistas correctamente
-                            className={`custom-button ${isButtonDisabled || !available || isInWishlist ? "clicked" : ""} d-flex align-items-center justify-content-center`}
+                            className={`custom-button ${isButtonDisabled || !available || isInWishlist ? "clicked" : ""}`}
                             onClick={handleButtonClick}
                             disabled={
                                 isButtonDisabled || !available || isInWishlist
@@ -221,7 +236,9 @@ function Card_C(props) {
                             style={{
                                 boxShadow: "none",
                                 outline: "none",
-                                height: "45px",
+                                height: "40px",
+                                borderRadius: "0px",
+                                // Padding ajustado para que se vea bien al estirarse
                                 padding: "0 15px",
                                 transition: "all 0.2s ease",
                             }}
@@ -232,17 +249,8 @@ function Card_C(props) {
                                 icon="heart"
                                 className={isInWishlist ? "me-2" : "me-1"}
                             />
-                            <span
-                                style={{
-                                    fontWeight: "600",
-                                    letterSpacing: "0.5px",
-                                }}
-                            >
-                                {isInWishlist
-                                    ? "ADDED"
-                                    : isButtonDisabled && userId
-                                      ? ""
-                                      : "ADD"}
+                            <span style={{ fontWeight: "600" }}>
+                                {isInWishlist ? "ADDED" : "ADD"}
                             </span>
                         </MDBBtn>
                     </div>

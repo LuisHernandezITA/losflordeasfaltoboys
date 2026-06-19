@@ -92,7 +92,8 @@ function ListCardNewest() {
                             }}
                         >
                             <h2
-                                className="text-white m-0 text-uppercase fw-bold"
+                                className="glitch-text text-white m-0 text-uppercase fw-bold"
+                                //className="text-white m-0 text-uppercase fw-bold"
                                 style={{
                                     letterSpacing: "1px",
                                     fontSize: "1.4rem",
@@ -125,6 +126,7 @@ function ListCardNewest() {
                                         price={product.price}
                                         image_primary={product.image_primary}
                                         available={product.available}
+                                        showDescription={true}
                                     />
                                 </div>
                             ))}

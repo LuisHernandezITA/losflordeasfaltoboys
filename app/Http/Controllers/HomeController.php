@@ -19,7 +19,7 @@ class HomeController extends Controller
             // 2. Obtener los últimos 3 productos subidos
             // CORREGIDO: Usamos el modelo real 'Products' y ordenamos por ID de la misma manera que en tu método newest()
             $ultimosProductos = Products::orderBy('id', 'desc')
-                ->take(6)
+                ->take(20)
                 ->get();
 
             // Retorno exitoso en formato JSON

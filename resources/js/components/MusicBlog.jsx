@@ -133,18 +133,6 @@ function MusicBlog() {
                     <Container fluid className="px-md-5 mb-4">
                         <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-end border-bottom border-secondary pb-3 opacity-75">
                             <div>
-                                <span
-                                    style={{
-                                        fontSize: "0.75rem",
-                                        fontFamily: "monospace",
-                                        color: "crimson",
-                                        letterSpacing: "3px",
-                                        display: "block",
-                                        marginBottom: "4px",
-                                    }}
-                                >
-                                    // Curado por @street_art_ags
-                                </span>
                                 <h1
                                     className="text-white m-0 text-uppercase fw-black art-archive-title" // <-- Agregamos esta clase
                                     style={{
@@ -154,8 +142,19 @@ function MusicBlog() {
                                         lineHeight: "1",
                                     }}
                                 >
-                                    UNDER ARTE EXH
+                                    UNDER ART EXHIBITION
                                 </h1>
+                                <span
+                                    style={{
+                                        fontSize: "0.75rem",
+                                        fontFamily: "monospace",
+                                        color: "crimson",
+                                        letterSpacing: "3px",
+                                        display: "block",
+                                    }}
+                                >
+                                    // @street_art_ags x Outsider
+                                </span>
                             </div>
 
                             {/* METADATOS DE TEMPORADA AUTOMATIZADOS */}
@@ -197,40 +196,18 @@ function MusicBlog() {
                                 key={`${art.id}-${idx}`}
                                 className="card-art-exhibit"
                             >
-                                {/* El enlace envuelve TODO el contenido */}
                                 <a
                                     href={`https://www.instagram.com/${(art.autor || "").replace("@", "")}/`}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="text-decoration-none"
-                                    style={{
-                                        display: "block",
-                                        color: "inherit",
-                                    }}
+                                    style={{ color: "inherit" }}
                                 >
                                     <div className="art-frame-wrapper">
-                                        {/* 1. IMAGEN */}
-                                        <div
-                                            className="art-frame"
-                                            style={{
-                                                height: "250px",
-                                                width: "100%",
-                                                overflow: "hidden",
-                                                display: "flex",
-                                                justifyContent: "center",
-                                                alignItems: "center",
-                                                border: "1px solid #000000",
-                                            }}
-                                        >
+                                        <div className="art-frame">
                                             <img
                                                 src={art.image_url}
                                                 alt={art.title}
-                                                style={{
-                                                    width: "100%",
-                                                    height: "100%",
-                                                    objectFit: "cover",
-                                                    display: "block",
-                                                }}
                                             />
                                         </div>
 

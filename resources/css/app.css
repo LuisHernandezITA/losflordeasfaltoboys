@@ -1193,11 +1193,16 @@ input[type="submit"],
   gap: 50px;
   width: 100%; /* Ahora ocupará el 100% de su contenedor padre */
   background-color: #ddd8d8;
+  align-items: center;
   padding: 40px 20px; /* Un poco de margen a los lados ayuda al scroll */
   scrollbar-width: none; 
   /* Mejora para dispositivos móviles */
   touch-action: pan-x; 
   -webkit-overflow-scrolling: touch; /* Scroll inercial en iPhone/iPad */
+    flex-wrap: nowrap; /* FUERZA QUE NO SE APILEN EN COLUMNA */
+    min-width: 100%; /* Asegura que el contenedor no se compacte */
+    -webkit-overflow-scrolling: touch; /* Scroll inercial suave en iOS */
+
 }
 
 .art-marquee-container::-webkit-scrollbar {
@@ -1230,7 +1235,8 @@ input[type="submit"],
 /* --- NUEVA CLASE PARA EL MARCO DE LA IMAGEN --- */
 .art-frame {
     height: 250px; /* Tu alto fijo */
-    width: auto;   /* El ancho se ajustará proporcionalmente */
+    width: auto;   /* El ancho se calculará solo */
+    max-width: 90vw; /* Evita que en móviles la imagen sea más ancha que la pantalla */
     overflow: hidden;
     display: flex;
     justify-content: center;
@@ -1240,18 +1246,18 @@ input[type="submit"],
 
 /* --- NUEVA CLASE PARA LA IMAGEN DENTRO DEL MARCO --- */
 .art-frame img {
-    height: 100%;    /* La imagen siempre llena el alto de 250px */
-    width: auto;     /* El ancho se ajusta automáticamente para ser proporcional */
-    object-fit: contain; /* Muestra la imagen completa, sin recortes */
+    height: 100%;    /* La imagen siempre intenta llenar el alto del marco */
+    width: auto;     /* Esta es la clave: el ancho se ajusta a la proporción natural */
+    object-fit: contain; /* 'contain' garantiza que NUNCA se corte ni se deforme */
     display: block;
 }
 
 /* --- CUADRO DE EXPOSICIÓN --- */
 .card-art-exhibit {
-    width: fit-content; 
+    width: fit-content; /* El ancho se ajusta al contenido (la imagen) */
     flex-shrink: 0;
-    background: transparent; /* El contenedor principal ya no es blanco */
-    transition: all 0.4s ease;
+    background: transparent;
+    height: 100%; /* Asegura que la tarjeta siempre ocupe el alto del contenedor padre */
 }
 
 /* --- BLOQUE DE TEXTO NEGRO --- */

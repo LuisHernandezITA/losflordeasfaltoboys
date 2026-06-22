@@ -143,7 +143,7 @@ function MusicBlog() {
                                         marginBottom: "4px",
                                     }}
                                 >
-                                    // SYSTEM_DATA_STREAM
+                                    // Curado por @street_art_ags
                                 </span>
                                 <h1
                                     className="text-white m-0 text-uppercase fw-black art-archive-title" // <-- Agregamos esta clase
@@ -154,7 +154,7 @@ function MusicBlog() {
                                         lineHeight: "1",
                                     }}
                                 >
-                                    UNDERGROUND_ART_ARCHIVE
+                                    UNDER ARTE EXH
                                 </h1>
                             </div>
 

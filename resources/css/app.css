@@ -1194,7 +1194,6 @@ input[type="submit"],
   width: 100%; /* Ahora ocupará el 100% de su contenedor padre */
   background-color: #ddd8d8;
   padding: 40px 20px; /* Un poco de margen a los lados ayuda al scroll */
-  cursor: grab;
   scrollbar-width: none; 
   /* Mejora para dispositivos móviles */
   touch-action: pan-x; 
@@ -1203,10 +1202,6 @@ input[type="submit"],
 
 .art-marquee-container::-webkit-scrollbar {
   display: none;
-}
-
-.art-marquee-container:active {
-  cursor: grabbing;
 }
 
 /*TITULO D LA EXHIBICION*/
@@ -1232,9 +1227,28 @@ input[type="submit"],
     }
 }
 
+/* --- NUEVA CLASE PARA EL MARCO DE LA IMAGEN --- */
+.art-frame {
+    height: 250px; /* Tu alto fijo */
+    width: auto;   /* El ancho se ajustará proporcionalmente */
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid #000000;
+}
+
+/* --- NUEVA CLASE PARA LA IMAGEN DENTRO DEL MARCO --- */
+.art-frame img {
+    height: 100%;    /* La imagen siempre llena el alto de 250px */
+    width: auto;     /* El ancho se ajusta automáticamente para ser proporcional */
+    object-fit: contain; /* Muestra la imagen completa, sin recortes */
+    display: block;
+}
+
 /* --- CUADRO DE EXPOSICIÓN --- */
 .card-art-exhibit {
-    width: auto; 
+    width: fit-content; 
     flex-shrink: 0;
     background: transparent; /* El contenedor principal ya no es blanco */
     transition: all 0.4s ease;

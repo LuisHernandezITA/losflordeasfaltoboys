@@ -134,27 +134,33 @@ function MusicBlog() {
                         <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-end border-bottom border-secondary pb-3 opacity-75">
                             <div>
                                 <h1
-                                    className="text-white m-0 text-uppercase fw-black art-archive-title" // <-- Agregamos esta clase
+                                    className="text-white m-0 text-uppercase art-archive-title" // Limpiamos el fw-black de aquí
                                     style={{
                                         letterSpacing: "3px",
                                         fontFamily:
                                             "'Courier New', Courier, monospace",
                                         lineHeight: "1",
+                                        fontWeight: "400",
                                     }}
                                 >
-                                    UNDER ART EXHIBITION
+                                    UNDƎR( -_•)╦̵̵̿╤─
                                 </h1>
                                 <span
                                     style={{
                                         fontSize: "0.75rem",
                                         fontFamily: "monospace",
-                                        color: "crimson",
-                                        letterSpacing: "3px",
+                                        color: "grey",
+                                        letterSpacing: "1px",
                                         display: "block",
                                     }}
                                 >
-                                    // @street_art_ags x Outsider
+                                    GALERIA ALTERNATIVA
                                 </span>
+                                <div className="art-credits-container">
+                                    <span>// @street_art_ags</span>
+                                    <span>x</span>
+                                    <span>@losflordeasfalto</span>
+                                </div>
                             </div>
 
                             {/* METADATOS DE TEMPORADA AUTOMATIZADOS */}

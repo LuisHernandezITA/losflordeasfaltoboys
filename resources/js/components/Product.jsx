@@ -478,32 +478,34 @@ function Product() {
                 </div>
             </div>
 
-            {/* SECCIÓN DE THUMBNAILS COMPLETA */}
+            {/* SECCIÓN DE THUMBNAILS DINÁMICA */}
             <div className="thumb">
                 {[
                     product.image_primary,
                     product.image_detail_1,
                     product.image_detail_2,
-                ].map((imgUrl, index) => (
-                    <img
-                        key={index}
-                        src={imgUrl}
-                        alt={`Thumbnail ${index + 1}`}
-                        onClick={() => setActiveImage(imgUrl)}
-                        className={
-                            activeImage === imgUrl ? "active-thumbnail" : ""
-                        }
-                        style={{
-                            border:
-                                activeImage === imgUrl
-                                    ? "2px solid #000"
-                                    : "1px solid #ccc",
-                            cursor: "pointer",
-                            transition: "all 0.2s ease",
-                            opacity: activeImage === imgUrl ? 1 : 0.7,
-                        }}
-                    />
-                ))}
+                ]
+                    .filter((imgUrl) => imgUrl && imgUrl.trim() !== "") // Filtra valores vacíos o nulos
+                    .map((imgUrl, index) => (
+                        <img
+                            key={index}
+                            src={imgUrl}
+                            alt={`Thumbnail ${index + 1}`}
+                            onClick={() => setActiveImage(imgUrl)}
+                            className={
+                                activeImage === imgUrl ? "active-thumbnail" : ""
+                            }
+                            style={{
+                                border:
+                                    activeImage === imgUrl
+                                        ? "2px solid #000"
+                                        : "1px solid #ccc",
+                                cursor: "pointer",
+                                transition: "all 0.2s ease",
+                                opacity: activeImage === imgUrl ? 1 : 0.7,
+                            }}
+                        />
+                    ))}
             </div>
 
             {/* SMALL IMAGE */}

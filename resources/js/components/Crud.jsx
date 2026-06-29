@@ -231,6 +231,20 @@ function Crud() {
 
     const handleAddProduct = async (e) => {
         e.preventDefault();
+
+        // Limpiamos los campos opcionales antes de enviar
+        const payload = {
+            ...formData,
+            image_detail_1:
+                formData.image_detail_1?.trim() === ""
+                    ? null
+                    : formData.image_detail_1,
+            image_detail_2:
+                formData.image_detail_2?.trim() === ""
+                    ? null
+                    : formData.image_detail_2,
+        };
+
         try {
             const productResponse = await fetch("api/products_store", {
                 method: "POST",
@@ -238,7 +252,7 @@ function Crud() {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${accessToken}`,
                 },
-                body: JSON.stringify(formData),
+                body: JSON.stringify(payload),
             });
 
             if (!productResponse.ok) throw new Error("Error adding product.");
@@ -328,6 +342,20 @@ function Crud() {
 
     const handleUpdateProduct = async (e) => {
         e.preventDefault();
+
+        // Limpiamos los campos opcionales antes de enviar
+        const payload = {
+            ...formData,
+            image_detail_1:
+                formData.image_detail_1?.trim() === ""
+                    ? null
+                    : formData.image_detail_1,
+            image_detail_2:
+                formData.image_detail_2?.trim() === ""
+                    ? null
+                    : formData.image_detail_2,
+        };
+
         try {
             const response = await fetch(
                 `/api/products_update/${productIdUpdate}`,
@@ -337,7 +365,7 @@ function Crud() {
                         "Content-Type": "application/json",
                         Authorization: `Bearer ${accessToken}`,
                     },
-                    body: JSON.stringify(formData),
+                    body: JSON.stringify(payload),
                 },
             );
 

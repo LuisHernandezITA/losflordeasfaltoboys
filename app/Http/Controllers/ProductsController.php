@@ -48,9 +48,9 @@ class ProductsController extends Controller
             'category_id'     => $request->category_id,
             'price'           => $request->price,
             'available_stock' => $request->available_stock,
-            'image_primary'   => $request->image_primary,   // Nuevo
-            'image_detail_1'  => $request->image_detail_1,  // Nuevo
-            'image_detail_2'  => $request->image_detail_2,  // Nuevo
+            'image_primary'  => $request->image_primary,
+            'image_detail_1' => $request->has('image_detail_1') ? $request->image_detail_1 : null,
+            'image_detail_2' => $request->has('image_detail_2') ? $request->image_detail_2 : null,
             'seller_url'      => $request->seller_url,      // Nuevo
             'designer'        => $request->designer,        // Nuevo (Marca/Diseñador)
             'shipping_type'   => $request->shipping_type,   // Nuevo (Estado de entrega)
@@ -76,31 +76,34 @@ class ProductsController extends Controller
     }
 
     public function update(Request $request, $id)
-    {
-        $product = Products::find($id);
+{
+    $product = Products::find($id);
 
-        if (!$product) {
-            return response()->json(['message' => 'Product not found'], 404);
-        }
+    if (!$product) {
+        return response()->json(['message' => 'Product not found'], 404);
+    }
 
-        // Actualización con los nuevos campos asignados
-        $product->name            = $request->input('name');
-        $product->description     = $request->input('description');
-        $product->category_id     = $request->input('category_id');
-        $product->price           = $request->input('price');
-        $product->available_stock = $request->input('available_stock');
-        $product->image_primary   = $request->input('image_primary');   // Nuevo
-        $product->image_detail_1  = $request->input('image_detail_1');  // Nuevo
-        $product->image_detail_2  = $request->input('image_detail_2');  // Nuevo
-        $product->seller_url      = $request->input('seller_url');      // Nuevo
-        $product->designer        = $request->input('designer');        // Nuevo
-        $product->shipping_type   = $request->input('shipping_type');   // Nuevo
-        $product->addition_date   = $request->input('addition_date');
-        $product->available       = $request->input('available');
+    // Actualización con los campos asignados
+    $product->name            = $request->input('name');
+    $product->description     = $request->input('description');
+    $product->category_id     = $request->input('category_id');
+    $product->price           = $request->input('price');
+    $product->available_stock = $request->input('available_stock');
+    
+    // Aquí aplicamos la lógica para permitir que sean opcionales (null)
+    $product->image_primary   = $request->input('image_primary');
+    $product->image_detail_1  = $request->has('image_detail_1') ? $request->input('image_detail_1') : null;
+    $product->image_detail_2  = $request->has('image_detail_2') ? $request->input('image_detail_2') : null;
+    
+    $product->seller_url      = $request->input('seller_url');
+    $product->designer        = $request->input('designer');
+    $product->shipping_type   = $request->input('shipping_type');
+    $product->addition_date   = $request->input('addition_date');
+    $product->available       = $request->input('available');
 
-        $product->save();
+    $product->save();
 
-        return response()->json(['message' => 'Successfully updated product'], 200);
+    return response()->json(['message' => 'Successfully updated product'], 200);
     }
 
     public function destroy($id)

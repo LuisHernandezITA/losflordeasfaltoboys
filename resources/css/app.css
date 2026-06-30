@@ -130,6 +130,7 @@ section, .container, .container-fluid {
 
 /* Asegura que el texto no rompa el diseño */
 .card-title {
+    display: -webkit-box;
     -webkit-line-clamp: 1; /* Máximo 1 línea para el título */
     -webkit-box-orient: vertical;
     overflow: hidden;
@@ -137,7 +138,7 @@ section, .container, .container-fluid {
 
     white-space: nowrap;      /* Evita que el texto salte a la siguiente línea */
     text-overflow: ellipsis;  /* Agrega los puntos suspensivos automáticamente */
-    display: block;
+    
 }
 
 

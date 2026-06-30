@@ -154,6 +154,9 @@ function Product() {
         );
     }
 
+    const [localidad, ...resto] = product.description.split("||");
+    const descripcionReal = resto.join("||");
+
     return (
         <div className="app" style={{ position: "relative" }}>
             <div className="details">
@@ -301,7 +304,7 @@ function Product() {
                             className="designer-brand-detail"
                             style={{
                                 fontSize: "0.9rem",
-                                color: "#444",
+                                color: "#0c0c0c",
                                 fontWeight: "700",
                                 textTransform: "uppercase",
                                 letterSpacing: "1px",
@@ -333,36 +336,93 @@ function Product() {
                                     color: "#000000",
                                 }}
                             >
-                                {Number(product.shipping_type) === 0 && (
-                                    <span>
-                                        <MDBIcon
-                                            fas
-                                            icon="map-marker-alt me-1"
-                                        />{" "}
-                                        Envío Local
-                                    </span>
-                                )}
-                                {Number(product.shipping_type) === 1 && (
-                                    <span>
-                                        <MDBIcon fas icon="truck me-1" /> Envío
-                                        Nacional
-                                    </span>
-                                )}
-                                {Number(product.shipping_type) === 2 && (
-                                    <span>
-                                        <MDBIcon fas icon="globe me-1" /> Envío
-                                        Internacional
-                                    </span>
-                                )}
+                                {/* Definimos el color compartido para mantener la consistencia */}
+                                {(() => {
+                                    const shippingOptions = {
+                                        0: {
+                                            icon: "map-marker-alt",
+                                            label: "Envío Local",
+                                        },
+                                        1: {
+                                            icon: "truck",
+                                            label: "Envío Nacional",
+                                        },
+                                        2: {
+                                            icon: "globe",
+                                            label: "Envío Internacional",
+                                        },
+                                    };
+
+                                    const option =
+                                        shippingOptions[
+                                            Number(product.shipping_type)
+                                        ];
+
+                                    return option ? (
+                                        <span
+                                            style={{
+                                                color: "#310101",
+                                                fontWeight: "600",
+                                            }}
+                                        >
+                                            <MDBIcon
+                                                fas
+                                                icon={`${option.icon} me-1`}
+                                            />
+                                            {option.label}
+                                        </span>
+                                    ) : null;
+                                })()}
                             </div>
                         </div>
                     </div>
-                    <p>{product.description}</p>
+                    {/* DESCRIPCIÓN CON ETIQUETA DE LOCALIDAD */}
+                    <p style={{ lineHeight: "1.6", color: "#111111" }}>
+                        {descripcionReal && (
+                            <span
+                                style={{
+                                    fontWeight: "bold",
+                                    color: "#FFFFFF",
+                                    backgroundColor: "#310101",
+                                    padding: "1px 6px",
+                                    marginRight: "8px",
+                                    fontSize: "0.75em", // Un poco más pequeño para elegancia
+                                    textTransform: "uppercase", // Para que luzca como código de producto
+                                    letterSpacing: "1px",
+                                }}
+                            >
+                                {localidad.trim()}
+                            </span>
+                        )}
+                        {descripcionReal || localidad}
+                    </p>
+
+                    {/* STOCK CON ESTILO DE ETIQUETA ADICIONAL */}
+                    {product.available_stock < 2 && (
+                        <div style={{ marginTop: "10px" }}>
+                            <span
+                                style={{
+                                    fontSize: "0.8em",
+                                    fontWeight: "bold",
+                                    padding: "4px 8px",
+                                    border: "1px solid #310101", // Borde sutil
+                                    color: "#310101",
+                                    textTransform: "uppercase",
+                                }}
+                            >
+                                {product.available_stock === 0
+                                    ? "Sobre pedido"
+                                    : "Pieza única"}
+                            </span>
+                        </div>
+                    )}
+
+                    <br></br>
 
                     {/* SELECTOR DE COLORES */}
                     {colors && colors.length > 0 && (
                         <div>
-                            <h2 style={{ color: "black" }}>Colors</h2>
+                            {/*<h2 style={{ color: "black" }}>Colores</h2>*/}
                             <div className="color-buttons">
                                 {colors.map((colorId, index) => (
                                     <button
@@ -387,7 +447,17 @@ function Product() {
                     {/* SELECTOR DE TALLAS */}
                     {sizes && sizes.length > 0 && (
                         <div>
-                            <h2 style={{ color: "black" }}>Sizes</h2>
+                            <h2
+                                style={{
+                                    color: "#000000", // Usamos tu color carmesí para mantener la identidad
+                                    fontSize: "0.85rem", // Más pequeño, para que no destaque más que el título del producto
+                                    fontWeight: "bold", // Peso fuerte
+                                    textTransform: "uppercase", // Estilo industrial/moderno
+                                    letterSpacing: "1px", // Un poco de aire entre letras para elegancia
+                                }}
+                            >
+                                Tallas
+                            </h2>
                             <div
                                 className="size-buttons-detail"
                                 style={{

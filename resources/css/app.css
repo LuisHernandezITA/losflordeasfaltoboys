@@ -128,17 +128,16 @@ section, .container, .container-fluid {
     --bs-gutter-x: 0.25rem; /* Espacio mínimo de 4px */
 }
 
-/* Asegura que el texto no rompa el diseño */
 .card-title {
     display: -webkit-box;
-    -webkit-line-clamp: 1; /* Máximo 1 línea para el título */
     -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1; /* Esto fuerza 1 línea y pone los puntos automáticamente */
     overflow: hidden;
-    height: 1.5rem; /* Altura fija para el título */
-
-    white-space: nowrap;      /* Evita que el texto salte a la siguiente línea */
-    text-overflow: ellipsis;  /* Agrega los puntos suspensivos automáticamente */
+    text-overflow: ellipsis;
     
+    /* En lugar de height fijo, usa min-height o deja que el contenedor fluya */
+    min-height: 1.2em; 
+    width: 100%; /* Asegura que ocupe el ancho disponible */
 }
 
 

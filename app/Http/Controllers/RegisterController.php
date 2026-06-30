@@ -76,11 +76,11 @@ class RegisterController extends ResponseController
 
             return response()->json([
                 'success' => true,
-                'message' => 'User login successfully.',
+                'message' => 'Bienvenido!.',
                 'user' => $success
             ]);
         } else {
-            return $this->sendError('Unauthorised.', ['error' => 'User not found']);
+            return $this->sendError('Usuario no encontrado.', ['error' => 'User not found']);
         }
     } else {
         // AUTH WITH CREDENTIALS
@@ -92,11 +92,11 @@ class RegisterController extends ResponseController
 
             return response()->json([
                 'success' => true,
-                'message' => 'User login successfully.',
+                'message' => 'Bienvenido!.',
                 'user' => $success
             ]);
         } else {
-            return $this->sendError('Unauthorised.', ['error' => 'Unauthorised']);
+            return $this->sendError('No autorizado.', ['error' => 'Unauthorised']);
         }
     }
 }

@@ -97,6 +97,10 @@ function Card_C(props) {
 
     const showDescription = props.showDescription || false;
 
+    const [etiqueta, ...restoDescripcion] = description.split("||");
+    const descripcionFinal =
+        restoDescripcion.length > 0 ? restoDescripcion.join("||") : "";
+
     return (
         <Card
             className="my-card"
@@ -215,7 +219,28 @@ function Card_C(props) {
                         className={`card-subtitle mb-2 text-white-50 small ${showDescription ? "d-block" : "d-none d-md-block"}`}
                         style={{ fontWeight: "300" }}
                     >
-                        {description}
+                        {/* Si existe una etiqueta (lo que estaba antes del ||), renderizamos el span */}
+                        {descripcionFinal && (
+                            <span
+                                style={{
+                                    fontWeight: "bold",
+                                    color: "#8c8c8c",
+                                    border: "1px solid #8c8c8c", // Borde blanco
+                                    backgroundColor: "transparent", // Fondo transparente
+                                    padding: "1px 6px",
+                                    marginRight: "8px",
+                                    marginBottom: "4px",
+                                    fontSize: "0.65em",
+                                    textTransform: "uppercase",
+                                    letterSpacing: "1px",
+                                    display: "inline-block", // Asegura que el padding se aplique bien
+                                }}
+                            >
+                                {etiqueta.trim()}
+                            </span>
+                        )}
+                        {/* Mostramos el resto de la descripción o la original si no había separador */}
+                        {descripcionFinal || etiqueta}
                     </Card.Subtitle>
 
                     {/* Si showDescription es false, añadimos 'justify-content-center' al contenedor

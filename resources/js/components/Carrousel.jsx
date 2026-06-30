@@ -22,7 +22,10 @@ function Carrousel() {
     const handleButtonClick = (id, url) => {
         setClickedId(id);
         setTimeout(() => {
-            window.location.href = url;
+            // Asegúrate de que url no sea null o undefined
+            if (url) {
+                window.location.assign(url); // window.location.assign es a veces más robusto que href
+            }
         }, 150);
     };
 
@@ -57,17 +60,12 @@ function Carrousel() {
                     <Carousel.Caption className="custom-carousel-caption">
                         {banner.link_url && (
                             <MDBBtn
-                                // Mantenemos tus clases originales para la animación de 'clicked'
-                                class={`custom-button mb-4 ${clickedId === banner.id ? "clicked" : ""}`}
-                                className="mb-4 w-100"
+                                tag="a" // Esto convierte el componente MDBBtn en una etiqueta <a>
+                                href={banner.link_url} // URL directa
+                                className={`custom-button mb-4 ${clickedId === banner.id ? "clicked" : ""}`}
                                 style={circularWhiteButtonStyle}
                                 size="lg"
-                                onClick={() =>
-                                    handleButtonClick(
-                                        banner.id,
-                                        banner.link_url,
-                                    )
-                                }
+                                onClick={() => setClickedId(banner.id)} // Solo para tu efecto visual
                             >
                                 {banner.alt_text}
                             </MDBBtn>

@@ -716,7 +716,7 @@ section, .container, .container-fluid {
 /* Estilo para las imágenes del carrusel */
 .custom-carousel-img {
     width: 100%;
-    height: 350px; /* Altura en móviles */
+    height: 500px; /* Altura en móviles */
     object-fit: cover; 
     object-position: center;
     /* IMPORTANTE: Evita que el navegador intente arrastrar la imagen como un elemento HTML */

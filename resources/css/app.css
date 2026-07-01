@@ -643,28 +643,22 @@ section, .container, .container-fluid {
 
 .sold-out-badge {
     position: absolute;
-    inset: 0; /* Cubre todo el contenedor */
+    inset: 0; 
     z-index: 10;
-
+    
     display: flex;
     align-items: center;
     justify-content: center;
-
-    background-color: rgba(231, 231, 231, 0.65) !important; 
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08); /* Más sutil */
+    
+    /* ESTA ES LA CLAVE PARA QUE EL ZOOM FUNCIONE */
+    pointer-events: none; 
+    
     transition: all 0.4s ease;
-    padding: 5px 0; /* Un poco más compacto */
-
-    /* Tipografía */
+    padding: 5px 0;
     color: #000000;
     text-align: center;
     font-weight: 900;
     font-size: 0.5rem;
-  
-  /* Elimina cualquier evento de click */
-    pointer-events: none;
 }
 
 .sold-out-label {
@@ -1350,46 +1344,3 @@ input[type="submit"],
         opacity: 0.2;
     }
 }
-
-/*STROBE MARQUEE*/
-
-.strobe-gallery-container {
-    width: 100%;
-    height: 18vh;
-    position: relative;
-    background: #000;
-    overflow: hidden;
-    display: flex;
-    justify-content: center;
-}
-
-.strobe-img {
-    position: absolute;
-    width: 100%;      /* Aseguramos que ocupe todo el ancho */
-    height: 100%;     /* Aseguramos que ocupe toda la altura */
-    object-fit: cover; /* ESTO ES LO QUE HACE QUE CUBRA TODO EL ESPACIO */
-    object-position: top; /* Centra la imagen para que el recorte sea parejo */
-    filter: grayscale(1) contrast(3) brightness(1.2); /* Look punk saturado */
-    opacity: 0; /* Invisibles por defecto */
-    animation: strobe-fade 1.2s infinite;
-}
-
-/* Animación que hace que aparezcan aleatoriamente */
-@keyframes strobe-fade {
-    /* Mantenemos el negro casi todo el tiempo */
-    0%, 3%, 6%, 9%, 12%, 15%, 18%, 21%, 24%, 27%, 100% { 
-        opacity: 0; 
-    }
-    
-    /* Disparos de luz aleatorios y rápidos */
-    1.5%, 4.5%, 7.5%, 10.5%, 13.5%, 16.5%, 19.5%, 22.5%, 25.5% { 
-        opacity: 1; 
-        filter: brightness(2) contrast(1.5) grayscale(1); /* Flash blanco intenso */
-    }
-}
-
-/* Desfasamos cada imagen para que no parpadeen todas al mismo tiempo */
-.strobe-img:nth-child(1) { animation-delay: 0s; }
-.strobe-img:nth-child(2) { animation-delay: 0.3s; }
-.strobe-img:nth-child(3) { animation-delay: 0.7s; }
-.strobe-img:nth-child(4) { animation-delay: 1.2s; }

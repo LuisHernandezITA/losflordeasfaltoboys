@@ -170,30 +170,37 @@ function Card_C(props) {
                         className={`card-subtitle mb-2 text-white-50 small ${showDescription ? "d-block" : "d-none d-md-block"}`}
                         style={{ fontWeight: "300" }}
                     >
-                        {/* Si existe una etiqueta (lo que estaba antes del ||), renderizamos el span */}
-                        {descripcionFinal && (
-                            <span
-                                style={{
-                                    fontWeight: "bold",
-                                    color: "#8c8c8c",
-                                    border: "1px solid #8c8c8c", // Borde blanco
-                                    backgroundColor: "transparent", // Fondo transparente
-                                    padding: "1px 6px",
-                                    marginRight: "8px",
-                                    marginBottom: "4px",
-                                    fontSize: "0.65em",
-                                    textTransform: "uppercase",
-                                    letterSpacing: "1px",
-                                    display: "inline-block", // Asegura que el padding se aplique bien
-                                }}
-                            >
-                                {etiqueta.trim()}
-                            </span>
-                        )}
-                        {/* Mostramos el resto de la descripción o la original si no había separador */}
-                        {descripcionFinal || etiqueta}
+                        {/* Contenedor que aplica el truncamiento */}
+                        <div
+                            style={{
+                                display: "-webkit-box",
+                                WebkitLineClamp: 2,
+                                WebkitBoxOrient: "vertical",
+                                overflow: "hidden",
+                            }}
+                        >
+                            {descripcionFinal && (
+                                <span
+                                    style={{
+                                        fontWeight: "bold",
+                                        color: "#8c8c8c",
+                                        border: "1px solid #8c8c8c",
+                                        backgroundColor: "transparent",
+                                        padding: "1px 6px",
+                                        marginRight: "8px",
+                                        marginBottom: "4px",
+                                        fontSize: "0.65em",
+                                        textTransform: "uppercase",
+                                        letterSpacing: "1px",
+                                        display: "inline-block",
+                                    }}
+                                >
+                                    {etiqueta.trim()}
+                                </span>
+                            )}
+                            {descripcionFinal || etiqueta}
+                        </div>
                     </Card.Subtitle>
-
                     {/* Si showDescription es false, añadimos 'justify-content-center' al contenedor
                    para que el precio y el botón se centren en móvil.
                 */}

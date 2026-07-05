@@ -236,7 +236,13 @@ function MusicBlog() {
                                                 }}
                                             >
                                                 <div className="text-dark">
-                                                    <strong>{art.autor}</strong>
+                                                    <strong
+                                                        style={{
+                                                            color: "crimson",
+                                                        }}
+                                                    >
+                                                        {art.autor}
+                                                    </strong>
                                                 </div>
                                                 <div className="text-secondary">
                                                     {art.technique}

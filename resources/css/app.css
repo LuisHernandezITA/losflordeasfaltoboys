@@ -155,13 +155,13 @@ section, .container, .container-fluid {
     }
 }
 
-/* Ajuste específico para que el contenedor de precio no necesite altura fija */
 .card-subtitle {
-    display: -webkit-box;
+    /* Forzamos el display para que sea el contenedor del clamp */
+    display: -webkit-box !important;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
-    min-height: 3rem; /* Cambiado a min-height para que no ocupe espacio si está vacío */
+    min-height: 3rem;
 }
 
 /* Contenedor que mantiene todo en una sola línea */

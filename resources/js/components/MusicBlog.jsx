@@ -22,9 +22,14 @@ function MusicBlog() {
                     axios.get("/api/gallery_artworks"),
                 ]);
 
-                // Invertimos la data original para que los últimos registros de música salgan primero
                 setMusicData(musicRes.data.reverse());
-                setArtworks(galleryRes.data.data || []);
+
+                // Mezclar aleatoriamente las obras antes de establecer el estado
+                const rawArtworks = galleryRes.data.data || [];
+                const shuffledArtworks = [...rawArtworks].sort(
+                    () => Math.random() - 0.5,
+                );
+                setArtworks(shuffledArtworks);
             } catch (error) {
                 console.error(
                     "Error fetching multimedia dashboard data:",

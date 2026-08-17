@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import {
     Spinner,
     Navbar,
@@ -14,6 +15,9 @@ import "/resources/css/app.css";
 import { MDBIcon } from "mdb-react-ui-kit";
 
 function ListCard() {
+    const { brandName } = useParams(); // <--- Lee el parámetro de la ruta
+    const useNavigateInstance = useNavigate(); // <--- Para cambiar la URL al hacer clic
+
     const [productData, setProductData] = useState([]);
     const [categories, setCategories] = useState([]);
 
@@ -21,18 +25,29 @@ function ListCard() {
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [selectedBrand, setSelectedBrand] = useState(null);
     const [searchTerm, setSearchTerm] = useState("");
-    const [brandSearchTerm, setBrandSearchTerm] = useState("");
     const [showSuggestions, setShowSuggestions] = useState(false);
 
-    // --- NUEVOS ESTADOS PARA PAGINACIÓN ---
+    // --- ESTADOS PARA PAGINACIÓN ---
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 12;
+
+    // Función auxiliar para transformar marcas a slugs limpios con guiones
+    const formatSlug = (text) => {
+        if (!text) return "";
+        return text.toString().toLowerCase().trim().replace(/\s+/g, "-");
+    };
+
+    // OBTENER MARCAS ÚNICAS DISPONIBLES EN LOS PRODUCTOS
+    const brands = [
+        ...new Set(
+            productData.map((product) => product.designer).filter(Boolean),
+        ),
+    ];
 
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const response = await axios.get("/api/products_index");
-                // Invertimos el array antes de setearlo
                 const productosInvertidos = [...response.data].reverse();
                 setProductData(productosInvertidos);
             } catch (error) {
@@ -53,16 +68,25 @@ function ListCard() {
         fetchCategories();
     }, []);
 
+    // EFECTO PARA INTERPRETAR LA URL CON GUIONES MEDIOS (-)
+    useEffect(() => {
+        if (brandName) {
+            // Reemplaza los guiones por espacios para buscar el nombre real de la marca
+            const formattedUrlName = brandName.replace(/-/g, " ");
+            const decodedBrand = decodeURIComponent(formattedUrlName);
+
+            const foundBrand = brands.find(
+                (b) => b.toLowerCase() === decodedBrand.toLowerCase(),
+            );
+            setSelectedBrand(foundBrand || decodedBrand);
+        } else {
+            setSelectedBrand(null);
+        }
+    }, [brandName, productData]);
+
     useEffect(() => {
         setCurrentPage(1);
     }, [selectedCategory, selectedBrand, searchTerm]);
-
-    // OBTENER MARCAS ÚNICAS DISPONIBLES EN LOS PRODUCTOS
-    const brands = [
-        ...new Set(
-            productData.map((product) => product.designer).filter(Boolean),
-        ),
-    ];
 
     // FUNCIÓN DE FILTRADO REACTIVO COMBINADO
     const getFilteredProducts = () => {
@@ -132,14 +156,13 @@ function ListCard() {
             <Navbar
                 expand="lg"
                 variant="dark"
-                className="shadow-sm py-3 w-100 position-relative" // Mantenemos relative
+                className="shadow-sm py-3 w-100 position-relative"
                 style={{
                     borderBottom: "1px solid rgba(255,255,255,0.05)",
-                    //overflow: "hidden",
-                    backgroundColor: "transparent", // Forzamos transparente
+                    backgroundColor: "transparent",
                 }}
             >
-                {/* Capa de fondo con la imagen - Z-INDEX 0 (Base) */}
+                {/* Capa de fondo con la imagen */}
                 <div
                     style={{
                         position: "absolute",
@@ -152,7 +175,7 @@ function ListCard() {
                     }}
                 />
 
-                {/* Capa de desenfoque - Z-INDEX 1 (Encima de la imagen) */}
+                {/* Capa de desenfoque */}
                 <div
                     style={{
                         position: "absolute",
@@ -163,7 +186,7 @@ function ListCard() {
                     }}
                 />
 
-                {/* Contenido - Z-INDEX 2 (Encima de todo) */}
+                {/* Contenido */}
                 <Container
                     className="px-4 flex-wrap"
                     style={{ position: "relative", zIndex: 2 }}
@@ -190,7 +213,7 @@ function ListCard() {
                         className="w-100 mt-3 mt-lg-0"
                     >
                         <Nav className="me-auto d-flex flex-column flex-lg-row gap-2 gap-lg-4 w-100 hierarchical-nav">
-                            {/* BLOQUE: CATEGORÍAS (AHORA DESPLEGABLE) */}
+                            {/* BLOQUE: CATEGORÍAS */}
                             <div className="nav-filter-group">
                                 <span
                                     className="text-muted small d-block mb-1 tracking-wider"
@@ -255,10 +278,9 @@ function ListCard() {
                                 </NavDropdown>
                             </div>
 
-                            {/* DIVISOR INTERNO EN MÓVILES */}
                             <hr className="d-lg-none my-2 border-secondary" />
 
-                            {/* BLOQUE: MARCAS (ESTILIZADO) */}
+                            {/* MARCAS (CON URL SLUG FORMAT) */}
                             <div className="nav-filter-group">
                                 <span
                                     className="text-muted small d-block mb-1 tracking-wider"
@@ -270,7 +292,6 @@ function ListCard() {
                                 >
                                     BRANDS
                                 </span>
-
                                 <NavDropdown
                                     title={
                                         selectedBrand === null
@@ -282,7 +303,9 @@ function ListCard() {
                                     style={{ fontSize: "0.875rem" }}
                                 >
                                     <NavDropdown.Item
-                                        onClick={() => setSelectedBrand(null)}
+                                        onClick={() =>
+                                            useNavigateInstance("/store")
+                                        }
                                         className={
                                             selectedBrand === null
                                                 ? "active-dropdown-item"
@@ -291,14 +314,12 @@ function ListCard() {
                                     >
                                         ALL BRANDS
                                     </NavDropdown.Item>
-
                                     <NavDropdown.Divider
                                         style={{
                                             backgroundColor:
                                                 "rgba(255,255,255,0.1)",
                                         }}
                                     />
-
                                     <div
                                         style={{
                                             maxHeight: "250px",
@@ -309,7 +330,9 @@ function ListCard() {
                                             <NavDropdown.Item
                                                 key={idx}
                                                 onClick={() =>
-                                                    setSelectedBrand(brand)
+                                                    useNavigateInstance(
+                                                        `/store/${encodeURIComponent(formatSlug(brand))}`,
+                                                    )
                                                 }
                                                 className={
                                                     selectedBrand === brand
@@ -350,14 +373,14 @@ function ListCard() {
                                     value={searchTerm}
                                     onChange={(e) => {
                                         setSearchTerm(e.target.value);
-                                        setShowSuggestions(true); // Mostrar lista al escribir
+                                        setShowSuggestions(true);
                                     }}
                                     onBlur={() =>
                                         setTimeout(
                                             () => setShowSuggestions(false),
                                             200,
                                         )
-                                    } // Ocultar al perder foco
+                                    }
                                     style={{
                                         backgroundColor: "#1a1a1a",
                                         border: "1px solid #333",
@@ -391,8 +414,10 @@ function ListCard() {
                                                 cursor: "pointer",
                                             }}
                                             onClick={() => {
-                                                setSearchTerm(brand); // Rellena el input con la marca
-                                                setSelectedBrand(brand); // Aplica el filtro real
+                                                setSearchTerm(brand);
+                                                useNavigateInstance(
+                                                    `/store/${encodeURIComponent(formatSlug(brand))}`,
+                                                );
                                                 setShowSuggestions(false);
                                             }}
                                         >
@@ -411,15 +436,11 @@ function ListCard() {
             {/* CONTENEDOR DE PRODUCTOS PAGINADOS */}
             <div
                 className="d-flex flex-wrap justify-content-center"
-                style={{ gap: "10px" }} // Reducimos un poco el gap para móvil
+                style={{ gap: "10px" }}
             >
                 {currentItems.length > 0 ? (
                     currentItems.map((product) => (
-                        <div
-                            key={product.id}
-                            className="card-wrapper"
-                            // ELIMINAMOS EL style={{ margin: "1px" }}
-                        >
+                        <div key={product.id} className="card-wrapper">
                             <Card_C
                                 id={product.id}
                                 name={product.name}
@@ -447,11 +468,11 @@ function ListCard() {
                     </div>
                 )}
             </div>
+            <br></br>
 
-            {/* --- CONTROLES DE PAGINACIÓN CON CLASSNAME --- */}
+            {/* --- CONTROLES DE PAGINACIÓN --- */}
             {totalPages > 1 && (
                 <div className="d-flex justify-content-center align-items-center mt-4 pb-5">
-                    {/* Botón Anterior */}
                     <button
                         disabled={currentPage === 1}
                         onClick={() => paginate(currentPage - 1)}
@@ -460,9 +481,7 @@ function ListCard() {
                         «
                     </button>
 
-                    {/* Números de página */}
                     {(() => {
-                        // ... (la misma lógica de cálculo de startPage/endPage que vimos antes)
                         const pageNumbers = [];
                         let startPage = Math.max(1, currentPage - 2);
                         let endPage = Math.min(totalPages, startPage + 4);
@@ -482,7 +501,6 @@ function ListCard() {
                         ));
                     })()}
 
-                    {/* Botón Siguiente */}
                     <button
                         disabled={currentPage === totalPages}
                         onClick={() => paginate(currentPage + 1)}

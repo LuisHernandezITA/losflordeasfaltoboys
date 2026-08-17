@@ -37,7 +37,7 @@ function Main() {
                     <Route path="crudcategories" element={<CrudCategory />} />
                     <Route path="crudbanners" element={<CrudBanner />} />
                     <Route path="crudsongs" element={<CrudMusic />} />
-                    <Route path="store" element={<ListCard />} />
+                    <Route path="store/:brandName?" element={<ListCard />} />
                     <Route path="gallery" element={<MusicBlog />} />
                     <Route path="login" element={<Login_B />} />
                     <Route path="cart" element={<Cart />} />

@@ -79,7 +79,7 @@ function Menu() {
     };
 
     const hideListCardNewest =
-        location.pathname === "/store" ||
+        location.pathname.startsWith("/store") ||
         location.pathname === "/gallery" ||
         location.pathname === "/legal-notice" ||
         location.pathname === "/about-us" ||
@@ -87,7 +87,6 @@ function Menu() {
 
     useEffect(() => {
         const noCarouselPaths = [
-            "/store",
             "/gallery",
             "/blog",
             "/about-us",
@@ -106,6 +105,7 @@ function Menu() {
 
         const shouldHide =
             noCarouselPaths.includes(location.pathname) ||
+            location.pathname.startsWith("/store") || // <-- Cubre /store y cualquier ruta relativa /store/...
             location.pathname.startsWith("/item") ||
             location.pathname.startsWith("/events/");
 

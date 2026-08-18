@@ -163,7 +163,7 @@ function ListCard() {
     }
 
     const getBannerUrl = () => {
-        const GENERIC_BANNER = "https://i.postimg.cc/kgbRcpB2/VISUALOIDE.gif";
+        const GENERIC_BANNER = "https://i.postimg.cc/2ynSsVBL/VISUALPAGVV.gif";
 
         if (!selectedBrand) return GENERIC_BANNER;
 

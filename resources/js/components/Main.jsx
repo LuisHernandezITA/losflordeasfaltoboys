@@ -18,6 +18,7 @@ import AvisoLegal from "./AvisoLegal";
 import AboutUs from "./AboutUs";
 import CrudGallery from "./CrudGallery";
 import CrudUsers from "./CrudUsers";
+import CrudBrand from "./CrudBrand";
 
 function Main() {
     return (
@@ -36,6 +37,7 @@ function Main() {
                     <Route path="crudevents" element={<CrudEvents />} />
                     <Route path="crudcategories" element={<CrudCategory />} />
                     <Route path="crudbanners" element={<CrudBanner />} />
+                    <Route path="crudbrands" element={<CrudBrand />} />
                     <Route path="crudsongs" element={<CrudMusic />} />
                     <Route path="store/:brandName?" element={<ListCard />} />
                     <Route path="gallery" element={<MusicBlog />} />

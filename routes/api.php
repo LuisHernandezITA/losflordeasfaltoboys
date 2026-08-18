@@ -17,7 +17,8 @@ use App\Http\Controllers\MusicController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\BlogController; 
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\GalleryController; // <-- Controlador de Galería y Publicidad Irónica
+use App\Http\Controllers\GalleryController;
+use App\Http\Controllers\BrandController;
 
 /*
 |--------------------------------------------------------------------------
@@ -40,6 +41,7 @@ Route::get('/category_index', [CategoryController::class, 'index']);
 Route::get('/color_index', [ColorController::class, 'index']);
 Route::get('/size_index', [SizeController::class, 'index']);
 Route::get('/banners_index', [BannerController::class, 'index']);
+Route::get('/brands_index', [BrandController::class, 'index']);
 Route::get('/music_index', [MusicController::class, 'index']);
 
 Route::get('/events_index', [EventController::class, 'index']); 
@@ -127,5 +129,11 @@ Route::middleware(['auth:api', 'isAdmin'])->group(function () {
     Route::post('/gallery_edit', [GalleryController::class, 'edit']);           
     Route::put('/gallery_update/{id}', [GalleryController::class, 'update']);   
     Route::delete('/gallery_destroy/{id}', [GalleryController::class, 'destroy']); 
-    Route::post('/gallery_update_ad', [GalleryController::class, 'updateParodyAd']); // Ruta directa para el Banner de Publicidad
+    Route::post('/gallery_update_ad', [GalleryController::class, 'updateParodyAd']);
+
+    // --- CRUD DE MARCAS PARA EL ADMINISTRADOR ---
+    Route::get('/brands/{id}/edit', [BrandController::class, 'edit']);
+    Route::post('/brands_store', [BrandController::class, 'store']);
+    Route::put('/brands_update/{id}', [BrandController::class, 'update']);
+    Route::delete('/brands_destroy/{id}', [BrandController::class, 'destroy']);
 });

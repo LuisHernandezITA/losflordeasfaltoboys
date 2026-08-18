@@ -20,6 +20,7 @@ function ListCard() {
 
     const [productData, setProductData] = useState([]);
     const [categories, setCategories] = useState([]);
+    const [brandsData, setBrandsData] = useState([]);
 
     // ESTADOS DE FILTRADO Y BÚSQUEDA
     const [selectedCategory, setSelectedCategory] = useState(null);
@@ -64,8 +65,19 @@ function ListCard() {
             }
         };
 
+        const fetchBrandsData = async () => {
+            try {
+                // Ajusta esta ruta a tu endpoint real de marcas
+                const response = await axios.get("/api/brands_index");
+                setBrandsData(response.data);
+            } catch (error) {
+                console.error("Error cargando marcas:", error);
+            }
+        };
+
         fetchData();
         fetchCategories();
+        fetchBrandsData();
     }, []);
 
     // EFECTO PARA INTERPRETAR LA URL CON GUIONES MEDIOS (-)
@@ -150,9 +162,38 @@ function ListCard() {
         );
     }
 
+    const getBannerUrl = () => {
+        const GENERIC_BANNER = "https://i.postimg.cc/kgbRcpB2/VISUALOIDE.gif";
+
+        if (!selectedBrand) return GENERIC_BANNER;
+
+        const brandInfo = brandsData.find(
+            (b) => b.name.toLowerCase() === selectedBrand.toLowerCase(),
+        );
+
+        return brandInfo?.banner_url || GENERIC_BANNER;
+    };
+
     return (
         <div>
             <br></br>
+            <div
+                className="brand-banner"
+                style={{
+                    width: "100%",
+                    height: "250px",
+                    backgroundImage: `url("${getBannerUrl()}")`,
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                    backgroundRepeat: "no-repeat",
+                    // --- TRANSICIÓN ELEGANTE Y FLUIDA ---
+                    transition:
+                        "background-image 1.1s cubic-bezier(0.25, 1, 0.5, 1), opacity 1.1s ease-in-out",
+                    WebkitTransition:
+                        "background-image 1.1s cubic-bezier(0.25, 1, 0.5, 1), opacity 1.1s ease-in-out",
+                    // ------------------------------------
+                }}
+            />
             <Navbar
                 expand="lg"
                 variant="dark"

@@ -100,6 +100,7 @@ function Menu() {
             "/crudproducts",
             "/crudcategories",
             "/crudbanners",
+            "/crudbrands",
             "/crudsongs",
         ];
 
@@ -281,6 +282,9 @@ function Menu() {
                                         to="crudbanners"
                                     >
                                         Banners Crud
+                                    </NavDropdown.Item>
+                                    <NavDropdown.Item as={Link} to="crudbrands">
+                                        Brands Crud
                                     </NavDropdown.Item>
                                     <NavDropdown.Item
                                         as={Link}
